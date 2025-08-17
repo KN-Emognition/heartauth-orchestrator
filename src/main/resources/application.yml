@@ -12,7 +12,6 @@ spring:
       maximum-pool-size: ${DB_POOL_MAX:10}
       minimum-idle: ${DB_POOL_MIN:2}
       connection-timeout: 30000
-
   jpa:
     open-in-view: false
     hibernate:
@@ -22,34 +21,17 @@ spring:
         jdbc.lob.non_contextual_creation: true
         format_sql: true
         default_schema: ${DB_SCHEMA:public}
-
   flyway:
     enabled: true
     locations: classpath:db/migration
     schemas: ${DB_SCHEMA:public}
-
-#  rabbitmq:
-#    host: ${RABBIT_HOST:localhost}
-#    port: ${RABBIT_PORT:5672}
-#    username: ${RABBIT_USER:guest}
-#    password: ${RABBIT_PASSWORD:guest}
-#    virtual-host: ${RABBIT_VHOST:/}
-#    listener:
-#      simple:
-#        acknowledge-mode: auto
-#        default-requeue-rejected: false
-#        concurrency: ${RABBIT_CONCURRENCY:1}
-#        max-concurrency: ${RABBIT_MAX_CONCURRENCY:5}
-
   mvc:
     problemdetails:
       enabled: true
-
 server:
   port: ${PORT:8080}
   shutdown: graceful
   forward-headers-strategy: framework
-
 management:
   endpoints:
     web:
@@ -62,9 +44,19 @@ management:
   observations:
     key-values:
       application: ${spring.application.name}
-
 logging:
   level:
     root: INFO
     org.springframework: INFO
     org.hibernate.SQL: WARN
+security:
+  api:
+    keys:
+      - id: KEYCLOAK
+        value: ${API_KEY_KEYCLOAK:your-keycloak-api-key}
+        roles: [keycloak]
+fcm:
+  project-id:  knemognition-heartauth
+  credentials-path: ${FCM_CREDENTIALS_PATH:classpath:fcm/service-account.json}
+  dry-run: true
+
