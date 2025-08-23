@@ -5,12 +5,12 @@ import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRespons
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.ChallengeService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.DeviceDirectory;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FcmSender;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeMapper;
-import knemognition.heartauth.orchestrator.internal.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
 
@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ChallengeServiceImpl implements ChallengeService {
+public class InternalInternalChallengeServiceImpl implements InternalChallengeService {
 
     private static final int NONCE_BYTES = 32;
     private static final int DEFAULT_TTL = 120;

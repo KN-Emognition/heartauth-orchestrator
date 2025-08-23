@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.config.redis;
 
-import knemognition.heartauth.orchestrator.internal.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

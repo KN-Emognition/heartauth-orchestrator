@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.ChallengeQueryService;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeStatusMapper;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeStatusResponse;
 
 import java.util.UUID;

@@ -11,7 +11,7 @@ tags:
     description: Completing login-time challenges from the device.
 
 paths:
-  /pair/exchange/init:
+  /external/v1/pair/exchange/init:
     post:
       operationId: externalPairingInit
       tags: [ Pairing ]
@@ -56,7 +56,7 @@ paths:
                     exp: 1723712400
                     policy: { deviceLimitRemaining: 2 }
 
-  /pair/exchange/confirm:
+  /external/v1/pair/exchange/confirm:
     post:
       operationId: externalPairingConfirm
       tags: [ Pairing ]
@@ -98,7 +98,7 @@ paths:
                         verdict: MEETS_DEVICE_INTEGRITY
                       createdAt: 1723712000
 
-  /challenge/{id}/complete:
+  /external/v1/challenge/{id}/complete:
     post:
       operationId: externalChallengeComplete
       tags: [ Challenge ]

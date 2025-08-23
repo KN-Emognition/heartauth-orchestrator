@@ -1,11 +1,10 @@
-package knemognition.heartauth.orchestrator.internal.gateways.persistence.redis;
+package knemognition.heartauth.orchestrator.shared.redis;
 
 
-import lombok.RequiredArgsConstructor;
+import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.ChallengeStore;
-import knemognition.heartauth.orchestrator.internal.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;

@@ -1,8 +1,8 @@
-package knemognition.heartauth.orchestrator.internal.app.ports.out;
+package knemognition.heartauth.orchestrator.shared.api;
 
 
 
-import knemognition.heartauth.orchestrator.internal.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
 
 import java.time.Duration;
 import java.util.Optional;

@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import knemognition.heartauth.orchestrator.internal.api.ChallengeApi;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.ChallengeQueryService;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.ChallengeService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeStatusResponse;
 
@@ -18,16 +18,16 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('keycloak')")
 @RestController
 @RequiredArgsConstructor
-public class ChallengeController implements ChallengeApi {
+public class InternalChallengeController implements ChallengeApi {
 
-    private final ChallengeService challengeService;
+    private final InternalChallengeService internalChallengeService;
     private final ChallengeQueryService challengeQueryService;
 
 
     @Override
     public ResponseEntity<ChallengeCreateResponse> internalChallengeCreate(
             @Valid ChallengeCreateRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(challengeService.createAndDispatch(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(internalChallengeService.createAndDispatch(request));
     }
 
 
