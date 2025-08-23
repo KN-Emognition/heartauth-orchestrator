@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: ECG Orchestrator API — External
+  version: 1.0.0
+  description: Endpoints called by the mobile app.
+
+tags:
+  - name: Pairing
+    description: Device enrollment from the mobile app.
+  - name: Challenge
+    description: Completing login-time challenges from the device.
+
+paths:
+  /pair/exchange/init:
+    post:
+      operationId: externalPairingInit
+      tags: [ Pairing ]
+      summary: Begin device pairing using a one-time pairing JWT from Keycloak.
+      description: |
+        Mobile app calls this after scanning the QR on the Keycloak Required Action page.
+        Returns a fresh nonce and creates pairing state keyed by JWT `jti`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yml#/components/schemas/PairingInitRequest'
+            examples:
+              android:
+                value:
+                  deviceId: "android:3f24a1c2"
+                  displayName: "Pixel 8 Pro"
+                  publicKeyPem: |
+                    -----BEGIN PUBLIC KEY-----
+                    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+                    -----END PUBLIC KEY-----
+                  fcmToken: "fcm_token_example"
+                  platform: ANDROID
+                  osVersion: "14"
+                  model: "Google Pixel 8 Pro"
+                  attestation:
+                    type: play-integrity
+                    verdict: MEETS_DEVICE_INTEGRITY
+      responses:
+        '201':
+          description: Pairing initiated; device must confirm proof-of-possession.
+          content:
+            application/json:
+              schema:
+                $ref: './components.yml#/components/schemas/PairingInitResponse'
+              examples:
+                ok:
+                  value:
+                    jti: "5b5c6a2f-2d3b-4c3b-8d8f-9f2e1e6f9c21"
+                    nonce: "k6aB0u0cB4m0aP2O2nO5yA=="
+                    exp: 1723712400
+                    policy: { deviceLimitRemaining: 2 }
+
+  /pair/exchange/confirm:
+    post:
+      operationId: externalPairingConfirm
+      tags: [ Pairing ]
+      summary: Confirm device pairing by proving possession of the generated private key.
+      description: |
+        Device signs the server-provided nonce (and context) with its hardware-backed
+        private key. On success, orchestrator persists device metadata and marks `jti` as linked.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yml#/components/schemas/PairingConfirmRequest'
+            examples:
+              confirm:
+                value:
+                  jti: "5b5c6a2f-2d3b-4c3b-8d8f-9f2e1e6f9c21"
+                  deviceId: "android:3f24a1c2"
+                  signature: "MEUCIE3..."  # base64url DER of ECDSA(SHA-256(nonce||jti||deviceId))
+                  alg: ES256
+      responses:
+        '200':
+          description: Pairing completed; device linked to user.
+          content:
+            application/json:
+              schema:
+                $ref: './components.yml#/components/schemas/PairingConfirmResponse'
+              examples:
+                linked:
+                  value:
+                    status: linked
+                    credential:
+                      deviceId: "android:3f24a1c2"
+                      displayName: "Pixel 8 Pro"
+                      publicKeyPem: "-----BEGIN PUBLIC KEY-----..."
+                      fcmToken: "fcm_token_example"
+                      attestation:
+                        type: play-integrity
+                        verdict: MEETS_DEVICE_INTEGRITY
+                      createdAt: 1723712000
+
+  /challenge/{id}/complete:
+    post:
+      operationId: externalChallengeComplete
+      tags: [ Challenge ]
+      summary: Complete a challenge from the device after ECG pass and signature verification.
+      description: |
+        Mobile app posts a signed assertion proving possession of the device key.
+        Server validates signature (using stored public key), nonce, and policy.
+      parameters:
+        - $ref: './components.yml#/components/parameters/ChallengeIdParam'
+        - $ref: './components.yml#/components/parameters/DPoPHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: './components.yml#/components/schemas/ChallengeCompleteRequest'
+            examples:
+              ok:
+                value:
+                  assertionJwt: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGFsbGVuZ2VJZCI6Ijc5ZjFhODMzLTI..."
+                  matchScore: 0.94
+                  biometricPassed: true
+      responses:
+        '200':
+          description: Challenge outcome recorded.
+          content:
+            application/json:
+              schema:
+                $ref: './components.yml#/components/schemas/ChallengeStatusResponse'
+              examples:
+                approved: { value: { state: approved } }
+                denied:   { value: { state: denied, reason: low_score } }

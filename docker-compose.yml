@@ -17,5 +17,14 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
+  redis:
+    image: redis:7-alpine
+    container_name: orchestrator-redis
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
 volumes:
   pgdata:
+  redis-data:

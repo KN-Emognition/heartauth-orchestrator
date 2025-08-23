@@ -3,7 +3,17 @@ spring:
     name: orchestrator
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-
+  data:
+    redis:
+      url: ${REDIS_URL:redis://localhost:6379}
+      timeout: 3s
+      client-type: lettuce
+      lettuce:
+        pool:
+          max-active: 16
+          max-idle: 8
+          min-idle: 0
+          max-wait: 5s
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/orchestrator}
     username: ${DB_USER:orchestrator}
@@ -15,7 +25,7 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: validate
+      ddl-auto: none
     properties:
       hibernate:
         jdbc.lob.non_contextual_creation: true
