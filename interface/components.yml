@@ -103,7 +103,7 @@ components:
       type: object
       required: [ userId ]
       properties:
-        userId: { type: string, description: Keycloak user ID. }
+        userId: { type: string, format: uuid }
         ttlSeconds: { type: integer, minimum: 30, maximum: 300, default: 120 }
 
     ChallengeCreateResponse:

@@ -41,7 +41,7 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
 
     @Override
     public ChallengeCreateResponse createAndDispatch(ChallengeCreateRequest req) {
-
+        log.info("creating challenge for user {}", req.getUserId());
         final List<String> fcmTokens = deviceDirectory.getActiveFcmTokens(req.getUserId());
         if (fcmTokens.isEmpty()) {
             log.info("no active devices for user {}", req.getUserId());
@@ -56,7 +56,7 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
         final long exp = now + ttl;
 
         ChallengeState state = challengeMapper.toState(req, challengeId,  nonceB64, exp, now);
-
+        log.info("storing challenge in cache {} for user {}", challengeId, req.getUserId());
         challengeStore.create(state, Duration.ofSeconds(ttl));
 
         var data = Map.of(
@@ -67,6 +67,7 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
         );
         for (String token : fcmTokens) {
             try {
+                log.info("sending challenge {} to device {}", challengeId, token);
                 fcmSender.sendData(token, data, Duration.ofSeconds(ttl));
             } catch (Exception e) {
                 log.warn("failed to send challenge to device", e);

@@ -11,7 +11,7 @@ PLACEHOLDER
     platform       = 'ANDROID',
     last_seen_at   = now(),
     updated_at     = now()
-WHERE user_id  = '1a2b3c-user'
+WHERE user_id  = '00000000-0000-0000-0000-000000000000'
   AND device_id = 'android:3f24a1c2'
   AND revoked_at IS NULL
     RETURNING 1
@@ -20,7 +20,7 @@ INSERT INTO device_credential (
     user_id, device_id, display_name, public_key_pem, fcm_token, platform, last_seen_at
 )
 SELECT
-    '1a2b3c-user',
+    '00000000-0000-0000-0000-000000000000',
     'android:3f24a1c2',
     'Pixel 8 Pro (seed)',
     '-----BEGIN PUBLIC KEY-----

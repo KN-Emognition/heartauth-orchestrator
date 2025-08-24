@@ -25,7 +25,7 @@ public class DeviceCredentialEntity {
     private UUID id = UUID.randomUUID();
 
     @Column(name = "user_id", nullable = false)
-    private String userId;
+    private UUID userId;
 
     @Column(name = "device_id", nullable = false)
     private String deviceId;

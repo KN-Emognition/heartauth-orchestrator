@@ -18,5 +18,5 @@ public interface DeviceCredentialRepository extends JpaRepository<DeviceCredenti
          and e.revokedAt is null
          and e.fcmToken is not null
     """)
-    List<String> findActiveFcmTokensByUser(@Param("userId") String userId);
+    List<String> findActiveFcmTokensByUser(@Param("userId") UUID userId);
 }

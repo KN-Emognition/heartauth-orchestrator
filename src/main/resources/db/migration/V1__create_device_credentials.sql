@@ -1,8 +1,8 @@
 CREATE TABLE device_credential (
                                    id               UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-                                   user_id          TEXT    NOT NULL,
-                                   device_id        TEXT    NOT NULL,                       -- e.g. "android:3f24a1c2"
+                                   user_id          UUID    NOT NULL,
+                                   device_id        TEXT    NOT NULL,
                                    display_name     TEXT    NOT NULL,
                                    public_key_pem   TEXT    NOT NULL,
                                    fcm_token        TEXT    NOT NULL,

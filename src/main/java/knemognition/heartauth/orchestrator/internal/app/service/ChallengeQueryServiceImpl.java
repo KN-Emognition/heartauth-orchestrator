@@ -18,6 +18,7 @@ public class ChallengeQueryServiceImpl implements ChallengeQueryService {
     private final ChallengeStatusMapper mapper;
 
     public ChallengeStatusResponse status(UUID challengeId) {
+        log.info("querying challenge status for id {}", challengeId);
         return store.get(challengeId)
                 .map(mapper::toResponse)
                 // key missing (expired/unknown) → treat as expired to match lean spec

@@ -9,7 +9,7 @@ import java.util.UUID;
 public class ChallengeState {
     private String state;
     private UUID challengeId;
-    private String userId;
+    private UUID userId;
     private String nonceB64;
     private Long   exp;
     private Long   createdAt;
