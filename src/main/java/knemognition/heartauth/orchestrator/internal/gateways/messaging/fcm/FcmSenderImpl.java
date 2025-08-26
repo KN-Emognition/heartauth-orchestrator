@@ -68,6 +68,7 @@ public class FcmSenderImpl implements FcmSender {
                 "message", Map.of(
                         "token", token,
                         "data", data == null ? Map.<String, String>of() : data,
+                        "notification", Map.of("title", "New login attempt", "body", "Authenticate yourself to complete the login process."),
                         "android", ttlStr == null ? Map.of("priority", "HIGH")
                                 : Map.of("priority", "HIGH", "ttl", ttlStr),
                         "apns", ttlStr == null ? Map.of()
