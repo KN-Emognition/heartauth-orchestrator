@@ -7,8 +7,8 @@ import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiClient
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import knemognition.heartauth.orchestrator.external.model.ChallengeStatus;
 import knemognition.heartauth.orchestrator.external.model.ChallengeStatusResponse;
-import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
-import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.api.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
