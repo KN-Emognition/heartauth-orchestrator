@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.domain;
+package knemognition.heartauth.orchestrator.shared.app.domain;
 
 import lombok.*;
 

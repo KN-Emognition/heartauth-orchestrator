@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.config.security;
+package knemognition.heartauth.orchestrator.shared.security;
 
 
 import jakarta.validation.constraints.NotBlank;

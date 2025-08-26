@@ -9,8 +9,8 @@ import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallen
 import knemognition.heartauth.orchestrator.internal.app.ports.out.DeviceDirectory;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FcmSender;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeMapper;
-import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.api.ChallengeStore;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
 

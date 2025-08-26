@@ -3,7 +3,7 @@ package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import org.mapstruct.*;
-import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
 import java.util.UUID;

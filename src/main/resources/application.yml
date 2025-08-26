@@ -1,8 +1,9 @@
+
 spring:
   application:
     name: orchestrator
   profiles:
-    active: ${SPRING_PROFILES_ACTIVE:dev}
+    active: ${SPRING_PROFILES_ACTIVE:internal}
   data:
     redis:
       url: ${REDIS_URL:redis://localhost:6379}

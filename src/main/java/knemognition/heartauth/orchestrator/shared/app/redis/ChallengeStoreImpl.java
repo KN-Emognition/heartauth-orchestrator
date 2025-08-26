@@ -1,10 +1,10 @@
-package knemognition.heartauth.orchestrator.shared.redis;
+package knemognition.heartauth.orchestrator.shared.app.redis;
 
 
-import knemognition.heartauth.orchestrator.shared.api.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.app.api.ChallengeStore;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
-import knemognition.heartauth.orchestrator.shared.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
