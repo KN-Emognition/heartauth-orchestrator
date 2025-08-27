@@ -5,9 +5,9 @@ import knemognition.heartauth.orchestrator.client.modelapi.PredictResponse;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiClient;
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
-import knemognition.heartauth.orchestrator.external.model.ChallengeStatus;
 import knemognition.heartauth.orchestrator.external.model.ChallengeStatusResponse;
-import knemognition.heartauth.orchestrator.shared.app.api.ChallengeStore;
+import knemognition.heartauth.orchestrator.external.model.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,13 +33,13 @@ public class ExternalExternalChallengeServiceImpl implements ExternalChallengeSe
         Optional<ChallengeState> maybe = challengeStore.get(challengeId);
         if (maybe.isEmpty()) {
             return new ChallengeStatusResponse()
-                    .state(ChallengeStatus.EXPIRED);
+                    .status(FlowStatus.EXPIRED);
         }
         ChallengeState st = maybe.get();
         long now = Instant.now().getEpochSecond();
         if (st.getExp() != null && st.getExp() <= now) {
             return new ChallengeStatusResponse()
-                    .state(ChallengeStatus.EXPIRED);
+                    .status(FlowStatus.EXPIRED);
         }
 
         // TODO: verify assertion JWT signature, challengeId/nonce/device binding, DPoP, etc.
@@ -53,22 +53,22 @@ public class ExternalExternalChallengeServiceImpl implements ExternalChallengeSe
             log.warn("model-api call failed for challenge {}", challengeId, e);
             // If the model call fails, you can choose to deny or keep pending.
             // Here we deny with 'policy' reason to be explicit.
-            challengeStore.changeState(challengeId, ChallengeStatus.DENIED.getValue(), "policy");
+            challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "policy");
             return new ChallengeStatusResponse()
-                    .state(ChallengeStatus.DENIED)
+                    .status(FlowStatus.DENIED)
                     .reason(ChallengeStatusResponse.ReasonEnum.POLICY);
         }
 
         boolean approved = prediction != null && Boolean.TRUE.equals(prediction.getPrediction());
 
         if (approved) {
-            challengeStore.changeState(challengeId, ChallengeStatus.APPROVED.getValue(), null);
+            challengeStore.changeStatus(challengeId, FlowStatus.APPROVED, null);
             return new ChallengeStatusResponse()
-                    .state(ChallengeStatus.APPROVED);
+                    .status(FlowStatus.APPROVED);
         } else {
-            challengeStore.changeState(challengeId, ChallengeStatus.DENIED.getValue(), "low_score");
+            challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "low_score");
             return new ChallengeStatusResponse()
-                    .state(ChallengeStatus.DENIED)
+                    .status(FlowStatus.DENIED)
                     .reason(ChallengeStatusResponse.ReasonEnum.LOW_SCORE);
         }
     }

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 
-@Profile("external")
+@Profile({"external" ,"orchestrator"})
 @Configuration
 @ComponentScan(basePackageClasses = { ExternalMarker.class, SharedMarker.class })
 public class ExternalConfig {}

@@ -77,3 +77,10 @@ model:
     api-key: ${MODEL_API_KEY:}
     connect-timeout: 3s
     read-timeout: 5s
+
+orchestrator:
+  max-devices-per-user: 3
+  pairing:
+    nonce-bytes: 32
+    max-ttl-seconds: 300
+    linked-keep-ttl-seconds: 60

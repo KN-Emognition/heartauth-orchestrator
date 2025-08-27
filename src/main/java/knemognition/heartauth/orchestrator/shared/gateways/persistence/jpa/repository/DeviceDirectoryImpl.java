@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.internal.gateways.persistence.jpa.repository;
+package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository;
 
 
 import lombok.RequiredArgsConstructor;

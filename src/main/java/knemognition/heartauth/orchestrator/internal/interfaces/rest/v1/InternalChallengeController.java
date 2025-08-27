@@ -37,9 +37,8 @@ public class InternalChallengeController implements ChallengeApi {
     @Override
     public ResponseEntity<ChallengeStatusResponse> internalChallengeStatus(UUID id, String xKCSession) {
         log.info("Received internal challenge status request for id {}", id);
-        var body = challengeQueryService.status(id);
         return ResponseEntity.ok()
 //                .cacheControl(CacheControl.noStore().mustRevalidate().cachePrivate().sMaxAge(0, TimeUnit.SECONDS))
-                .body(body);
+                .body(challengeQueryService.status(id));
     }
 }

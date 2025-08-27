@@ -1,6 +1,7 @@
-package knemognition.heartauth.orchestrator.internal.gateways.persistence.jpa.entity;
+package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
 
 import jakarta.persistence.*;
+import knemognition.heartauth.orchestrator.external.model.Platform;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,16 +9,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
-@Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "device_credential",
-        indexes = {
-                @Index(name = "ix_device_credential_user_active", columnList = "user_id")
-        })
+@Table(name = "device_credential")
 public class DeviceCredentialEntity {
 
     @Id
@@ -66,6 +62,5 @@ public class DeviceCredentialEntity {
     @Column(name = "revoked_at")
     private Instant revokedAt;
 
-    public enum Platform {ANDROID, IOS}
 }
 
