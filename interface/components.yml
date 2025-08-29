@@ -50,17 +50,11 @@ components:
         jti: { type: string, format: uuid }
         nonce: { type: string, description: Base64 random 32-byte nonce. }
         exp: { type: integer, format: int64, description: Expiration (epoch seconds). }
-        policy:
-          type: object
-          nullable: true
-          properties:
-            deviceLimitRemaining: { type: integer, minimum: 0 }
 
     PairingConfirmRequest:
       type: object
-      required: [ jti, deviceId, signature, alg ]
+      required: [ deviceId, signature, alg ]
       properties:
-        jti: { type: string, format: uuid }
         deviceId: { type: string }
         signature:
           type: string
@@ -73,18 +67,10 @@ components:
       required: [ status ]
       properties:
         status:
-            $ref: '#/components/schemas/FlowStatus'
-        credential: { $ref: '#/components/schemas/DeviceCredential' }
-
-    PairingStatusResponse:
-      type: object
-      required: [ status ]
-      properties:
-        status:
           $ref: '#/components/schemas/FlowStatus'
-        reason: { type: string, nullable: true, description: Optional reason for terminal states. }
+        credential: { $ref: '#/components/schemas/DeviceInfo' }
 
-    DeviceCredential:
+    DeviceInfo:
       type: object
       required: [ deviceId, displayName, publicKeyPem, fcmToken, createdAt ]
       properties:
@@ -125,7 +111,7 @@ components:
             JWS (ES256) signed by the device key. Claims: challengeId, nonce, aud, iat, biometricPassed, matchScore, deviceId.
         anything:
           type: string
-    ChallengeStatusResponse:
+    StatusResponse:
       type: object
       required: [ status ]
       properties:

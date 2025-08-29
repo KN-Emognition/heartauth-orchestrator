@@ -38,7 +38,6 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
             chain.doFilter(req, res); // let it through; @PreAuthorize will block if required
             return;
         }
-        System.out.print(match.roles().stream().map(SimpleGrantedAuthority::new).toList().toString());
         var auth = new UsernamePasswordAuthenticationToken(
                 match.id(), null,
                 match.roles().stream().map(SimpleGrantedAuthority::new).toList()); // attach roles here

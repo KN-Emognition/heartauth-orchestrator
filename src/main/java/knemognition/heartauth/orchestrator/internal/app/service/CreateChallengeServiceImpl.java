@@ -5,7 +5,7 @@ import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRespons
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.CreateChallengeService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.DeviceDirectory;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FcmSender;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeMapper;
@@ -25,7 +25,7 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class InternalInternalChallengeServiceImpl implements InternalChallengeService {
+public class CreateChallengeServiceImpl implements CreateChallengeService {
 
     private static final int NONCE_BYTES = 32;
     private static final int DEFAULT_TTL = 120;
@@ -41,10 +41,10 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
 
     @Override
     public ChallengeCreateResponse createAndDispatch(ChallengeCreateRequest req) {
-        log.info("creating challenge for user {}", req.getUserId());
         final List<String> fcmTokens = deviceDirectory.getActiveFcmTokens(req.getUserId());
+        log.info("Fetched fcmTokens for user {}", req.getUserId());
         if (fcmTokens.isEmpty()) {
-            log.info("no active devices for user {}", req.getUserId());
+            log.info("No active devices for user {}", req.getUserId());
             throw new NoActiveDeviceException();
         }
         final UUID challengeId = UUID.randomUUID();
@@ -55,9 +55,9 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
         final long now = Instant.now().getEpochSecond();
         final long exp = now + ttl;
 
-        ChallengeState state = challengeMapper.toState(req, challengeId,  nonceB64, exp, now);
-        log.info("storing challenge in cache {} for user {}", challengeId, req.getUserId());
+        ChallengeState state = challengeMapper.toState(req, challengeId, nonceB64, exp, now);
         challengeStore.create(state, Duration.ofSeconds(ttl));
+        log.info("Stored challenge in cache {} for user {}", challengeId, req.getUserId());
 
         var data = Map.of(
                 "type", "ECG_CHALLENGE",
@@ -67,10 +67,10 @@ public class InternalInternalChallengeServiceImpl implements InternalChallengeSe
         );
         for (String token : fcmTokens) {
             try {
-                log.info("sending challenge {} to device {}", challengeId, token);
                 fcmSender.sendData(token, data, Duration.ofSeconds(ttl));
+                log.info("Sent challenge {} to device {}", challengeId, token);
             } catch (Exception e) {
-                log.warn("failed to send challenge to device", e);
+                log.error("Failed to send challenge to device");
             }
         }
         return challengeMapper.toResponse(challengeId);

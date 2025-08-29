@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import knemognition.heartauth.orchestrator.external.model.Platform;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -17,8 +19,8 @@ import java.util.UUID;
 public class DeviceCredentialEntity {
 
     @Id
-    @Builder.Default
-    private UUID id = UUID.randomUUID();
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private UUID id ;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
@@ -46,6 +48,7 @@ public class DeviceCredentialEntity {
     private String model;
 
     @Column(name = "attestation", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
     private String attestationJson;
 
     @CreationTimestamp

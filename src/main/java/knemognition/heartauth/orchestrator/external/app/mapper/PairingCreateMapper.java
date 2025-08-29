@@ -17,7 +17,7 @@ public interface PairingCreateMapper {
     @Mapping(target = "displayName", source = "req.displayName")
     @Mapping(target = "publicKeyPem", source = "req.publicKeyPem")
     @Mapping(target = "fcmToken", source = "req.fcmToken")
-    @Mapping(target = "platform", expression = "java(req.getPlatform() != null ? req.getPlatform().name() : null)")
+    @Mapping(target = "platform", expression = "java(req.getPlatform())")
     @Mapping(target = "osVersion", source = "req.osVersion")
     @Mapping(target = "model", source = "req.model")
     @Mapping(target = "attestationType", expression = "java(req.getAttestation() != null && req.getAttestation().getType() != null ? req.getAttestation().getType().name() : null)")

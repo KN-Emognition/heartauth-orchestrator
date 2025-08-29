@@ -9,8 +9,19 @@ tags:
     description: Device enrollment from the mobile app.
   - name: Challenge
     description: Completing login-time challenges from the device.
+  - name: Health
+    description: Administrative endpoints (not implemented yet).
 
 paths:
+  /actuator/health:
+    get:
+      tags: [ Health ]
+      summary: Get overall application health
+      description: Returns the aggregated health status of the application.
+      operationId: getHealth
+      responses:
+        '200':
+          description: Application is healthy
   /external/v1/pair/exchange/init:
     post:
       operationId: externalPairingInit
@@ -54,7 +65,7 @@ paths:
                     jti: "5b5c6a2f-2d3b-4c3b-8d8f-9f2e1e6f9c21"
                     nonce: "k6aB0u0cB4m0aP2O2nO5yA=="
                     exp: 1723712400
-                    policy: { deviceLimitRemaining: 2 }
+
 
   /external/v1/pair/exchange/confirm:
     post:
@@ -70,13 +81,7 @@ paths:
           application/json:
             schema:
               $ref: './components.yml#/components/schemas/PairingConfirmRequest'
-            examples:
-              confirm:
-                value:
-                  jti: "5b5c6a2f-2d3b-4c3b-8d8f-9f2e1e6f9c21"
-                  deviceId: "android:3f24a1c2"
-                  signature: "MEUCIE3..."  # base64url DER of ECDSA(SHA-256(nonce||jti||deviceId))
-                  alg: ES256
+
       responses:
         '200':
           description: Pairing completed; device linked to user.
@@ -84,19 +89,6 @@ paths:
             application/json:
               schema:
                 $ref: './components.yml#/components/schemas/PairingConfirmResponse'
-              examples:
-                linked:
-                  value:
-                    status: linked
-                    credential:
-                      deviceId: "android:3f24a1c2"
-                      displayName: "Pixel 8 Pro"
-                      publicKeyPem: "-----BEGIN PUBLIC KEY-----..."
-                      fcmToken: "fcm_token_example"
-                      attestation:
-                        type: play-integrity
-                        verdict: MEETS_DEVICE_INTEGRITY
-                      createdAt: 1723712000
 
   /external/v1/challenge/{id}/complete:
     post:
@@ -119,15 +111,10 @@ paths:
               ok:
                 value:
                   assertionJwt: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGFsbGVuZ2VJZCI6Ijc5ZjFhODMzLTI..."
-                  matchScore: 0.94
-                  biometricPassed: true
       responses:
         '200':
           description: Challenge outcome recorded.
           content:
             application/json:
               schema:
-                $ref: './components.yml#/components/schemas/ChallengeStatusResponse'
-              examples:
-                approved: { value: { state: approved } }
-                denied:   { value: { state: denied, reason: low_score } }
+                $ref: './components.yml#/components/schemas/StatusResponse'

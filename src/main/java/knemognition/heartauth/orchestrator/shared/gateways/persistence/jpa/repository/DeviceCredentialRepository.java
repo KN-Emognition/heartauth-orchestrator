@@ -21,6 +21,16 @@ public interface DeviceCredentialRepository extends JpaRepository<DeviceCredenti
 
     Optional<DeviceCredentialEntity> findByDeviceIdAndRevokedAtIsNull(String deviceId);
 
+    @Query("""
+           select distinct d.fcmToken
+           from DeviceCredentialEntity d
+           where d.userId = :userId
+             and d.revokedAt is null
+             and d.fcmToken is not null
+             and length(trim(d.fcmToken)) > 0
+           """)
+    List<String> findActiveFcmTokensByUser(@Param("userId") UUID userId);
+
     List<DeviceCredentialEntity> findByUserIdAndRevokedAtIsNullOrderByCreatedAtDesc(UUID userId);
 
     @Modifying

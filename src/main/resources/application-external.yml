@@ -1,0 +1,6 @@
+model:
+  api:
+    base-url: ${MODEL_API_URL:http://localhost:8000}
+    api-key: ${MODEL_API_KEY:}
+    connect-timeout: 3s
+    read-timeout: 5s

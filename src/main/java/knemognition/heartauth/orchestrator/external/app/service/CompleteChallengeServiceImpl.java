@@ -2,10 +2,10 @@ package knemognition.heartauth.orchestrator.external.app.service;
 
 import knemognition.heartauth.orchestrator.client.modelapi.In;
 import knemognition.heartauth.orchestrator.client.modelapi.PredictResponse;
-import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
+import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiClient;
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
-import knemognition.heartauth.orchestrator.external.model.ChallengeStatusResponse;
+import knemognition.heartauth.orchestrator.external.model.StatusResponse;
 import knemognition.heartauth.orchestrator.external.model.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
@@ -21,31 +21,30 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ExternalExternalChallengeServiceImpl implements ExternalChallengeService {
+public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 
     private final ChallengeStore challengeStore;
     private final ModelApiClient modelEvaluation;
 
-    public ChallengeStatusResponse complete(UUID challengeId,
+    public StatusResponse complete(UUID challengeId,
                                             ChallengeCompleteRequest req,
                                             String dpopHeader
     ) {
         Optional<ChallengeState> maybe = challengeStore.get(challengeId);
         if (maybe.isEmpty()) {
-            return new ChallengeStatusResponse()
+            return new StatusResponse()
                     .status(FlowStatus.EXPIRED);
         }
         ChallengeState st = maybe.get();
         long now = Instant.now().getEpochSecond();
         if (st.getExp() != null && st.getExp() <= now) {
-            return new ChallengeStatusResponse()
+            return new StatusResponse()
                     .status(FlowStatus.EXPIRED);
         }
 
         // TODO: verify assertion JWT signature, challengeId/nonce/device binding, DPoP, etc.
 
         In in = new In().anything("placeholder"); // TODO: populate with MODEL DATA
-        System.out.println(in.getAnything());
         PredictResponse prediction;
         try {
             prediction = modelEvaluation.predict(in);
@@ -54,22 +53,22 @@ public class ExternalExternalChallengeServiceImpl implements ExternalChallengeSe
             // If the model call fails, you can choose to deny or keep pending.
             // Here we deny with 'policy' reason to be explicit.
             challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "policy");
-            return new ChallengeStatusResponse()
+            return new StatusResponse()
                     .status(FlowStatus.DENIED)
-                    .reason(ChallengeStatusResponse.ReasonEnum.POLICY);
+                    .reason(StatusResponse.ReasonEnum.POLICY);
         }
 
         boolean approved = prediction != null && Boolean.TRUE.equals(prediction.getPrediction());
 
         if (approved) {
             challengeStore.changeStatus(challengeId, FlowStatus.APPROVED, null);
-            return new ChallengeStatusResponse()
+            return new StatusResponse()
                     .status(FlowStatus.APPROVED);
         } else {
             challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "low_score");
-            return new ChallengeStatusResponse()
+            return new StatusResponse()
                     .status(FlowStatus.DENIED)
-                    .reason(ChallengeStatusResponse.ReasonEnum.LOW_SCORE);
+                    .reason(StatusResponse.ReasonEnum.LOW_SCORE);
         }
     }
 }

@@ -2,16 +2,15 @@ package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface ChallengeStatusMapper {
+public interface PairingStatusMapper {
 
     @Mapping(target = "status", source = "status")
-    @Mapping(target = "reason", source = "reason")
-    StatusResponse toResponse(ChallengeState src);
+    StatusResponse toResponse(PairingState src);
 
     default StatusResponse notFound() {
         var r = new StatusResponse();

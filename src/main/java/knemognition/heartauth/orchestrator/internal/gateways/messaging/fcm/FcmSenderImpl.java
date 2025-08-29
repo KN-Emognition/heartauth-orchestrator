@@ -55,7 +55,7 @@ public class FcmSenderImpl implements FcmSender {
 
         var res = http.send(req, HttpResponse.BodyHandlers.ofString());
         if (res.statusCode() / 100 != 2) {
-            log.warn("FCM error {}: {}", res.statusCode(), res.body());
+//            log.warn("FCM error {}: {}", res.statusCode(), res.body());
             throw new FcmSendException("FCM error %d: %s".formatted(res.statusCode(), res.body()));
         }
     }

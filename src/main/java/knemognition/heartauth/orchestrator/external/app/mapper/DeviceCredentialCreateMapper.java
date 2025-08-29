@@ -27,7 +27,6 @@ public interface DeviceCredentialCreateMapper {
     @Mapping(target = "revokedAt", ignore = true)
     DeviceCredential fromPairingState(PairingState state, @Context ObjectMapper mapper);
 
-    // Helper to build a JSONB-friendly attestation object
     default JsonNode toAttestationJson(PairingState s, @Context ObjectMapper mapper) {
         if (s.getAttestationType() == null && s.getAttestationVerdict() == null && s.getAttestationPayloadJson() == null) {
             return null;
@@ -39,7 +38,6 @@ public interface DeviceCredentialCreateMapper {
             try {
                 root.set("payload", mapper.readTree(s.getAttestationPayloadJson()));
             } catch (Exception e) {
-                // fallback: stash raw text if it wasn't valid JSON
                 root.put("payloadRaw", s.getAttestationPayloadJson());
             }
         }
