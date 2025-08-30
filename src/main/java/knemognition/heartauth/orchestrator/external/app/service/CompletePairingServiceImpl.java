@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.DeviceCredentialCreateMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.PairingConfirmMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
@@ -23,15 +24,14 @@ import java.util.UUID;
 public class CompletePairingServiceImpl implements CompletePairingService {
 
     private final PairingStore pairingStore;
-    private final JwtServiceImpl jwtService;
     private final DeviceCredentialStore deviceCredentialStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
     private final ObjectMapper objectMapper;
     private final PairingConfirmMapper pairingConfirmMapper;
 
     @Override
-    public PairingConfirmResponse complete(PairingConfirmRequest req) {
-        UUID jti = jwtService.process().jti();
+    public PairingConfirmResponse complete(PairingConfirmRequest req, QrClaims claims) {
+        UUID jti = claims.jti();
 
         PairingState pairingState = pairingStore.get(jti)
                 .orElseThrow(() -> new IllegalStateException("pairing_not_found_or_expired"));

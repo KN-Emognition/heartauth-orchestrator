@@ -25,9 +25,7 @@ public class InitPairingServiceImpl implements InitPairingService {
     private final PairingCreateMapper pairingCreateMapper;
 
     @Override
-    public PairingInitResponse init(PairingInitRequest req) {
-        QrClaims claims = jwtService.process();
-
+    public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
         Instant now = Instant.now();
         long ttlByJwt = Math.max(0, claims.exp().getEpochSecond() - now.getEpochSecond());
         long ttl = Math.min(ttlByJwt, 60);

@@ -61,3 +61,16 @@ security:
       - id: KEYCLOAK
         value: ${API_KEY_KEYCLOAK:a-string-secret-at-least-256-bits-long}
         roles: [keycloak]
+  pairing:
+    jwt:
+      secret: your-256-bit-secret
+fcm:
+  project-id:  knemognition-heartauth
+  credentials-path: ${FCM_CREDENTIALS_PATH:classpath:fcm/service-account.json}
+  dry-run: false
+model:
+  api:
+    base-url: ${MODEL_API_URL:http://localhost:8000}
+    api-key: ${MODEL_API_KEY:}
+    connect-timeout: 3s
+    read-timeout: 5s

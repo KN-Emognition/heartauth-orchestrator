@@ -1,4 +1,0 @@
-fcm:
-  project-id:  knemognition-heartauth
-  credentials-path: ${FCM_CREDENTIALS_PATH:classpath:fcm/service-account.json}
-  dry-run: false

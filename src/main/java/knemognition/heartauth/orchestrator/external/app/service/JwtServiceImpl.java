@@ -3,14 +3,17 @@ package knemognition.heartauth.orchestrator.external.app.service;
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.ports.in.JwtService;
+import knemognition.heartauth.orchestrator.shared.mdc.HeaderNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.time.Clock;
 import java.time.Duration;
@@ -19,10 +22,11 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@RequestScope
 @Slf4j
 public class JwtServiceImpl implements JwtService {
 
-    private final HttpServletRequest request;
+    private final ObjectFactory<HttpServletRequest> requestFactory;
     private static final Duration ALLOWED_SKEW = Duration.ofSeconds(30);
 
     private final JwtDecoder pairingJwtDecoder;
@@ -30,6 +34,7 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public QrClaims process() {
+        HttpServletRequest request = requestFactory.getObject();
         String auth = request.getHeader("Authorization");
         if (auth == null || auth.isBlank()) {
             throw new IllegalArgumentException("missing_authorization");
@@ -41,22 +46,20 @@ public class JwtServiceImpl implements JwtService {
         try {
             jwt = pairingJwtDecoder.decode(token);
         } catch (BadJwtException e) {
-            debug("JWT rejected by decoder: {}", e.getMessage());
             throw new IllegalArgumentException("invalid_token_signature");
         } catch (JwtException e) {
-            debug("JWT decode error: {}", e.getMessage());
             throw new IllegalArgumentException("invalid_token");
         }
 
         UUID jti = UUID.fromString(jwt.getId());
         UUID userId = UUID.fromString(jwt.getSubject());
         Instant exp = jwt.getExpiresAt();
-
         Instant now = Instant.now(clock);
         if (exp.plus(ALLOWED_SKEW).isBefore(now)) {
             throw new IllegalArgumentException("pairing_token_expired");
         }
         QrClaims claims = new QrClaims(jti, userId, exp);
+        MDC.put(HeaderNames.MDC_PROCESS_ID, jti.toString());
         log.info("Verified Token and extracted Claims");
         return claims;
     }
@@ -70,13 +73,5 @@ public class JwtServiceImpl implements JwtService {
         return header.substring(prefix.length()).trim();
     }
 
-    private static void debug(String msg, Object arg) {
-        String rid = MDC.get("routeId");
-        if (rid != null) {
-            log.debug("[routeId={}] " + msg, rid, arg);
-        } else {
-            log.debug(msg, arg);
-        }
-    }
 }
 
