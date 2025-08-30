@@ -32,7 +32,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yml#/components/schemas/PairingStatusResponse'
+                $ref: './components.yml#/components/schemas/StatusResponse'
               examples:
                 pending: { value: { state: pending } }
                 linked:  { value: { state: linked } }
@@ -94,7 +94,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yml#/components/schemas/ChallengeStatusResponse'
+                $ref: './components.yml#/components/schemas/StatusResponse'
               examples:
                 pending:  { value: { state: pending } }
                 approved: { value: { state: approved } }

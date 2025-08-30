@@ -35,10 +35,9 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         String provided = req.getHeader(AUTH_HEADER);
         var match = props.keys().stream().filter(k -> k.matches(provided)).findFirst().orElse(null);
         if (match == null) {
-            chain.doFilter(req, res); // let it through; @PreAuthorize will block if required
+            chain.doFilter(req, res);
             return;
         }
-        System.out.print(match.roles().stream().map(SimpleGrantedAuthority::new).toList().toString());
         var auth = new UsernamePasswordAuthenticationToken(
                 match.id(), null,
                 match.roles().stream().map(SimpleGrantedAuthority::new).toList()); // attach roles here

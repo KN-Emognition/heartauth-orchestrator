@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @AllArgsConstructor
 @ConfigurationProperties(prefix = "fcm")
 public class FcmProperties {
-    private String projectId;
     private String credentialsPath;
     private boolean dryRun = false;
 }
