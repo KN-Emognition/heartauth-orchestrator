@@ -65,5 +65,11 @@ public class DeviceCredentialEntity {
     @Column(name = "revoked_at")
     private Instant revokedAt;
 
+    @PrePersist
+    void ensureId() {
+        if (this.id == null) {
+            this.id = UUID.randomUUID();
+        }
+    }
 }
 

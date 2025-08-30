@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: orchestrator
   data:
     redis:
       url: ${REDIS_URL:redis://localhost:6379}
@@ -63,14 +61,4 @@ security:
         roles: [keycloak]
   pairing:
     jwt:
-      secret: your-256-bit-secret
-fcm:
-  project-id:  knemognition-heartauth
-  credentials-path: ${FCM_CREDENTIALS_PATH:classpath:fcm/service-account.json}
-  dry-run: false
-model:
-  api:
-    base-url: ${MODEL_API_URL:http://localhost:8000}
-    api-key: ${MODEL_API_KEY:}
-    connect-timeout: 3s
-    read-timeout: 5s
+      secret: ${PAIRING_JWT_SECRET:your-256-bit-secret}
