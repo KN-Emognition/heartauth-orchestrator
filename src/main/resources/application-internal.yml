@@ -1,6 +1,6 @@
 spring:
   application:
     name: internal-orchestrator
-fcm:
-  credentials-path: ${FCM_CREDENTIALS_PATH:classpath:fcm/service-account.json}
+firebase:
+  credentials-location: ${GOOGLE_APPLICATION_CREDENTIALS:classpath:firebase/service-account.json}
   dry-run: false

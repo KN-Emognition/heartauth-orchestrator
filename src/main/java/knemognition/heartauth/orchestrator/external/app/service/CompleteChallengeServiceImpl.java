@@ -7,8 +7,8 @@ import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiClient
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import knemognition.heartauth.orchestrator.external.model.StatusResponse;
 import knemognition.heartauth.orchestrator.external.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,12 +23,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 
-    private final ChallengeStore challengeStore;
+    private final FlowStore<ChallengeState> challengeStore;
     private final ModelApiClient modelEvaluation;
 
     public StatusResponse complete(UUID challengeId,
-                                            ChallengeCompleteRequest req,
-                                            String dpopHeader
+                                   ChallengeCompleteRequest req,
+                                   String dpopHeader
     ) {
         Optional<ChallengeState> maybe = challengeStore.get(challengeId);
         if (maybe.isEmpty()) {
@@ -52,7 +52,7 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
             log.warn("model-api call failed for challenge {}", challengeId, e);
             // If the model call fails, you can choose to deny or keep pending.
             // Here we deny with 'policy' reason to be explicit.
-            challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "policy");
+            challengeStore.setStatus(challengeId, FlowStatus.DENIED, "policy");
             return new StatusResponse()
                     .status(FlowStatus.DENIED)
                     .reason(StatusResponse.ReasonEnum.POLICY);
@@ -61,11 +61,11 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
         boolean approved = prediction != null && Boolean.TRUE.equals(prediction.getPrediction());
 
         if (approved) {
-            challengeStore.changeStatus(challengeId, FlowStatus.APPROVED, null);
+            challengeStore.setStatus(challengeId, FlowStatus.APPROVED, null);
             return new StatusResponse()
                     .status(FlowStatus.APPROVED);
         } else {
-            challengeStore.changeStatus(challengeId, FlowStatus.DENIED, "low_score");
+            challengeStore.setStatus(challengeId, FlowStatus.DENIED, "low_score");
             return new StatusResponse()
                     .status(FlowStatus.DENIED)
                     .reason(StatusResponse.ReasonEnum.LOW_SCORE);

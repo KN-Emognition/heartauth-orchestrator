@@ -59,7 +59,6 @@ public class JwtServiceImpl implements JwtService {
             throw new IllegalArgumentException("pairing_token_expired");
         }
         QrClaims claims = new QrClaims(jti, userId, exp);
-        MDC.put(HeaderNames.MDC_PROCESS_ID, jti.toString());
         log.info("Verified Token and extracted Claims");
         return claims;
     }

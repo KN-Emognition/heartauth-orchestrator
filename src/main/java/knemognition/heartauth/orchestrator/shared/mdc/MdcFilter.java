@@ -19,10 +19,6 @@ public class MdcFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        String processId = request.getHeader(HeaderNames.HEADER_PROCESS_ID);
-        if(processId!=null) {
-            MDC.put(HeaderNames.MDC_PROCESS_ID,processId);
-        }
         String routeId = request.getHeader(HeaderNames.HEADER_ROUTE_ID);
         if (routeId == null || routeId.isBlank()) {
             routeId = request.getRequestURI();
@@ -34,7 +30,6 @@ public class MdcFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } finally {
-            MDC.remove(HeaderNames.MDC_PROCESS_ID);
             MDC.remove(HeaderNames.MDC_ROUTE_ID);
         }
     }

@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.st
 
 import knemognition.heartauth.orchestrator.external.model.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper.ChallengeStateRedisMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
-public class ChallengeStoreImpl implements ChallengeStore {
+public class ChallengeStoreImpl implements FlowStore<ChallengeState> {
 
     private static final String KEYSPACE = "challenge:";
 
@@ -49,7 +49,7 @@ public class ChallengeStoreImpl implements ChallengeStore {
     }
 
     @Override
-    public boolean changeStatus(UUID id, FlowStatus newStatus, String reason) {
+    public boolean setStatus(UUID id, FlowStatus newStatus, String reason) {
         return repo.findById(id).map(ent -> {
             mapper.applyStatus(ent, newStatus, reason);
 

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.internal.config.fcm;
+package knemognition.heartauth.orchestrator.internal.config.firebase;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ConfigurationProperties(prefix = "fcm")
-public class FcmProperties {
-    private String credentialsPath;
+@ConfigurationProperties(prefix = "firebase")
+public class FirebaseProperties {
+    private String credentialsLocation;
     private boolean dryRun = false;
 }

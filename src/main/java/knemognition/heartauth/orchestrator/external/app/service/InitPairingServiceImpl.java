@@ -5,7 +5,7 @@ import knemognition.heartauth.orchestrator.external.app.mapper.PairingCreateMapp
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.model.*;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.PairingStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.Base64;
 public class InitPairingServiceImpl implements InitPairingService {
 
     private final JwtServiceImpl jwtService;
-    private final PairingStore pairingStore;
+    private final FlowStore<PairingState> pairingStore;
     private final PairingCreateMapper pairingCreateMapper;
 
     @Override

@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreateChallengeService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.DeviceDirectory;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.FcmSender;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeMapper;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
@@ -35,7 +35,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
     private final SecureRandom rng = new SecureRandom();
 
     private final DeviceDirectory deviceDirectory;
-    private final FcmSender fcmSender;
+    private final FirebaseSender firebaseSender;
     private final ChallengeStore challengeStore;
     private final ChallengeMapper challengeMapper;
 
@@ -67,7 +67,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
         );
         for (String token : fcmTokens) {
             try {
-                fcmSender.sendData(token, data, Duration.ofSeconds(ttl));
+                firebaseSender.sendData(token, data, Duration.ofSeconds(ttl));
                 log.info("Sent challenge {} to device {}", challengeId, token);
             } catch (Exception e) {
                 log.error("Failed to send challenge to device");

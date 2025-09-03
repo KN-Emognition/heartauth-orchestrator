@@ -38,8 +38,8 @@ components:
         fcmToken: { type: string, description: Firebase Cloud Messaging token. }
         platform:
           $ref: '#/components/schemas/Platform'
-        osVersion: { type: string, nullable: true }
-        model: { type: string, nullable: true }
+        osVersion: { type: string }
+        model: { type: string }
         attestation:
           $ref: '#/components/schemas/Attestation'
 
@@ -60,7 +60,7 @@ components:
           type: string
           description: Base64url DER ECDSA over SHA-256(nonce||jti||deviceId).
         alg: { type: string, enum: [ ES256 ] }
-        dpop: { type: string, nullable: true }
+        dpop: { type: string }
 
     PairingConfirmResponse:
       type: object
@@ -85,8 +85,8 @@ components:
       type: object
       properties:
         type: { type: string, enum: [ play-integrity, safety-net, devicecheck, none ] }
-        verdict: { type: string, nullable: true }
-        payload: { type: object, nullable: true, additionalProperties: true }
+        verdict: { type: string }
+        payload: { type: object, additionalProperties: true }
 
     ChallengeCreateRequest:
       type: object
@@ -117,7 +117,7 @@ components:
       properties:
         status:
           $ref: '#/components/schemas/FlowStatus'
-        reason: { type: string, nullable: true, enum: [ low_score, user_cancelled, timeout, policy ] }
+        reason: { type: string, enum: [ low_score, user_cancelled, timeout, policy ] }
     FlowStatus:
       type: string
       description: Lifecycle state of a challenge.

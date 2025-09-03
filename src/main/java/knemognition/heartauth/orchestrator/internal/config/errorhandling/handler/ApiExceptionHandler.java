@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.internal.config.errorhandling.handle
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
-import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FcmSendException;
+import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FirebaseSendException;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ public class ApiExceptionHandler {
     public ProblemDetail handleNoActiveDevice(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No active device for given user.", req, ex);
     }
-    @ExceptionHandler(FcmSendException.class)
+    @ExceptionHandler(FirebaseSendException.class)
     public ProblemDetail handleFcmSend(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_GATEWAY, "Failed to send notification via FCM.", req, ex);
     }

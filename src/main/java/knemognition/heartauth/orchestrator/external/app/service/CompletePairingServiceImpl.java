@@ -9,7 +9,7 @@ import knemognition.heartauth.orchestrator.external.model.*;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.PairingStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompletePairingServiceImpl implements CompletePairingService {
 
-    private final PairingStore pairingStore;
+    private final FlowStore<PairingState> pairingStore;
     private final DeviceCredentialStore deviceCredentialStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
     private final ObjectMapper objectMapper;
@@ -37,17 +37,17 @@ public class CompletePairingServiceImpl implements CompletePairingService {
                 .orElseThrow(() -> new IllegalStateException("pairing_not_found_or_expired"));
 
         if (!Objects.equals(pairingState.getDeviceId(), req.getDeviceId())) {
-            pairingStore.changeStatus(jti, FlowStatus.DENIED, "device_mismatch");
+            pairingStore.setStatus(jti, FlowStatus.DENIED, "device_mismatch");
             throw new IllegalArgumentException("device_mismatch");
         }
 
         if (pairingState.getStatus() == FlowStatus.APPROVED) {
-            pairingStore.changeStatus(jti, FlowStatus.DENIED, "replayed");
+            pairingStore.setStatus(jti, FlowStatus.DENIED, "replayed");
             throw new IllegalStateException("pairing_replayed");
         }
 
         if (pairingState.getExp() <= Instant.now().getEpochSecond()) {
-            pairingStore.changeStatus(jti, FlowStatus.EXPIRED, null);
+            pairingStore.setStatus(jti, FlowStatus.EXPIRED, null);
             throw new IllegalStateException("pairing_expired");
         }
 
@@ -80,7 +80,7 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         deviceCredentialStore.create(deviceCredential);
         log.info("Saved device credential");
 
-        pairingStore.changeStatus(jti, FlowStatus.APPROVED, null);
+        pairingStore.setStatus(jti, FlowStatus.APPROVED, null);
         log.info("Changed cache pairing status to Approved.");
 
 

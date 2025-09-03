@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.st
 
 import knemognition.heartauth.orchestrator.external.model.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.PairingStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper.PairingStateRedisMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
-public class PairingStoreImpl implements PairingStore {
+public class PairingStoreImpl implements FlowStore<PairingState> {
 
     private static final String KEYSPACE = "pairing:";
 
@@ -49,7 +49,7 @@ public class PairingStoreImpl implements PairingStore {
     }
 
     @Override
-    public boolean changeStatus(UUID id, FlowStatus newStatus, String reason) {
+    public boolean setStatus(UUID id, FlowStatus newStatus, String reason) {
         return repo.findById(id).map(ent -> {
             mapper.applyStatus(ent, newStatus, reason);
 

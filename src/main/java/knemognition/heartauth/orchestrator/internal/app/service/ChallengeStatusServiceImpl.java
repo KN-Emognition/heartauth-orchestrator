@@ -2,11 +2,12 @@ package knemognition.heartauth.orchestrator.internal.app.service;
 
 import knemognition.heartauth.orchestrator.internal.app.ports.in.StatusService;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeStatusMapper;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 
 import java.util.UUID;
 
@@ -14,7 +15,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ChallengeStatusServiceImpl implements StatusService {
-    private final ChallengeStore store;
+    private final FlowStore<ChallengeState> store;
     private final ChallengeStatusMapper mapper;
 
     @Override

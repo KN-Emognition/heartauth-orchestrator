@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.config.errorhandling.exception;
 
-public class FcmSendException extends RuntimeException {
-    public FcmSendException(String message) {
+public class FirebaseSendException extends RuntimeException {
+    public FirebaseSendException(String message) {
         super(message);
     }
 }

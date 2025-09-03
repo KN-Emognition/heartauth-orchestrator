@@ -23,9 +23,9 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest req) {
-        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) return true; // CORS preflight
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) return true;
         String p = req.getRequestURI();
-        return "/".equals(p) || p.startsWith("/actuator/health");     // public paths
+        return "/".equals(p) || p.startsWith("/actuator/health");
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
         }
         var auth = new UsernamePasswordAuthenticationToken(
                 match.id(), null,
-                match.roles().stream().map(SimpleGrantedAuthority::new).toList()); // attach roles here
+                match.roles().stream().map(SimpleGrantedAuthority::new).toList());
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         chain.doFilter(req, res);
