@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.mdc;
+package knemognition.heartauth.orchestrator.shared.config.mdc;
 
 
 import jakarta.servlet.FilterChain;

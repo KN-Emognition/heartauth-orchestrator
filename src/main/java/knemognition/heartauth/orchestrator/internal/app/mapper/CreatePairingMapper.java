@@ -6,9 +6,11 @@ import knemognition.heartauth.orchestrator.shared.app.domain.CreatePairing;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring", imports = FlowStatus.class, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface CreatePairingMapper {
 
-    CreatePairing toCreatePairing(PairingCreateRequest req, Long ttl);
+    CreatePairing toCreatePairing(PairingCreateRequest req, UUID jti, Long ttl);
 }
 

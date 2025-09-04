@@ -1,13 +1,10 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
-import io.jsonwebtoken.JwtParser;
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.ports.in.JwtService;
-import knemognition.heartauth.orchestrator.shared.mdc.HeaderNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;

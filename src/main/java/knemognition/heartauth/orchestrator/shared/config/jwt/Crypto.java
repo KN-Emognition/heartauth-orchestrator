@@ -1,9 +1,8 @@
-package knemognition.heartauth.orchestrator.shared;
+package knemognition.heartauth.orchestrator.shared.config.jwt;
 
 
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
-import org.bouncycastle.cert.X509CertificateHolder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;

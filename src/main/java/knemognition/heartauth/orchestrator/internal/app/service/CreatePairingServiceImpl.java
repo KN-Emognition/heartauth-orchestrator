@@ -40,15 +40,9 @@ public class CreatePairingServiceImpl implements CreatePairingService {
                 .expiration(new Date(System.currentTimeMillis() + ttl * 1000L))
                 .signWith(ecPrivateKey, Jwts.SIG.ES256)
                 .compact();
-        CreatePairing to = pairingCreateMapper.toCreatePairing(req, 120L);
+        CreatePairing to = pairingCreateMapper.toCreatePairing(req, jti, 120L);
         pairingStateCreateFlowStore.create(to);
         return new PairingCreateResponse(jti, token);
     }
 
-    private String jwtSecret = "4261656C64756E674261656C64756E674261656C64756E674261656C64756E67";
-
-    private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(this.jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
 }

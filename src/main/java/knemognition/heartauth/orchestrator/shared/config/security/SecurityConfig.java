@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.security;
+package knemognition.heartauth.orchestrator.shared.config.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

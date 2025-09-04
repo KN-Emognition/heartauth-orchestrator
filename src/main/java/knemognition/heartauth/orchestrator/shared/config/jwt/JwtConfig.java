@@ -1,6 +1,5 @@
-package knemognition.heartauth.orchestrator.shared.security;
+package knemognition.heartauth.orchestrator.shared.config.jwt;
 
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.Curve;
 import com.nimbusds.jose.jwk.ECKey;
@@ -11,7 +10,6 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import knemognition.heartauth.orchestrator.shared.Crypto;
 import org.springframework.core.io.Resource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,11 +23,11 @@ import java.security.interfaces.ECPublicKey;
 
 
 @Configuration
-@EnableConfigurationProperties(PairingJwtProperties.class)
-public class PairingJwtConfig {
+@EnableConfigurationProperties(JwtProperties.class)
+public class JwtConfig {
 
     @Bean("pairingPrivateKey")
-    public ECPrivateKey pairingPrivateKey(PairingJwtProperties p) throws Exception {
+    public ECPrivateKey pairingPrivateKey(JwtProperties p) throws Exception {
         Resource r = p.privateKeyLocation();
         try (var in = r.getInputStream()) {
             char[] pwd = p.privateKeyPassword() != null ? p.privateKeyPassword().toCharArray() : null;
@@ -38,7 +36,7 @@ public class PairingJwtConfig {
     }
 
     @Bean("pairingPublicKey")
-    public ECPublicKey pairingPublicKey(PairingJwtProperties p) throws Exception {
+    public ECPublicKey pairingPublicKey(JwtProperties p) throws Exception {
         Resource r = p.publicKeyLocation();
         try (var in = r.getInputStream()) {
             return Crypto.loadEcPublicKey(in);
@@ -47,7 +45,7 @@ public class PairingJwtConfig {
 
     @Bean
     @Qualifier("pairingSigningJwk")
-    public com.nimbusds.jose.jwk.ECKey signingJwk(PairingJwtProperties p,
+    public com.nimbusds.jose.jwk.ECKey signingJwk(JwtProperties p,
                                                   @Qualifier("pairingPublicKey") ECPublicKey pub,
                                                   @Qualifier("pairingPrivateKey") ECPrivateKey priv) {
         return new com.nimbusds.jose.jwk.ECKey.Builder(Curve.P_256, pub)
