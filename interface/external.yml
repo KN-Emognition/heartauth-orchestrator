@@ -3,19 +3,18 @@ info:
   title: ECG Orchestrator API — External
   version: 1.0.0
   description: Endpoints called by the mobile app.
-
 tags:
   - name: Pairing
     description: Device enrollment from the mobile app.
   - name: Challenge
     description: Completing login-time challenges from the device.
   - name: Health
-    description: Administrative endpoints (not implemented yet).
-
+    description: Administrative endpoints.
 paths:
   /actuator/health:
     get:
-      tags: [ Health ]
+      tags:
+        - Health
       summary: Get overall application health
       description: Returns the aggregated health status of the application.
       operationId: getHealth
@@ -25,7 +24,8 @@ paths:
   /external/v1/pair/exchange/init:
     post:
       operationId: externalPairingInit
-      tags: [ Pairing ]
+      tags:
+        - Pairing
       summary: Begin device pairing using a one-time pairing JWT from Keycloak.
       description: |
         Mobile app calls this after scanning the QR on the Keycloak Required Action page.
@@ -36,22 +36,6 @@ paths:
           application/json:
             schema:
               $ref: './components.yml#/components/schemas/PairingInitRequest'
-            examples:
-              android:
-                value:
-                  deviceId: "android:3f24a1c2"
-                  displayName: "Pixel 8 Pro"
-                  publicKeyPem: |
-                    -----BEGIN PUBLIC KEY-----
-                    MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
-                    -----END PUBLIC KEY-----
-                  fcmToken: "fcm_token_example"
-                  platform: ANDROID
-                  osVersion: "14"
-                  model: "Google Pixel 8 Pro"
-                  attestation:
-                    type: play-integrity
-                    verdict: MEETS_DEVICE_INTEGRITY
       responses:
         '201':
           description: Pairing initiated; device must confirm proof-of-possession.
@@ -59,18 +43,11 @@ paths:
             application/json:
               schema:
                 $ref: './components.yml#/components/schemas/PairingInitResponse'
-              examples:
-                ok:
-                  value:
-                    jti: "5b5c6a2f-2d3b-4c3b-8d8f-9f2e1e6f9c21"
-                    nonce: "k6aB0u0cB4m0aP2O2nO5yA=="
-                    exp: 1723712400
-
-
   /external/v1/pair/exchange/confirm:
     post:
       operationId: externalPairingConfirm
-      tags: [ Pairing ]
+      tags:
+        - Pairing
       summary: Confirm device pairing by proving possession of the generated private key.
       description: |
         Device signs the server-provided nonce (and context) with its hardware-backed
@@ -88,29 +65,25 @@ paths:
           content:
             application/json:
               schema:
-                $ref: './components.yml#/components/schemas/PairingConfirmResponse'
+                $ref: './components.yml#/components/schemas/StatusResponse'
 
   /external/v1/challenge/{id}/complete:
     post:
       operationId: externalChallengeComplete
-      tags: [ Challenge ]
+      tags:
+        - Challenge
       summary: Complete a challenge from the device after ECG pass and signature verification.
       description: |
         Mobile app posts a signed assertion proving possession of the device key.
         Server validates signature (using stored public key), nonce, and policy.
       parameters:
         - $ref: './components.yml#/components/parameters/ChallengeIdParam'
-        - $ref: './components.yml#/components/parameters/DPoPHeader'
       requestBody:
         required: true
         content:
           application/json:
             schema:
               $ref: './components.yml#/components/schemas/ChallengeCompleteRequest'
-            examples:
-              ok:
-                value:
-                  assertionJwt: "eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaGFsbGVuZ2VJZCI6Ijc5ZjFhODMzLTI..."
       responses:
         '200':
           description: Challenge outcome recorded.

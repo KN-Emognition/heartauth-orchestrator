@@ -7,10 +7,7 @@ import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.config.rest.security.PairingJwtInterceptor;
-import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
-import knemognition.heartauth.orchestrator.external.model.PairingConfirmResponse;
-import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
-import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;
+import knemognition.heartauth.orchestrator.external.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +22,7 @@ public class ExternalPairingController implements PairingApi {
     private final CompletePairingService completePairingService;
     private final HttpServletRequest request;
 
-    public ResponseEntity<PairingConfirmResponse> externalPairingConfirm(@Valid PairingConfirmRequest pairingConfirmRequest
+    public ResponseEntity<StatusResponse> externalPairingConfirm(@Valid PairingConfirmRequest pairingConfirmRequest
     ) {
         QrClaims claims = (QrClaims) request.getAttribute(
                 PairingJwtInterceptor.REQ_ATTR_QR_CLAIMS);

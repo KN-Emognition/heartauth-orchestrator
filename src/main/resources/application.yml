@@ -59,6 +59,11 @@ security:
       - id: KEYCLOAK
         value: ${API_KEY_KEYCLOAK:a-string-secret-at-least-256-bits-long}
         roles: [keycloak]
-  pairing:
-    jwt:
-      secret: ${PAIRING_JWT_SECRET:your-256-bit-secret}
+
+pairing-jwt:
+  issuer: "hauth:orchestrator"
+  audience: "hauth:pairing"
+  kid: "key-2025-09"
+  ttl-seconds: 300
+  privateKeyLocation: ${PRIVATE_KEY_LOCATION:classpath:security/privKey.pem}
+  public-key-location: ${PRIVATE_KEY_LOCATION:classpath:security/pubKey.pem}

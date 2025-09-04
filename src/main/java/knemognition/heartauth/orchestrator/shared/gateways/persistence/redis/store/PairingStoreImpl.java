@@ -1,74 +1,86 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.store;
 
-import knemognition.heartauth.orchestrator.external.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.FlowStore;
+import jakarta.transaction.Transactional;
+import knemognition.heartauth.orchestrator.shared.app.domain.*;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper.PairingStateRedisMapper;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Repository
 @RequiredArgsConstructor
-public class PairingStoreImpl implements FlowStore<PairingState> {
+public class PairingStoreImpl
+        implements StatusStore<PairingState>, CreateFlowStore<CreatePairing>, GetFlowStore<PairingState>, EnrichDeviceDataStore {
 
-    private static final String KEYSPACE = "pairing:";
+    private static final long DEFAULT_TTL_SECONDS = 300L;
 
     private final PairingStateRepository repo;
-    private final StringRedisTemplate redis;
     private final PairingStateRedisMapper mapper;
 
     @Override
-    public void create(PairingState st, Duration ttl) {
-        if (st.getId() == null) throw new IllegalArgumentException("id (jti) required");
-        Long ttlSec = ttl != null ? ttl.getSeconds() : null;
-        PairingStateRedis ent = mapper.toRedis(st, ttlSec);
-        if (repo.existsById(ent.getId())) throw new IllegalStateException("pairing_conflict");
+    public CreatedFlowResult create(CreatePairing state) {
+        final UUID id = state.getJti();
+        final long ttl = Optional.ofNullable(state.getTtlSeconds()).filter(t -> t > 0).orElse(DEFAULT_TTL_SECONDS);
+        var ent = mapper.fromCreate(state, id, ttl);
         repo.save(ent);
+        return mapper.toCreatedResult(ent);
     }
 
     @Override
-    public Optional<PairingState> get(UUID id) {
+    public boolean setStatus(StatusChange statusChange) {
+        return repo.findById(statusChange.getId())
+                .map(ent -> {
+                    mapper.applyStatus(ent, statusChange.getStatus(), statusChange.getReason());
+                    repo.save(ent);
+                    return true;
+                })
+                .orElse(false);
+    }
+
+    @Override
+    public Optional<FlowStatusDescription> getStatus(UUID id) {
         return repo.findById(id).map(ent -> {
             long now = Instant.now().getEpochSecond();
             if (ent.getExp() != null && ent.getExp() <= now) return null;
-
-            Long remaining = redis.getExpire(KEYSPACE + id, TimeUnit.SECONDS);
-            Long effTtl = (remaining != null && remaining > 0) ? remaining : ent.getTtlSeconds();
-
-            return mapper.toDomain(ent, effTtl);
-        }).filter(ps -> ps != null);
+            return mapper.toStatus(ent);
+        });
     }
 
     @Override
-    public boolean setStatus(UUID id, FlowStatus newStatus, String reason) {
+    public Optional<PairingState> getFlow(UUID id) {
         return repo.findById(id).map(ent -> {
-            mapper.applyStatus(ent, newStatus, reason);
-
-            Long remaining = redis.getExpire(KEYSPACE + id, TimeUnit.SECONDS);
-            if (remaining != null && remaining > 0) ent.setTtlSeconds(remaining);
-
-            repo.save(ent);
-            return true;
-        }).orElse(false);
+            long now = Instant.now().getEpochSecond();
+            if (ent.getExp() != null && ent.getExp() <= now) return null;
+            return mapper.toDomain(ent);
+        });
     }
 
-    public boolean markLinkedAndShrinkTtl(UUID id, long keepSeconds) {
-        return repo.findById(id).map(ent -> {
-            mapper.applyStatus(ent, FlowStatus.APPROVED, ent.getReason());
-            Long cur = redis.getExpire(KEYSPACE + id, TimeUnit.SECONDS);
-            long newTtl = (cur != null && cur > 0) ? Math.min(cur, keepSeconds) : keepSeconds;
-            ent.setTtlSeconds(newTtl);
+    @Override
+    @Transactional
+    public void enrich(EnrichDeviceData req) {
+        if (req == null || req.getJti() == null) return;
+
+        repo.findById(req.getJti()).ifPresent(ent -> {
+            long now = Instant.now().getEpochSecond();
+
+            if (ent.getExp() != null && ent.getExp() <= now) return;
+
+            mapper.applyEnrichment(ent, req);
+
+            if (ent.getExp() != null) {
+                long remaining = ent.getExp() - now;
+                if (remaining <= 0) return;
+                ent.setTtlSeconds(remaining);
+            }
             repo.save(ent);
-            return true;
-        }).orElse(false);
+        });
     }
 }

@@ -7,7 +7,7 @@ import lombok.*;
 import java.util.UUID;
 
 
-import knemognition.heartauth.orchestrator.external.model.FlowStatus;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 
 @Getter
 @Setter
@@ -15,7 +15,6 @@ import knemognition.heartauth.orchestrator.external.model.FlowStatus;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PairingState {
-    private UUID id;
     private UUID userId;
     private String deviceId;
     private String displayName;
