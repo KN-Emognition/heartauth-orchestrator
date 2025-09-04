@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.app.domain;
+package knemognition.heartauth.orchestrator.external.app.domain;
 
 import knemognition.heartauth.orchestrator.external.model.Attestation;
 import knemognition.heartauth.orchestrator.external.model.Platform;

@@ -1,9 +1,9 @@
-package knemognition.heartauth.orchestrator.shared.app.service;
+package knemognition.heartauth.orchestrator.internal.app.service.status;
 
-import knemognition.heartauth.orchestrator.shared.app.ports.in.StatusService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.StatusService;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.app.mapper.ResponseStatusMapper;
+import knemognition.heartauth.orchestrator.internal.app.mapper.ResponseStatusMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import lombok.extern.slf4j.Slf4j;
 

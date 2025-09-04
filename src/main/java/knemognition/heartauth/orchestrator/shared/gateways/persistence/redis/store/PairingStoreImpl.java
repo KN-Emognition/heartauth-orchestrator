@@ -1,10 +1,13 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.store;
 
 import jakarta.transaction.Transactional;
+import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.CreateFlowStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.EnrichDeviceDataStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper.PairingStateRedisMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;

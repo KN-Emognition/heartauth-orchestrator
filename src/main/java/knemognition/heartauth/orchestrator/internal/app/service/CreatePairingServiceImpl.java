@@ -1,19 +1,16 @@
 package knemognition.heartauth.orchestrator.internal.app.service;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
 import knemognition.heartauth.orchestrator.internal.app.mapper.CreatePairingMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingService;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
-import knemognition.heartauth.orchestrator.shared.app.domain.CreatePairing;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.security.interfaces.ECPrivateKey;
 import java.util.*;
 

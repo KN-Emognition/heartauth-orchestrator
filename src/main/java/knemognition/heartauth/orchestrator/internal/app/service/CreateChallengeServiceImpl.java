@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.internal.app.service;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.mapper.CreateChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
-import knemognition.heartauth.orchestrator.shared.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

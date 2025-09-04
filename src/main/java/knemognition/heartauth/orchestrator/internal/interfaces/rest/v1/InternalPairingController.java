@@ -4,7 +4,7 @@ import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingSe
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
-import knemognition.heartauth.orchestrator.shared.app.ports.in.StatusService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.StatusService;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

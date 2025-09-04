@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.app.mapper;
+package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.app.ports.out;
+package knemognition.heartauth.orchestrator.external.app.ports.out;
 
 import java.util.Optional;
 import java.util.UUID;

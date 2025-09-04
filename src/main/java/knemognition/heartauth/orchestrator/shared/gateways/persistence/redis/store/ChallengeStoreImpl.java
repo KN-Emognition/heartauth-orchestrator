@@ -1,7 +1,9 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.store;
 
+import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper.ChallengeStateRedisMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;

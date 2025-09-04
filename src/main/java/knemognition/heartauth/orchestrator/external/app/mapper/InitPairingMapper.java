@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.external.app.mapper;
 
 import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
-import knemognition.heartauth.orchestrator.shared.app.domain.EnrichDeviceData;
+import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import org.mapstruct.Mapper;
 
 import java.util.UUID;

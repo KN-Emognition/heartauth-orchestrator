@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
 import jakarta.validation.Valid;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.ports.in.StatusService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.StatusService;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import lombok.RequiredArgsConstructor;

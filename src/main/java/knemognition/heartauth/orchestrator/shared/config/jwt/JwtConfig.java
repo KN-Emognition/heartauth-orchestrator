@@ -56,7 +56,7 @@ public class JwtConfig {
     }
 
     @Bean("pairingJwtDecoder")
-    JwtDecoder pairingJwtDecoder(@Qualifier("pairingPublicKey") ECPublicKey publicKey) {
+    NimbusJwtDecoder pairingJwtDecoder(@Qualifier("pairingPublicKey") ECPublicKey publicKey) {
         ECKey ecKey = new ECKey.Builder(Curve.P_256, publicKey)
                 .keyUse(KeyUse.SIGNATURE)
                 .build();

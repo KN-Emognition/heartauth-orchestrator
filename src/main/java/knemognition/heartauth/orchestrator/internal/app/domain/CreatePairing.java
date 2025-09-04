@@ -1,17 +1,16 @@
-package knemognition.heartauth.orchestrator.shared.app.domain;
+package knemognition.heartauth.orchestrator.internal.app.domain;
 
 import lombok.*;
 
 import java.util.UUID;
-
 
 @Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateChallenge {
+public class CreatePairing {
     private UUID userId;
-    private String nonceB64;
+    private UUID jti;
     private Long ttlSeconds;
 }

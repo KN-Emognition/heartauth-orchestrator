@@ -11,7 +11,7 @@ import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class CompletePairingServiceImpl implements CompletePairingService {
 
     @Override
     public StatusResponse complete(PairingConfirmRequest req, QrClaims claims) {
-        UUID jti = claims.jti();
+        UUID jti = claims.getJti();
 
         PairingState pairingState = pairingStateGetFlowStore.getFlow(jti)
                 .orElseThrow(() -> new IllegalStateException("pairing_not_found_or_expired"));

@@ -5,10 +5,10 @@ import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.model.*;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.EnrichDeviceData;
+import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class InitPairingServiceImpl implements InitPairingService {
     public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
 
         String nonceB64 = createNonce();
-        UUID id = claims.jti();
+        UUID id = claims.getJti();
 
         EnrichDeviceData to = initPairingMapper.toEnrichDeviceData(req, nonceB64, id);
         enrichDeviceDataStore.enrich(to);

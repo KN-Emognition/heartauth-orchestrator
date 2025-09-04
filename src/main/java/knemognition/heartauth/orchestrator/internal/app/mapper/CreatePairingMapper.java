@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
-import knemognition.heartauth.orchestrator.shared.app.domain.CreatePairing;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
 import org.mapstruct.Mapper;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.app.ports.in;
+package knemognition.heartauth.orchestrator.internal.app.ports.in;
 
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
