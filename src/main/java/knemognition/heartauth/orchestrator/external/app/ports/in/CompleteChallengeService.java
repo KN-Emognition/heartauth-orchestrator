@@ -6,5 +6,7 @@ import knemognition.heartauth.orchestrator.external.model.StatusResponse;
 import java.util.UUID;
 
 public interface CompleteChallengeService {
-    StatusResponse complete(UUID challengeId, ChallengeCompleteRequest req, String dpopHeader);
+    StatusResponse complete(UUID challengeId,
+                            ChallengeCompleteRequest req
+    );
 }

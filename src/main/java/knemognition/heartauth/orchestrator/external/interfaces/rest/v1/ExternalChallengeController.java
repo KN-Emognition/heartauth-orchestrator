@@ -19,14 +19,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExternalChallengeController implements ChallengeApi {
     private final CompleteChallengeService completeChallengeService;
+
     @Override
     public ResponseEntity<StatusResponse> externalChallengeComplete(
             UUID id,
-            @Valid ChallengeCompleteRequest request,
-            String dPoP
-
+            @Valid ChallengeCompleteRequest request
     ) {
         log.info("Received challenge completion request for id {}", id);
-        return ResponseEntity.ok(completeChallengeService.complete(id, request, dPoP));
+        return ResponseEntity.ok(completeChallengeService.complete(id, request));
     }
 }

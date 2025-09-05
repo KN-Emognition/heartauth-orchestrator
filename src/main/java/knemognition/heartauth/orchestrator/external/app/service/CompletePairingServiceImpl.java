@@ -3,19 +3,20 @@ package knemognition.heartauth.orchestrator.external.app.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.DeviceCredentialCreateMapper;
-import knemognition.heartauth.orchestrator.external.app.mapper.PairingConfirmMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
-import knemognition.heartauth.orchestrator.external.model.*;
+import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
+import knemognition.heartauth.orchestrator.external.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
+import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.PairingStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
@@ -23,33 +24,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompletePairingServiceImpl implements CompletePairingService {
 
-    private final PairingStore pairingStore;
+    private final GetFlowStore<PairingState> pairingStateGetFlowStore;
+    private final StatusStore<PairingState> pairingStateStatusStore;
     private final DeviceCredentialStore deviceCredentialStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
     private final ObjectMapper objectMapper;
-    private final PairingConfirmMapper pairingConfirmMapper;
 
     @Override
-    public PairingConfirmResponse complete(PairingConfirmRequest req, QrClaims claims) {
-        UUID jti = claims.jti();
+    public StatusResponse complete(PairingConfirmRequest req, QrClaims claims) {
+        UUID jti = claims.getJti();
 
-        PairingState pairingState = pairingStore.get(jti)
+        PairingState pairingState = pairingStateGetFlowStore.getFlow(jti)
                 .orElseThrow(() -> new IllegalStateException("pairing_not_found_or_expired"));
 
-        if (!Objects.equals(pairingState.getDeviceId(), req.getDeviceId())) {
-            pairingStore.changeStatus(jti, FlowStatus.DENIED, "device_mismatch");
-            throw new IllegalArgumentException("device_mismatch");
-        }
-
+        StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(jti);
         if (pairingState.getStatus() == FlowStatus.APPROVED) {
-            pairingStore.changeStatus(jti, FlowStatus.DENIED, "replayed");
+            pairingStateStatusStore.setStatus(
+                    statusChangeBuilder
+                            .status(FlowStatus.DENIED)
+                            .build());
             throw new IllegalStateException("pairing_replayed");
         }
 
-        if (pairingState.getExp() <= Instant.now().getEpochSecond()) {
-            pairingStore.changeStatus(jti, FlowStatus.EXPIRED, null);
-            throw new IllegalStateException("pairing_expired");
-        }
 
 //        if (!"ES256".equals(req.getAlg())) {
 //            pairingStore.changeStatus(jti, FlowStatus.DENIED, "unsupported_alg");
@@ -80,10 +76,12 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         deviceCredentialStore.create(deviceCredential);
         log.info("Saved device credential");
 
-        pairingStore.changeStatus(jti, FlowStatus.APPROVED, null);
+        pairingStateStatusStore.setStatus(statusChangeBuilder
+                .status(FlowStatus.APPROVED)
+                .build());
         log.info("Changed cache pairing status to Approved.");
 
 
-        return pairingConfirmMapper.approved(deviceCredential, pairingState);
+        return new StatusResponse(knemognition.heartauth.orchestrator.external.model.FlowStatus.APPROVED);
     }
 }

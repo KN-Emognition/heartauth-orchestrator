@@ -1,26 +1,25 @@
 package knemognition.heartauth.orchestrator.internal.app.service;
 
+import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.mapper.CreateChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreateChallengeService;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.DeviceDirectory;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.FcmSender;
-import knemognition.heartauth.orchestrator.internal.app.mapper.ChallengeMapper;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
 
 import java.security.SecureRandom;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -28,62 +27,57 @@ import java.util.UUID;
 public class CreateChallengeServiceImpl implements CreateChallengeService {
 
     private static final int NONCE_BYTES = 32;
-    private static final int DEFAULT_TTL = 120;
-    private static final int MIN_TTL = 30;
-    private static final int MAX_TTL = 300;
 
     private final SecureRandom rng = new SecureRandom();
 
-    private final DeviceDirectory deviceDirectory;
-    private final FcmSender fcmSender;
-    private final ChallengeStore challengeStore;
-    private final ChallengeMapper challengeMapper;
+    private final DeviceCredentialStore deviceCredentialStore;
+    private final FirebaseSender firebaseSender;
+    private final CreateChallengeMapper createChallengeMapper;
+    private final CreateFlowStore<CreateChallenge> createChallengeCreateFlowStore;
 
     @Override
-    public ChallengeCreateResponse createAndDispatch(ChallengeCreateRequest req) {
-        final List<String> fcmTokens = deviceDirectory.getActiveFcmTokens(req.getUserId());
+    public ChallengeCreateResponse create(ChallengeCreateRequest req) {
+        final List<String> fcmTokens = deviceCredentialStore.getActiveFcmTokens(req.getUserId());
         log.info("Fetched fcmTokens for user {}", req.getUserId());
         if (fcmTokens.isEmpty()) {
             log.info("No active devices for user {}", req.getUserId());
             throw new NoActiveDeviceException();
         }
-        final UUID challengeId = UUID.randomUUID();
+
+
         final String nonceB64 = Base64.getEncoder().encodeToString(randomBytes(NONCE_BYTES));
 
-        final int ttl = clamp(req.getTtlSeconds() == null ? DEFAULT_TTL : req.getTtlSeconds(),
-                MIN_TTL, MAX_TTL);
-        final long now = Instant.now().getEpochSecond();
-        final long exp = now + ttl;
+        CreateChallenge to = createChallengeMapper.toCreateChallenge(req, nonceB64);
+        CreatedFlowResult result = createChallengeCreateFlowStore.create(to);
+        log.info("Stored challenge in cache {} for user {}", result.getId(), req.getUserId());
 
-        ChallengeState state = challengeMapper.toState(req, challengeId, nonceB64, exp, now);
-        challengeStore.create(state, Duration.ofSeconds(ttl));
-        log.info("Stored challenge in cache {} for user {}", challengeId, req.getUserId());
 
+        sendToDevices(fcmTokens, nonceB64, result);
+        return createChallengeMapper.toResponse(result);
+    }
+
+    private void sendToDevices(List<String> fcmTokens, String nonceB64, CreatedFlowResult result) {
         var data = Map.of(
                 "type", "ECG_CHALLENGE",
-                "challengeId", challengeId.toString(),
+                "challengeId", String.valueOf(result.getId()),
                 "nonce", nonceB64,
-                "exp", String.valueOf(exp)
+                "exp", String.valueOf(result.getExp())
         );
+
         for (String token : fcmTokens) {
             try {
-                fcmSender.sendData(token, data, Duration.ofSeconds(ttl));
-                log.info("Sent challenge {} to device {}", challengeId, token);
+                firebaseSender.sendData(token, data, Duration.ofSeconds(result.getTtl()));
+                log.info("Sent challenge {} to device {}", result.getId(), token);
             } catch (Exception e) {
                 log.error("Failed to send challenge to device");
             }
         }
-        return challengeMapper.toResponse(challengeId);
     }
 
     private byte[] randomBytes(int n) {
         byte[] b = new byte[n];
         rng.nextBytes(b);
         return b;
-    }
-
-    private int clamp(int v, int min, int max) {
-        return Math.max(min, Math.min(max, v));
     }
 }
 

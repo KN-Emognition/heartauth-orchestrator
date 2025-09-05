@@ -3,15 +3,10 @@ package knemognition.heartauth.orchestrator.external.app.service;
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.ports.in.JwtService;
-import knemognition.heartauth.orchestrator.shared.mdc.HeaderNames;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.security.oauth2.jwt.BadJwtException;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtException;
+import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
@@ -29,7 +24,7 @@ public class JwtServiceImpl implements JwtService {
     private final ObjectFactory<HttpServletRequest> requestFactory;
     private static final Duration ALLOWED_SKEW = Duration.ofSeconds(30);
 
-    private final JwtDecoder pairingJwtDecoder;
+    private final NimbusJwtDecoder pairingJwtDecoder;
     private final Clock clock = Clock.systemUTC();
 
     @Override
@@ -59,7 +54,6 @@ public class JwtServiceImpl implements JwtService {
             throw new IllegalArgumentException("pairing_token_expired");
         }
         QrClaims claims = new QrClaims(jti, userId, exp);
-        MDC.put(HeaderNames.MDC_PROCESS_ID, jti.toString());
         log.info("Verified Token and extracted Claims");
         return claims;
     }

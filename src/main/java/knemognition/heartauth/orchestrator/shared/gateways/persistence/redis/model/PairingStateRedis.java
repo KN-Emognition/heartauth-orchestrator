@@ -1,7 +1,6 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model;
 
-import com.fasterxml.jackson.annotation.JsonAlias;
-import knemognition.heartauth.orchestrator.external.model.FlowStatus;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
