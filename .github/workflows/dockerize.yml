@@ -13,7 +13,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Java 24 (Temurin) with Maven cache
+      - name: Make mvnw executable
+        run: chmod +x mvnw
+
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
