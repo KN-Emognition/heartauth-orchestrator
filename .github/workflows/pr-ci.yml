@@ -1,0 +1,43 @@
+name: PR CI (Maven build)
+
+on:
+  pull_request:
+    branches: [ master ]  
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pr-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 24 (Temurin) with Maven cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '24'
+          cache: maven
+
+      - name: Go offline (deps)
+        run: ./mvnw -B -ntp dependency:go-offline
+
+      # Lint / format checks (optional)
+      # - name: Spotless check
+      #   run: ./mvnw -B -ntp spotless:check
+
+      # Tests (enable when ready)
+      # - name: Test
+      #   run: ./mvnw -B -ntp test
+
+      - name: Build (skip tests)
+        run: ./mvnw -B -ntp -DskipTests package
+
+      # Optional: upload the JAR as an artifact
+      # - name: Upload JAR
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: orchestrator-jar
+      #     path: target/*.jar
