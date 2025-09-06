@@ -2,19 +2,19 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import org.mapstruct.*;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface ChallengeStatusMapper {
+public interface PairingStatusStoreMapper {
 
 
-    FlowStatusDescription toStatus(ChallengeStateRedis src);
+    FlowStatusDescription toStatus(PairingStateRedis src);
 
     @BeanMapping(ignoreByDefault = true)
     @Mapping(target = "status", source = "status")
     @Mapping(target = "reason", source = "reason")
-    void applyStatus(@MappingTarget ChallengeStateRedis target,
+    void applyStatus(@MappingTarget PairingStateRedis target,
                      FlowStatus status,
                      String reason);
 

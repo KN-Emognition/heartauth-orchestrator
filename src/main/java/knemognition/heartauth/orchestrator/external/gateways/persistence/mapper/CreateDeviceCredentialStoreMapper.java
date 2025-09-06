@@ -8,7 +8,7 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring",
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface CreateDeviceCredentialMapper {
+public interface CreateDeviceCredentialStoreMapper {
     DeviceCredential toDomain(DeviceCredentialEntity e);
     DeviceCredentialEntity toEntity(DeviceCredential d);
 }

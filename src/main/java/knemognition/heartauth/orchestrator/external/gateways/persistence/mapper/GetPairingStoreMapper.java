@@ -6,7 +6,7 @@ import org.mapstruct.*;
 
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface GetPairingMapper {
+public interface GetPairingStoreMapper {
 
 
     PairingState toDomain(PairingStateRedis src);

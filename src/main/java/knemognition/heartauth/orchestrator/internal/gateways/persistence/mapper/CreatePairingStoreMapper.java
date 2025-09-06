@@ -3,8 +3,6 @@ package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
-import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import org.mapstruct.*;
 
@@ -13,7 +11,7 @@ import java.util.UUID;
 
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface CreatePairingMapper {
+public interface CreatePairingStoreMapper {
 
 
     @Mapping(target = "createdAt", ignore = true)

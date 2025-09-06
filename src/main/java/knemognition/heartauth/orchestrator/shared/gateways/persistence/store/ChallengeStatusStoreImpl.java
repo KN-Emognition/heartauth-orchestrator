@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.ChallengeStatusMapper;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.ChallengeStatusStoreMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,13 +16,13 @@ import java.util.UUID;
 public class ChallengeStatusStoreImpl implements StatusStore<ChallengeState> {
 
     private final ChallengeStateRepository challengeStateRepository;
-    private final ChallengeStatusMapper challengeStatusMapper;
+    private final ChallengeStatusStoreMapper challengeStatusStoreMapper;
 
     @Override
     public boolean setStatus(StatusChange statusChange) {
         return challengeStateRepository.findById(statusChange.getId())
                 .map(ent -> {
-                    challengeStatusMapper.applyStatus(ent, statusChange.getStatus(), statusChange.getReason());
+                    challengeStatusStoreMapper.applyStatus(ent, statusChange.getStatus(), statusChange.getReason());
                     // No manual TTL juggling; Redis preserves remaining TTL on update.
                     challengeStateRepository.save(ent);
                     return true;
@@ -36,7 +36,7 @@ public class ChallengeStatusStoreImpl implements StatusStore<ChallengeState> {
         return challengeStateRepository.findById(id).map(ent -> {
             long now = Instant.now().getEpochSecond();
             if (ent.getExp() != null && ent.getExp() <= now) return null;
-            return challengeStatusMapper.toStatus(ent);
+            return challengeStatusStoreMapper.toStatus(ent);
         });
     }
 }

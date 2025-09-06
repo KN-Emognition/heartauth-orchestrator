@@ -3,7 +3,7 @@ package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
 import jakarta.transaction.Transactional;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
-import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.EnrichDeviceMapper;
+import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.EnrichDeviceStoreMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,7 @@ public class EnrichDeviceDataStoreImpl implements EnrichDeviceDataStore {
 
 
     private final PairingStateRepository pairingStateRepository;
-    private final EnrichDeviceMapper enrichDeviceMapper;
+    private final EnrichDeviceStoreMapper enrichDeviceStoreMapper;
 
 
     @Override
@@ -30,7 +30,7 @@ public class EnrichDeviceDataStoreImpl implements EnrichDeviceDataStore {
 
             if (ent.getExp() != null && ent.getExp() <= now) return;
 
-            enrichDeviceMapper.applyEnrichment(ent, req);
+            enrichDeviceStoreMapper.applyEnrichment(ent, req);
 
             if (ent.getExp() != null) {
                 long remaining = ent.getExp() - now;

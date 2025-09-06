@@ -14,7 +14,7 @@ import java.util.UUID;
 
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface CreateChallengeMapper {
+public interface CreateChallengeStoreMapper {
 
 
     @Mapping(target = "createdAt", ignore = true)

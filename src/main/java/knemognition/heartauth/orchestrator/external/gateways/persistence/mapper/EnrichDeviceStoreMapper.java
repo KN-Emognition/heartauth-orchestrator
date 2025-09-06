@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface EnrichDeviceMapper {
+public interface EnrichDeviceStoreMapper {
 
     @Mapping(target = "attestationType", ignore = true)
     @Mapping(target = "attestationVerdict", ignore = true)
