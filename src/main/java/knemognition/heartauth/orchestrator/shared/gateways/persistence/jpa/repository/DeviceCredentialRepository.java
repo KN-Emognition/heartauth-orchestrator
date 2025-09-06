@@ -9,12 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 import java.util.UUID;
 
-
-import org.springframework.data.jpa.repository.*;
-
-import java.time.Instant;
-import java.util.*;
-
 public interface DeviceCredentialRepository extends JpaRepository<DeviceCredentialEntity, UUID> {
 
 
