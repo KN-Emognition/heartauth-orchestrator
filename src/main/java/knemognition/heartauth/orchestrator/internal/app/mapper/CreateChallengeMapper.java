@@ -7,7 +7,7 @@ import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult
 import org.mapstruct.*;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
-import knemognition.heartauth.orchestrator.external.model.FlowStatus;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

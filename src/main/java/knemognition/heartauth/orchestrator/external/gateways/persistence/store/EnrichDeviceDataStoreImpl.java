@@ -3,6 +3,7 @@ package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
 import jakarta.transaction.Transactional;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.DeviceEnrichException;
 import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.EnrichDeviceStoreMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,21 +24,31 @@ public class EnrichDeviceDataStoreImpl implements EnrichDeviceDataStore {
     @Override
     @Transactional
     public void enrich(EnrichDeviceData req) {
-        if (req == null || req.getJti() == null) return;
+        if (req == null) {
+            throw new DeviceEnrichException("enrich_request_missing");
+        }
+        if (req.getJti() == null) {
+            throw new DeviceEnrichException("jti_missing");
+        }
 
-        pairingStateRepository.findById(req.getJti()).ifPresent(ent -> {
-            long now = Instant.now().getEpochSecond();
+        var ent = pairingStateRepository.findById(req.getJti())
+                .orElseThrow(() -> new DeviceEnrichException("pairing_not_found_or_expired"));
 
-            if (ent.getExp() != null && ent.getExp() <= now) return;
+        long now = Instant.now().getEpochSecond();
+        Long exp = ent.getExp();
 
-            enrichDeviceStoreMapper.applyEnrichment(ent, req);
-
-            if (ent.getExp() != null) {
-                long remaining = ent.getExp() - now;
-                if (remaining <= 0) return;
-                ent.setTtlSeconds(remaining);
+        if (exp != null && exp <= now) {
+            throw new DeviceEnrichException("pairing_not_found_or_expired");
+        }
+        enrichDeviceStoreMapper.applyEnrichment(ent, req);
+        if (exp != null) {
+            long remaining = exp - now;
+            if (remaining <= 0) {
+                throw new DeviceEnrichException("pairing_not_found_or_expired");
             }
-            pairingStateRepository.save(ent);
-        });
+            ent.setTtlSeconds(remaining);
+        }
+
+        pairingStateRepository.save(ent);
     }
 }

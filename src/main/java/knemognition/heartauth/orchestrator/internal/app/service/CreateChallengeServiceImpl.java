@@ -41,7 +41,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
         log.info("Fetched fcmTokens for user {}", req.getUserId());
         if (fcmTokens.isEmpty()) {
             log.info("No active devices for user {}", req.getUserId());
-            throw new NoActiveDeviceException();
+            throw new NoActiveDeviceException("No active device");
         }
 
 

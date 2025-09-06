@@ -26,7 +26,6 @@ public class CreateDeviceCredentialStoreImpl implements CreateDeviceCredentialSt
             DeviceCredentialEntity saved = deviceCredentialRepository.save(mapper.toEntity(toCreate));
             return mapper.toDomain(saved);
         } catch (DataIntegrityViolationException ex) {
-            // surface DB partial unique violations (device_id active / (user_id, device_id) active)
             throw ex;
         }
     }

@@ -22,12 +22,13 @@ public class ExternalPairingController implements PairingApi {
     private final CompletePairingService completePairingService;
     private final HttpServletRequest request;
 
-    public ResponseEntity<StatusResponse> externalPairingConfirm(@Valid PairingConfirmRequest pairingConfirmRequest
+    public ResponseEntity<Void> externalPairingConfirm(@Valid PairingConfirmRequest pairingConfirmRequest
     ) {
         QrClaims claims = (QrClaims) request.getAttribute(
                 PairingJwtInterceptor.REQ_ATTR_QR_CLAIMS);
         log.info("Received pairing confirmation request for device {}", pairingConfirmRequest.getDeviceId());
-        return ResponseEntity.ok(completePairingService.complete(pairingConfirmRequest, claims));
+        completePairingService.complete(pairingConfirmRequest, claims);
+        return ResponseEntity.noContent().build();
     }
 
     public ResponseEntity<PairingInitResponse> externalPairingInit(

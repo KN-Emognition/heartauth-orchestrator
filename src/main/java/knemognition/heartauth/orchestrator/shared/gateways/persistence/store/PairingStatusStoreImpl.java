@@ -39,6 +39,4 @@ public class PairingStatusStoreImpl implements StatusStore<PairingState> {
             return pairingStatusStoreMapper.toStatus(ent);
         });
     }
-
-
 }

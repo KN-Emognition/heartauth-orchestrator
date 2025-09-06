@@ -21,17 +21,15 @@ public class ModelApiConfig {
 
     @Bean
     public ApiClient apiClient(RestClient.Builder builder, ModelApiProperties p) {
-        RestClient restClient = builder
-                .requestInterceptor((request, body, execution) -> {
-                    request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                    request.getHeaders().setAccept(List.of(MediaType.APPLICATION_JSON));
-                    String routeId = MDC.get(MDC_ROUTE_ID);
-                    if (routeId != null && !routeId.isBlank()) {
-                        request.getHeaders().set(HEADER_ROUTE_ID, routeId);
-                    }
-                    return execution.execute(request, body);
-                })
-                .build();
+        RestClient restClient = builder.requestInterceptor((request, body, execution) -> {
+            request.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+            request.getHeaders().setAccept(List.of(MediaType.APPLICATION_JSON));
+            String routeId = MDC.get(MDC_ROUTE_ID);
+            if (routeId != null && !routeId.isBlank()) {
+                request.getHeaders().set(HEADER_ROUTE_ID, routeId);
+            }
+            return execution.execute(request, body);
+        }).build();
 
 
         ApiClient apiClient = new ApiClient(restClient);

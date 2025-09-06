@@ -58,14 +58,9 @@ paths:
           application/json:
             schema:
               $ref: './components.yml#/components/schemas/PairingConfirmRequest'
-
       responses:
-        '200':
-          description: Pairing completed; device linked to user.
-          content:
-            application/json:
-              schema:
-                $ref: './components.yml#/components/schemas/StatusResponse'
+        '204':
+          description: Pairing outcome recorded.
 
   /external/v1/challenge/{id}/complete:
     post:
@@ -85,9 +80,5 @@ paths:
             schema:
               $ref: './components.yml#/components/schemas/ChallengeCompleteRequest'
       responses:
-        '200':
-          description: Challenge outcome recorded.
-          content:
-            application/json:
-              schema:
-                $ref: './components.yml#/components/schemas/StatusResponse'
+          '204':
+            description: Challenge outcome recorded.
