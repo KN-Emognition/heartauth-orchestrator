@@ -10,7 +10,7 @@ import knemognition.heartauth.orchestrator.external.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.CreateDeviceCredentialStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class CompletePairingServiceImpl implements CompletePairingService {
 
     private final GetFlowStore<PairingState> pairingStateGetFlowStore;
     private final StatusStore<PairingState> pairingStateStatusStore;
-    private final DeviceCredentialStore deviceCredentialStore;
+    private final CreateDeviceCredentialStore deviceCredentialStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
     private final ObjectMapper objectMapper;
 

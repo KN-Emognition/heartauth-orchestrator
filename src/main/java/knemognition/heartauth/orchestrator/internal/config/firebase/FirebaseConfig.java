@@ -22,17 +22,17 @@ public class FirebaseConfig {
 
     @Bean
     public FirebaseApp firebaseApp() throws Exception {
-        GoogleCredentials creds;
+        GoogleCredentials credentials;
         if (StringUtils.hasText(props.getCredentialsLocation())) {
             Resource r = resourceLoader.getResource(props.getCredentialsLocation());
             try (InputStream is = r.getInputStream()) {
-                creds = GoogleCredentials.fromStream(is);
+                credentials = GoogleCredentials.fromStream(is);
             }
         } else {
-            creds = GoogleCredentials.getApplicationDefault();
+            credentials = GoogleCredentials.getApplicationDefault();
         }
 
-        FirebaseOptions.Builder b = FirebaseOptions.builder().setCredentials(creds);
+        FirebaseOptions.Builder b = FirebaseOptions.builder().setCredentials(credentials);
         return FirebaseApp.initializeApp(b.build());
     }
 

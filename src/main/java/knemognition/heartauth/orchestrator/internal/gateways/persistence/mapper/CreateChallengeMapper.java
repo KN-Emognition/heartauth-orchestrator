@@ -1,17 +1,20 @@
-package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper;
+package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.time.Instant;
 import java.util.UUID;
 
+
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface ChallengeStateRedisMapper {
+public interface CreateChallengeMapper {
 
 
     @Mapping(target = "createdAt", ignore = true)
@@ -20,7 +23,6 @@ public interface ChallengeStateRedisMapper {
     @Mapping(target = "ttlSeconds", ignore = true)
     ChallengeStateRedis baseFromCreate(CreateChallenge src, UUID id);
 
-    // Our default method sets the dynamic fields in seconds.
     default ChallengeStateRedis fromCreate(CreateChallenge src, UUID id, long ttlSeconds) {
         long now = Instant.now().getEpochSecond();
         var ent = baseFromCreate(src, id);
@@ -38,15 +40,4 @@ public interface ChallengeStateRedisMapper {
             @Mapping(target = "ttl", source = "ttlSeconds")
     })
     CreatedFlowResult toCreatedResult(ChallengeStateRedis ent);
-
-    FlowStatusDescription toStatus(ChallengeStateRedis src);
-
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "status", source = "status")
-    @Mapping(target = "reason", source = "reason")
-    void applyStatus(@MappingTarget ChallengeStateRedis target,
-                     knemognition.heartauth.orchestrator.internal.model.FlowStatus status,
-                     String reason);
-
-
 }

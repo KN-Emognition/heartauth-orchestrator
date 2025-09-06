@@ -23,7 +23,7 @@ import java.util.UUID;
 public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 
     private final StatusStore<ChallengeState> challengeStore;
-    private final ModelApiClient modelEvaluation;
+    private final ModelApiClient modelApiClient;
 
     @Override
     public StatusResponse complete(UUID challengeId,
@@ -37,7 +37,7 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
         In in = new In().anything("placeholder"); // TODO: populate with MODEL DATA
         PredictResponse prediction;
         try {
-            prediction = modelEvaluation.predict(in);
+            prediction = modelApiClient.predict(in);
             log.info("Called model for prediction.");
         } catch (Exception e) {
             log.warn("model-api call failed for challenge {}", challengeId, e);
