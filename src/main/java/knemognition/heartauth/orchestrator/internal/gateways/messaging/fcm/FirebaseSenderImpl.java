@@ -19,7 +19,7 @@ public class FirebaseSenderImpl implements FirebaseSender {
     private final FirebaseMessaging firebaseMessaging;
 
     @Override
-    public void sendData(String token, Map<String, String> data, Duration ttl) {
+    public void sendData(String token, Map<String, String> data, Duration ttl) throws FirebaseMessagingException {
         if (token == null || token.isBlank()) {
             throw new FirebaseSendException("FCM token is null/blank");
         }
@@ -30,21 +30,14 @@ public class FirebaseSenderImpl implements FirebaseSender {
                 .setPriority(AndroidConfig.Priority.HIGH);
         android.setTtl(ttl.toMillis());
 
-        ApnsConfig.Builder apns = ApnsConfig.builder();
-        long expEpoch = Instant.now().plus(ttl).getEpochSecond();
-        apns.putHeader("apns-expiration", String.valueOf(expEpoch));
 
-        Message message = createMessage(token, data, android, apns);
+        Message message = createMessage(token, data, android);
 
-        try {
-            firebaseMessaging.send(message);
-            log.info("Sent FCM message successfully ");
-        } catch (FirebaseMessagingException e) {
-            throw new FirebaseSendException("Firebase send exception");
-        }
+        firebaseMessaging.send(message);
+
     }
 
-    private Message createMessage(String token, Map<String, String> data, AndroidConfig.Builder android, ApnsConfig.Builder apns) {
+    private Message createMessage(String token, Map<String, String> data, AndroidConfig.Builder android) {
         return Message.builder()
                 .setToken(token)
                 .putAllData(data)
@@ -53,7 +46,6 @@ public class FirebaseSenderImpl implements FirebaseSender {
                         .setBody("Authenticate yourself to complete the login process.")
                         .build())
                 .setAndroidConfig(android.build())
-                .setApnsConfig(apns.build())
                 .build();
     }
 }
