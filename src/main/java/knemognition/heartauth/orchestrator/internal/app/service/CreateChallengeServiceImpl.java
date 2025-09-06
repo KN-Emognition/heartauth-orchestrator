@@ -61,7 +61,8 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
                 "type", "ECG_CHALLENGE",
                 "challengeId", String.valueOf(result.getId()),
                 "nonce", nonceB64,
-                "exp", String.valueOf(result.getExp())
+                "exp", String.valueOf(result.getExp()),
+                "ttl", String.valueOf(result.getTtl())
         );
 
         for (String token : fcmTokens) {
