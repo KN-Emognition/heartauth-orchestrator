@@ -24,7 +24,6 @@ components:
   schemas:
     In:
       type: object
-      additionalProperties: true
       description: Flexible input payload accepted by the model.
       properties:
         anything:

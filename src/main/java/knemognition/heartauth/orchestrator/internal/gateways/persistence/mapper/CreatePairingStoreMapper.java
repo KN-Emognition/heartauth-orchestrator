@@ -1,18 +1,17 @@
-package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mapper;
+package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper;
 
-import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import org.mapstruct.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
+
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-public interface PairingStateRedisMapper {
+public interface CreatePairingStoreMapper {
 
 
     @Mapping(target = "createdAt", ignore = true)
@@ -39,21 +38,4 @@ public interface PairingStateRedisMapper {
     CreatedFlowResult toCreatedResult(PairingStateRedis ent);
 
 
-    PairingState toDomain(PairingStateRedis src);
-
-    FlowStatusDescription toStatus(PairingStateRedis src);
-
-    @BeanMapping(ignoreByDefault = true)
-    @Mapping(target = "status", source = "status")
-    @Mapping(target = "reason", source = "reason")
-    void applyStatus(@MappingTarget PairingStateRedis target,
-                     knemognition.heartauth.orchestrator.internal.model.FlowStatus status,
-                     String reason);
-
-
-
-    @Mapping(target = "attestationType",     ignore = true)
-    @Mapping(target = "attestationVerdict",  ignore = true)
-    @Mapping(target = "attestationPayloadJson", ignore = true)
-    void applyEnrichment(@MappingTarget PairingStateRedis target, EnrichDeviceData src);
 }

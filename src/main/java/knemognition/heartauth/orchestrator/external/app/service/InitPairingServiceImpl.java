@@ -6,10 +6,13 @@ import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingServ
 import knemognition.heartauth.orchestrator.external.model.*;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
+import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,11 +36,15 @@ public class InitPairingServiceImpl implements InitPairingService {
         String nonceB64 = createNonce();
         UUID id = claims.getJti();
 
+        FlowStatusDescription status = pairingStateStatusStore.getStatus(id).orElseThrow(() -> new StatusServiceException("Status not found"));
+        if (status.getStatus() != FlowStatus.CREATED) {
+            throw new StatusServiceException("Pairing already initialized");
+        }
+
         EnrichDeviceData to = initPairingMapper.toEnrichDeviceData(req, nonceB64, id);
         enrichDeviceDataStore.enrich(to);
         log.info("Device data stored");
-        pairingStateStatusStore.setStatus(StatusChange.builder().id(id).status(FlowStatus.PENDING).build());
-        log.info("Status changed to PENDING");
+        pairingStateStatusStore.setStatusOrThrow(StatusChange.builder().id(id).status(FlowStatus.PENDING).build());
         return new PairingInitResponse().nonce(nonceB64);
     }
 

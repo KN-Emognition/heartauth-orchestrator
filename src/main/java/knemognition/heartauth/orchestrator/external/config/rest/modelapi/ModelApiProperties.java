@@ -13,7 +13,4 @@ import java.time.Duration;
 public class ModelApiProperties {
     private String baseUrl;
     private String apiKey;
-    private Duration connectTimeout = Duration.ofSeconds(3);
-    private Duration readTimeout = Duration.ofSeconds(5);
-    private Duration writeTimeout = Duration.ofSeconds(5);
 }

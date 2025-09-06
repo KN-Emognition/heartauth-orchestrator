@@ -7,4 +7,5 @@ import lombok.NoArgsConstructor;
 public class HeaderNames {
     public static final String MDC_ROUTE_ID="routeId";
     public static final String HEADER_ROUTE_ID = "X-Route-Id";
+    public static final String HEADER_API_KEY = "X-API-Key";
 }

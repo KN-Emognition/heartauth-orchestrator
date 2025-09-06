@@ -2,11 +2,11 @@ package knemognition.heartauth.orchestrator.internal.app.service;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.mapper.CreateChallengeMapper;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.FindFcmTokensStore;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,7 +30,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
 
     private final SecureRandom rng = new SecureRandom();
 
-    private final DeviceCredentialStore deviceCredentialStore;
+    private final FindFcmTokensStore deviceCredentialStore;
     private final FirebaseSender firebaseSender;
     private final CreateChallengeMapper createChallengeMapper;
     private final CreateFlowStore<CreateChallenge> createChallengeCreateFlowStore;
@@ -41,7 +41,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
         log.info("Fetched fcmTokens for user {}", req.getUserId());
         if (fcmTokens.isEmpty()) {
             log.info("No active devices for user {}", req.getUserId());
-            throw new NoActiveDeviceException();
+            throw new NoActiveDeviceException("No active device");
         }
 
 

@@ -12,9 +12,10 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.HEADER_API_KEY;
+
 @Component
 public class ApiKeyAuthFilter extends OncePerRequestFilter {
-    private static final String AUTH_HEADER = "X-API-Key";
     private final ApiKeyProperties props;
 
     public ApiKeyAuthFilter(ApiKeyProperties props) {
@@ -32,7 +33,7 @@ public class ApiKeyAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain)
             throws ServletException, IOException {
 
-        String provided = req.getHeader(AUTH_HEADER);
+        String provided = req.getHeader(HEADER_API_KEY);
         var match = props.keys().stream().filter(k -> k.matches(provided)).findFirst().orElse(null);
         if (match == null) {
             chain.doFilter(req, res);
