@@ -10,6 +10,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairingProperties;
 import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -69,31 +70,6 @@ public class JwtConfig {
         return new NimbusJwtEncoder(jwks);
     }
 
-    @Bean("pairingJwtDecoder")
-    JwtDecoder pairingJwtDecoder(@Qualifier("pairingPublicKey") ECPublicKey pub, JwtProperties p) {
-        ECKey publicJwk = new ECKey.Builder(Curve.P_256, pub)
-                .keyID(p.kid())
-                .keyUse(KeyUse.SIGNATURE)
-                .algorithm(JWSAlgorithm.ES256)
-                .build();
 
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(publicJwk));
-        DefaultJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        jwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.ES256, jwkSource));
-        NimbusJwtDecoder dec = new NimbusJwtDecoder(jwtProcessor);
-        OAuth2TokenValidator<Jwt> withIssuer =
-                JwtValidators.createDefaultWithIssuer("hauth:orchestrator");
-
-        OAuth2TokenValidator<Jwt> withAudience = jwt ->
-                (jwt.getAudience() != null && jwt.getAudience().contains("hauth:pairing"))
-                        ? OAuth2TokenValidatorResult.success()
-                        : OAuth2TokenValidatorResult.failure(
-                        new OAuth2Error("invalid_token", "missing/invalid audience", ""));
-
-        JwtTimestampValidator skew = new JwtTimestampValidator(Duration.ofSeconds(30));
-
-        dec.setJwtValidator(new DelegatingOAuth2TokenValidator<>(withIssuer, withAudience, skew));
-        return dec;
-    }
 
 }

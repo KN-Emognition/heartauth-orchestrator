@@ -60,7 +60,6 @@ security:
         value: ${API_KEY_KEYCLOAK:a-string-secret-at-least-256-bits-long}
         roles: [keycloak]
 jwt:
-  ttl-seconds: 300
   kid: "pairing-key-1"
   private-key-password: null
   private-key-location: ${PRIVATE_KEY_LOCATION:classpath:security/privKey.pem}

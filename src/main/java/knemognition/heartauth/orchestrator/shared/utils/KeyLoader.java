@@ -1,9 +1,13 @@
 package knemognition.heartauth.orchestrator.shared.utils;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
 import java.io.InputStream;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class KeyLoader {
     public static ECPrivateKey loadEcPrivateKey(InputStream in) throws Exception {
         byte[] der = pemToDer(in, "PRIVATE KEY"); // PKCS#8
