@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.app.service;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.app.mapper.CreateChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FindFcmTokensStore;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
@@ -19,7 +20,6 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Service
@@ -29,7 +29,6 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
     private static final int NONCE_BYTES = 32;
 
     private final SecureRandom rng = new SecureRandom();
-
     private final FindFcmTokensStore deviceCredentialStore;
     private final FirebaseSender firebaseSender;
     private final CreateChallengeMapper createChallengeMapper;
@@ -57,21 +56,10 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
     }
 
     private void sendToDevices(List<String> fcmTokens, String nonceB64, CreatedFlowResult result) {
-        var data = Map.of(
-                "type", "ECG_CHALLENGE",
-                "challengeId", String.valueOf(result.getId()),
-                "nonce", nonceB64,
-                "exp", String.valueOf(result.getExp()),
-                "ttl", String.valueOf(result.getTtl())
-        );
+        MessageData to = createChallengeMapper.toMessageData(result, nonceB64);
 
         for (String token : fcmTokens) {
-            try {
-                firebaseSender.sendData(token, data, Duration.ofSeconds(result.getTtl()));
-                log.info("Sent challenge {} to device {}", result.getId(), token);
-            } catch (Exception e) {
-                log.error("Failed to send challenge to device");
-            }
+            firebaseSender.sendData(token, to, Duration.ofSeconds(result.getTtl()));
         }
     }
 

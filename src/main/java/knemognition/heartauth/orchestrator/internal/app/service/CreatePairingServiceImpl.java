@@ -28,6 +28,7 @@ public class CreatePairingServiceImpl implements CreatePairingService {
     public PairingCreateResponse create(PairingCreateRequest req) {
         UUID jti = UUID.randomUUID();
         long ttl = 200L;
+        // TODO move ttl to request
         String token = Jwts.builder()
                 .subject(req.getUserId().toString())
                 .id(jti.toString())

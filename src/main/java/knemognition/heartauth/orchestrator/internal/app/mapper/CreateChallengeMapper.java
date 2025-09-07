@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import org.mapstruct.*;
@@ -20,5 +21,9 @@ public interface CreateChallengeMapper {
 
 
     CreateChallenge toCreateChallenge(ChallengeCreateRequest req, String nonceB64);
+
+    @Mapping(target="type", constant = "ECG_CHALLENGE")
+    @Mapping(target="nonce", source = "nonceB64")
+    MessageData toMessageData(CreatedFlowResult res,String nonceB64);
 }
 

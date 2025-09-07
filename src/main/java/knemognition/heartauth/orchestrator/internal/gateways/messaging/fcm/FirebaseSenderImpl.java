@@ -1,14 +1,16 @@
 package knemognition.heartauth.orchestrator.internal.gateways.messaging.fcm;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
+import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FirebaseSendException;
+import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.util.Map;
 
 @Slf4j
@@ -16,10 +18,12 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class FirebaseSenderImpl implements FirebaseSender {
 
+    private final RecordMapper recordMapper;
+    private final ObjectMapper objectMapper;
     private final FirebaseMessaging firebaseMessaging;
 
     @Override
-    public void sendData(String token, Map<String, String> data, Duration ttl) throws FirebaseMessagingException {
+    public void sendData(String token, MessageData messageData, Duration ttl) {
         if (token == null || token.isBlank()) {
             throw new FirebaseSendException("FCM token is null/blank");
         }
@@ -30,11 +34,14 @@ public class FirebaseSenderImpl implements FirebaseSender {
                 .setPriority(AndroidConfig.Priority.HIGH);
         android.setTtl(ttl.toMillis());
 
-
+        Map<String, String> data = recordMapper.convertObjectToMap(messageData, objectMapper);
         Message message = createMessage(token, data, android);
-
-        firebaseMessaging.send(message);
-
+        try {
+            firebaseMessaging.send(message);
+            log.info("Message sent successfully");
+        } catch (FirebaseMessagingException e) {
+            throw new FirebaseSendException("Message send failed.");
+        }
     }
 
     private Message createMessage(String token, Map<String, String> data, AndroidConfig.Builder android) {
