@@ -10,67 +10,90 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.JWSVerificationKeySelector;
 import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
-import org.springframework.core.io.Resource;
+import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2TokenValidator;
+import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
+import org.springframework.security.oauth2.jwt.*;
 
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
-
+import java.time.Duration;
 
 @Configuration
 @EnableConfigurationProperties(JwtProperties.class)
 public class JwtConfig {
 
     @Bean("pairingPrivateKey")
-    public ECPrivateKey pairingPrivateKey(JwtProperties p) throws Exception {
-        Resource r = p.privateKeyLocation();
-        try (var in = r.getInputStream()) {
-            char[] pwd = p.privateKeyPassword() != null ? p.privateKeyPassword().toCharArray() : null;
-            return Crypto.loadEcPrivateKey(in, pwd);
+    ECPrivateKey pairingPrivateKey(JwtProperties p) throws Exception {
+        try (var in = p.privateKeyLocation().getInputStream()) {
+            return KeyLoader.loadEcPrivateKey(in);
         }
+    }
+
+    @Bean("pairingPublicJwk")
+    ECKey pairingPublicJwk(@Qualifier("pairingPublicKey") ECPublicKey pub, JwtProperties p) {
+        return new ECKey.Builder(Curve.P_256, pub)
+                .keyID(p.kid())
+                .keyUse(KeyUse.SIGNATURE)
+                .algorithm(JWSAlgorithm.ES256)
+                .build();
     }
 
     @Bean("pairingPublicKey")
-    public ECPublicKey pairingPublicKey(JwtProperties p) throws Exception {
-        Resource r = p.publicKeyLocation();
-        try (var in = r.getInputStream()) {
-            return Crypto.loadEcPublicKey(in);
+    ECPublicKey pairingPublicKey(JwtProperties p) throws Exception {
+        try (var in = p.publicKeyLocation().getInputStream()) {
+            return KeyLoader.loadEcPublicKey(in);
         }
     }
 
-    @Bean
-    @Qualifier("pairingSigningJwk")
-    public com.nimbusds.jose.jwk.ECKey signingJwk(JwtProperties p,
-                                                  @Qualifier("pairingPublicKey") ECPublicKey pub,
-                                                  @Qualifier("pairingPrivateKey") ECPrivateKey priv) {
-        return new com.nimbusds.jose.jwk.ECKey.Builder(Curve.P_256, pub)
+    @Bean("pairingJwtEncoder")
+    JwtEncoder pairingJwtEncoder(
+            @Qualifier("pairingPrivateKey") ECPrivateKey priv,
+            @Qualifier("pairingPublicKey") ECPublicKey pub,
+            JwtProperties p) {
+
+        ECKey jwk = new ECKey.Builder(Curve.P_256, pub)
                 .privateKey(priv)
-                .keyUse(KeyUse.SIGNATURE)
                 .keyID(p.kid())
-                .algorithm(JWSAlgorithm.ES256).build();
+                .keyUse(KeyUse.SIGNATURE)
+                .algorithm(JWSAlgorithm.ES256)
+                .build();
+
+        JWKSource<SecurityContext> jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
     }
 
     @Bean("pairingJwtDecoder")
-    NimbusJwtDecoder pairingJwtDecoder(@Qualifier("pairingPublicKey") ECPublicKey publicKey) {
-        ECKey ecKey = new ECKey.Builder(Curve.P_256, publicKey)
+    JwtDecoder pairingJwtDecoder(@Qualifier("pairingPublicKey") ECPublicKey pub, JwtProperties p) {
+        ECKey publicJwk = new ECKey.Builder(Curve.P_256, pub)
+                .keyID(p.kid())
                 .keyUse(KeyUse.SIGNATURE)
+                .algorithm(JWSAlgorithm.ES256)
                 .build();
 
-        JWKSet jwkSet = new JWKSet(ecKey);
-        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(jwkSet);
-
+        JWKSource<SecurityContext> jwkSource = new ImmutableJWKSet<>(new JWKSet(publicJwk));
         DefaultJWTProcessor<SecurityContext> jwtProcessor = new DefaultJWTProcessor<>();
-        jwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<>(
-                JWSAlgorithm.ES256,
-                jwkSource
-        ));
+        jwtProcessor.setJWSKeySelector(new JWSVerificationKeySelector<>(JWSAlgorithm.ES256, jwkSource));
+        NimbusJwtDecoder dec = new NimbusJwtDecoder(jwtProcessor);
+        OAuth2TokenValidator<Jwt> withIssuer =
+                JwtValidators.createDefaultWithIssuer("hauth:orchestrator");
 
-        return new NimbusJwtDecoder(jwtProcessor);
+        OAuth2TokenValidator<Jwt> withAudience = jwt ->
+                (jwt.getAudience() != null && jwt.getAudience().contains("hauth:pairing"))
+                        ? OAuth2TokenValidatorResult.success()
+                        : OAuth2TokenValidatorResult.failure(
+                        new OAuth2Error("invalid_token", "missing/invalid audience", ""));
+
+        JwtTimestampValidator skew = new JwtTimestampValidator(Duration.ofSeconds(30));
+
+        dec.setJwtValidator(new DelegatingOAuth2TokenValidator<>(withIssuer, withAudience, skew));
+        return dec;
     }
 
 }

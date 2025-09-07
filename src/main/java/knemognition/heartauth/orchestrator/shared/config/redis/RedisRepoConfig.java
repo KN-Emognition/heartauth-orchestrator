@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.config;
+package knemognition.heartauth.orchestrator.shared.config.redis;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;

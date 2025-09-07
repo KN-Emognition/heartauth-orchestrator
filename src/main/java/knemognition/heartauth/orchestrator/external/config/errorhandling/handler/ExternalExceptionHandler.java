@@ -9,7 +9,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static knemognition.heartauth.orchestrator.shared.config.ExceptionHandlingUtils.problem;
+import static knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "knemognition.heartauth.orchestrator.external.interfaces.rest")
