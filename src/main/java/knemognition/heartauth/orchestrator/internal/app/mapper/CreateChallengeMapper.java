@@ -24,6 +24,7 @@ public interface CreateChallengeMapper {
 
     @Mapping(target="type", constant = "ECG_CHALLENGE")
     @Mapping(target="nonce", source = "nonceB64")
+    @Mapping(target="challengeId",source="res.id")
     MessageData toMessageData(CreatedFlowResult res,String nonceB64);
 }
 
