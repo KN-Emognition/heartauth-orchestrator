@@ -2,7 +2,7 @@ spring:
   application:
     name: internal-orchestrator
 firebase:
-  credentials-location: ${GOOGLE_APPLICATION_CREDENTIALS:classpath:firebase/service-account.json}
+  credentials-location: classpath:firebase/service-account.json
   dry-run: false
 internal-challenge:
   default-ttl: 120

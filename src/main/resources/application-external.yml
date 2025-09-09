@@ -3,8 +3,8 @@ spring:
     name: external-orchestrator
 model:
   api:
-    base-url: ${MODEL_API_URL:http://localhost:8000}
-    api-key: ${MODEL_API_KEY:}
+    base-url: http://localhost:8000
+    api-key:
 external-pairing:
   nonce-length: 32
   issuer: "hauth:orchestrator"
