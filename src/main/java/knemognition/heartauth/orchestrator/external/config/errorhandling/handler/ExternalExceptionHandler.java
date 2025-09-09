@@ -43,4 +43,14 @@ public class ExternalExceptionHandler {
     public ProblemDetail handleStatusService(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "Status operation for given flow failed.", req, ex);
     }
+
+    @ExceptionHandler(NonceValidationException.class)
+    public ProblemDetail handleNonceValidation(Exception ex, HttpServletRequest req) {
+        return problem(HttpStatus.BAD_REQUEST, "Nonce validation failed.", req, ex);
+    }
+
+    @ExceptionHandler(PemParsingException.class)
+    public ProblemDetail handlePemParsing(Exception ex, HttpServletRequest req) {
+        return problem(HttpStatus.BAD_REQUEST, "Pem format invalid.", req, ex);
+    }
 }

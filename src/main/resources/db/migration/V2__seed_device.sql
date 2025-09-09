@@ -1,32 +1,22 @@
--- Seed a single active device (static values, edit if needed).
--- Idempotent: UPDATE first; if no row was updated, INSERT.
-
-WITH updated AS (
-UPDATE device_credential
-SET fcm_token      = 'dev-fcm-token-123',
-    display_name   = 'Pixel 8 Pro (seed)',
-    public_key_pem = '-----BEGIN PUBLIC KEY-----
-PLACEHOLDER
------END PUBLIC KEY-----',
-    platform       = 'ANDROID',
-    last_seen_at   = now(),
-    updated_at     = now()
-WHERE user_id  = '00000000-0000-0000-0000-000000000000'
-  AND device_id = 'android:3f24a1c2'
-  AND revoked_at IS NULL
-    RETURNING 1
+WITH p AS (
+    SELECT
+        '00000000-0000-0000-0000-000000000000'::uuid AS user_id,
+        'android:3f24a1c2'::text                    AS device_id,
+        'Pixel 8 Pro (seed)'::text                  AS display_name,
+        '-----BEGIN PUBLIC KEY-----MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8/2k2MUkTlixFvR9ooUgBOwKgj5vBMVf3NGFOgV3TJcwaZme8fTcNjPxSmSrMoPd3LS6OJ+IMzNkQO5CVI79Vw==-----END PUBLIC KEY-----'::text AS public_key_pem,
+        'dev-fcm-token-123'::text                   AS fcm_token,
+        'ANDROID'::text                             AS platform,
+        now()                                       AS ts
 )
 INSERT INTO device_credential (
-    user_id, device_id, display_name, public_key_pem, fcm_token, platform, last_seen_at
+  user_id, device_id, display_name, public_key_pem, fcm_token, platform, last_seen_at
 )
-SELECT
-    '00000000-0000-0000-0000-000000000000',
-    'android:3f24a1c2',
-    'Pixel 8 Pro (seed)',
-    '-----BEGIN PUBLIC KEY-----
-  PLACEHOLDER
-  -----END PUBLIC KEY-----',
-    'dev-fcm-token-123',
-    'ANDROID',
-    now()
-    WHERE NOT EXISTS (SELECT 1 FROM updated);
+SELECT p.user_id, p.device_id, p.display_name, p.public_key_pem, p.fcm_token, p.platform, p.ts
+FROM p
+    ON CONFLICT (user_id, device_id) WHERE revoked_at IS NULL
+    DO UPDATE SET
+    display_name   = EXCLUDED.display_name,
+           public_key_pem = EXCLUDED.public_key_pem,
+           fcm_token      = EXCLUDED.fcm_token,
+           platform       = EXCLUDED.platform,
+           last_seen_at   = EXCLUDED.last_seen_at;

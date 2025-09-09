@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.external.app.service;
 
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper;
+import knemognition.heartauth.orchestrator.external.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
 import knemognition.heartauth.orchestrator.external.model.*;
@@ -34,9 +35,12 @@ public class InitPairingServiceImpl implements InitPairingService {
     private final SecureRandom secureRandom;
     private final EnrichDeviceDataStore enrichDeviceDataStore;
     private final StatusStore<PairingState> pairingStateStatusStore;
+    private final PemMapper pemMapper;
 
     @Override
     public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
+
+        pemMapper.map(req.getPublicKeyPem());
 
         String nonceB64 = createNonce(secureRandom, externalPairingProperties.getNonceLength());
         UUID id = claims.getJti();
