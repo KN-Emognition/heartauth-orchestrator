@@ -15,7 +15,6 @@ paths:
           content:
             application/json:
               schema: { $ref: '#/components/schemas/JwkSet' }
-
 components:
   schemas:
     JwkSet:
@@ -25,8 +24,7 @@ components:
         keys:
           type: array
           items:
-            $ref: '#/components/schemas/ECJwk'   # <-- no oneOf here
-
+            $ref: '#/components/schemas/ECJwk'
     ECJwk:
       type: object
       required: [kty, crv, x, y]
