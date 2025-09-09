@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 
-import static knemognition.heartauth.orchestrator.shared.config.ExceptionHandlingUtils.problem;
+import static knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem;
 
 @Slf4j
 @RestControllerAdvice(basePackages = "knemognition.heartauth.orchestrator.internal.interfaces.rest")
@@ -30,4 +30,5 @@ public class InternalExceptionHandler {
     public ProblemDetail handleStatusService(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "Status operation for given flow failed.", req, ex);
     }
+
 }

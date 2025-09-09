@@ -1,10 +1,9 @@
-package knemognition.heartauth.orchestrator.shared.config;
+package knemognition.heartauth.orchestrator.shared.utils;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 

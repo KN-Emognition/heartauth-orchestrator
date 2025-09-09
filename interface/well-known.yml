@@ -1,0 +1,50 @@
+openapi: 3.0.3
+info:
+  title: Well-Known JWKS
+  version: 1.0.0
+paths:
+  /.well-known/jwks.json:
+    get:
+      tags: [WellKnown]
+      summary: Get JSON Web Key Set (JWKS)
+      operationId: getJwks
+      security: []
+      responses:
+        '200':
+          description: JWKS document
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JwkSet' }
+components:
+  schemas:
+    JwkSet:
+      type: object
+      required: [keys]
+      properties:
+        keys:
+          type: array
+          items:
+            $ref: '#/components/schemas/ECJwk'
+    ECJwk:
+      type: object
+      required: [kty, crv, x, y]
+      properties:
+        kty:
+          type: string
+          enum: [EC]
+        crv:
+          type: string
+          enum: [P-256, P-384, P-521]
+        x:
+          type: string
+          pattern: '^[A-Za-z0-9_-]+$'
+        y:
+          type: string
+          pattern: '^[A-Za-z0-9_-]+$'
+        kid: { type: string }
+        use: { type: string, enum: [sig, enc] }
+        alg: { type: string }
+        x5u: { type: string, format: uri }
+        x5c: { type: array, items: { type: string } }
+        x5t: { type: string }
+        "x5t#S256": { type: string }

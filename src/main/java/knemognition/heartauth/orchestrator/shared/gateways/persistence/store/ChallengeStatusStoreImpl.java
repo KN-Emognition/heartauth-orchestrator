@@ -23,7 +23,6 @@ public class ChallengeStatusStoreImpl implements StatusStore<ChallengeState> {
         return challengeStateRepository.findById(statusChange.getId())
                 .map(ent -> {
                     challengeStatusStoreMapper.applyStatus(ent, statusChange.getStatus(), statusChange.getReason());
-                    // No manual TTL juggling; Redis preserves remaining TTL on update.
                     challengeStateRepository.save(ent);
                     return true;
                 })

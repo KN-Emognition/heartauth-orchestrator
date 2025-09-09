@@ -2,13 +2,15 @@ package knemognition.heartauth.orchestrator.external.app.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
+import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
+import knemognition.heartauth.orchestrator.external.app.mapper.ConfirmPairingMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.DeviceCredentialCreateMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
+import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoPairingException;
 import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.external.app.ports.out.CreateDeviceCredentialStore;
@@ -30,6 +32,8 @@ public class CompletePairingServiceImpl implements CompletePairingService {
     private final StatusStore<PairingState> pairingStateStatusStore;
     private final CreateDeviceCredentialStore deviceCredentialStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
+    private final ConfirmPairingMapper confirmPairingMapper;
+    private final ValidateNonceService validateNonceService;
     private final ObjectMapper objectMapper;
 
     @Override
@@ -47,29 +51,10 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         if (pairingState.getStatus() != FlowStatus.PENDING) {
             throw new StatusServiceException("Pairing status is not in pending");
         }
-//        if (!"ES256".equals(req.getAlg())) {
-//            pairingStore.changeStatus(jti, FlowStatus.DENIED, "unsupported_alg");
-//            throw new IllegalArgumentException("unsupported_alg");
-//        }
-//        try {
-//            PublicKey pub = CryptoUtils.parseECP256PublicKeyFromPEM(pairingState.getPublicKeyPem());
-//            byte[] nonce = Base64.getDecoder().decode(pairingState.getNonceB64());
-//            byte[] msg = CryptoUtils.concat(
-//                    nonce,
-//                    CryptoUtils.ascii(jti.toString()),
-//                    CryptoUtils.ascii(req.getDeviceId())
-//            );
-//            byte[] sig = Base64.getUrlDecoder().decode(req.getSignature());
-//            if (!CryptoUtils.verifyES256(pub, msg, sig)) {
-//                pairingStore.changeStatus(jti, FlowStatus.DENIED, "bad_signature");
-//                throw new SecurityException("bad_signature");
-//            }
-//        } catch (SecurityException se) {
-//            throw se;
-//        } catch (Exception e) {
-//            pairingStore.changeStatus(jti, FlowStatus.DENIED, "signature_verification_failed");
-//            throw new IllegalArgumentException("signature_verification_failed", e);
-//        }
+
+        ValidateNonce validateNonce = confirmPairingMapper.toValidateNonce(req, pairingState);
+        validateNonceService.validate(validateNonce);
+        log.info("Nonce has been successfully validated");
 
 
         DeviceCredential deviceCredential = deviceCredentialCreateMapper.fromPairingState(pairingState, objectMapper);

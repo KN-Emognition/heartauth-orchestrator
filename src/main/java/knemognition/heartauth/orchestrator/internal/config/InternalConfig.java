@@ -6,7 +6,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-@Profile({"internal","orchestrator"})
+@Profile({"internal"})
 @Configuration
-@ComponentScan(basePackageClasses = { InternalMarker.class, SharedMarker.class })
-public class InternalConfig {}
+@ComponentScan(basePackageClasses = {InternalMarker.class, SharedMarker.class})
+public class InternalConfig {
+}

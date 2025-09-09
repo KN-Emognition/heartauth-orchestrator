@@ -19,12 +19,13 @@ public interface CreateChallengeMapper {
     @Mapping(target = "challengeId", source = "id")
     ChallengeCreateResponse toResponse(CreatedFlowResult result);
 
+    @Mapping(target = "ttlSeconds", source = "effectiveTtl")
 
-    CreateChallenge toCreateChallenge(ChallengeCreateRequest req, String nonceB64);
+    CreateChallenge toCreateChallenge(ChallengeCreateRequest req, String nonceB64, Integer effectiveTtl);
 
-    @Mapping(target="type", constant = "ECG_CHALLENGE")
-    @Mapping(target="nonce", source = "nonceB64")
-    @Mapping(target="challengeId",source="res.id")
-    MessageData toMessageData(CreatedFlowResult res,String nonceB64);
+    @Mapping(target = "type", constant = "ECG_CHALLENGE")
+    @Mapping(target = "nonce", source = "nonceB64")
+    @Mapping(target = "challengeId", source = "res.id")
+    MessageData toMessageData(CreatedFlowResult res, String nonceB64);
 }
 
