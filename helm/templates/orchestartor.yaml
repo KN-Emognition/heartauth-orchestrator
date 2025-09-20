@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "orchestrator.fullname" . }}
+  labels:
+    app: {{ include "orchestrator.fullname" . }}
+    {{- include "orchestrator.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: {{ include "orchestrator.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "orchestrator.fullname" . }}
+        {{- include "orchestrator.labels" . | nindent 8 }}
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      containers:
+        - name: orchestrator
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort | default 8080 }}
+          {{- $hasEnv := or .Values.env .Values.secretEnv }}
+          {{- if $hasEnv }}
+          env:
+            {{- if .Values.env }}
+              {{- if kindIs "map" .Values.env }}
+                {{- range $k, $v := .Values.env }}
+            - name: {{ $k }}
+              value: {{ $v | quote }}
+                {{- end }}
+              {{- else }}
+                {{- toYaml .Values.env | nindent 12 }}
+              {{- end }}
+            {{- end }}
+            {{- if .Values.secretEnv }}
+              {{- $defaultSecret := (include "orchestrator.fullname" .) -}}
+              {{- if and (hasKey .Values "secret") (kindIs "map" .Values.secret) (hasKey .Values.secret "name") -}}
+                {{- $defaultSecret = default $defaultSecret .Values.secret.name -}}
+              {{- else if and (hasKey .Values "secret") (kindIs "string" .Values.secret) -}}
+                {{- $defaultSecret = .Values.secret -}}
+              {{- end }}
+              {{- range $name, $ref := .Values.secretEnv }}
+            - name: {{ $name }}
+              valueFrom:
+                secretKeyRef:
+                  {{- if kindIs "map" $ref }}
+                  name: {{ $ref.name }}
+                  key: {{ $ref.key }}
+                  {{- else }}
+                  name: {{ $defaultSecret }}
+                  key: {{ $ref }}
+                  {{- end }}
+              {{- end }}
+            {{- end }}
+          {{- end }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.probes.readiness.path | default "/health/ready" }}
+              port: {{ .Values.probes.port | default (.Values.service.targetPort | default 8080) }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds | default 15 }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds | default 10 }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold | default 6 }}
+
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.probes.liveness.path | default "/health/live" }}
+              port: {{ .Values.probes.port | default (.Values.service.targetPort | default 8080) }}
+            initialDelaySeconds: {{ .Values.probes.liveness.initialDelaySeconds | default 30 }}
+            periodSeconds: {{ .Values.probes.liveness.periodSeconds | default 10 }}
+            failureThreshold: {{ .Values.probes.liveness.failureThreshold | default 6 }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- if .Values.secretFiles.enabled }}
+          volumeMounts:
+            - name: secret-files
+              mountPath: {{ .Values.secretFiles.mountPath }}
+              readOnly: true
+          {{- end }}
+      {{- if .Values.secretFiles.enabled }}
+      volumes:
+        - name: secret-files
+          secret:
+            secretName: {{ .Values.secretFiles.name | default (include "orchestrator.fullname" .) }}
+            defaultMode: {{ .Values.secretFiles.defaultMode | default 0440 }}
+            items:
+              {{- range .Values.secretFiles.items }}
+              - key: {{ .key }}
+                path: {{ .path }}
+              {{- end }}
+      {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "orchestrator.fullname" . }}
+  labels:
+    app: {{ include "orchestrator.fullname" . }}
+    {{- include "orchestrator.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type | default "ClusterIP" }}
+  selector:
+    app: {{ include "orchestrator.fullname" . }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port | default 80 }}
+      targetPort: {{ .Values.service.targetPort | default 8080 }}
+

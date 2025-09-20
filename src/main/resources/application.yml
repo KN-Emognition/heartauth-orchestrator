@@ -1,7 +1,7 @@
 spring:
   data:
     redis:
-      url: ${REDIS_URL:redis://localhost:6379}
+      url: ${REDIS_URL:redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}}
       timeout: 3s
       client-type: lettuce
       lettuce:
@@ -11,7 +11,7 @@ spring:
           min-idle: 0
           max-wait: 5s
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/orchestrator}
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:orchestrator}}
     username: ${DB_USER:orchestrator}
     password: ${DB_PASSWORD:orchestrator}
     hikari:

@@ -9,30 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-
+    env:
+      SERVICE_NAME: orchestrator
     steps:
       - uses: actions/checkout@v4
-
-      - name: Make mvnw executable
-        run: chmod +x mvnw
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '24'
-          cache: maven
-
-      - name: Go offline (deps)
-        run: ./mvnw -B -ntp dependency:go-offline
-
-      # Optional quality gates
-      # - name: Test
-      #   run: ./mvnw -B -ntp test
-
-      - name: Build (skip tests)
-        run: ./mvnw -B -ntp -DskipTests package
-
       - name: Short SHA
         id: vars
         run: echo "short_sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
@@ -46,8 +26,7 @@ jobs:
         with:
           username: ${{ secrets.P3_DH_USERNAME }}
           password: ${{ secrets.P3_DH_PASSWORD }}
-
-      - name: Build & push Docker image
+      - name: Build & push Docker
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -56,4 +35,4 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           tags: |
-            ${{ secrets.P3_DH_USERNAME }}/orchestrator:${{ steps.vars.outputs.short_sha }}
+            ${{ secrets.P3_DH_USERNAME }}/${{ env.SERVICE_NAME }}:${{ steps.vars.outputs.short_sha }}

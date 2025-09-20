@@ -1,0 +1,65 @@
+# helm template ./helm -f helm/values.yaml > helm/rendered/core.yaml
+namespaceOverride:
+fullnameOverride: orchestrator
+
+replicas: 2
+
+
+image: 
+  repository: poziomk3/orchestrator
+  tag: v0.3.1
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+
+env:
+  JWT_KID: orchestrator-key
+  JWT_PRIVATE_KEY_LOCATION: file:/orchestrator-data/privateKey.pem
+  JWT_PUBLIC_KEY_LOCATION: file:/orchestrator-data/publicKey.pem
+secretEnv:
+  DB_USER: DB_USER
+  DB_PASSWORD: DB_PASSWORD
+secret:
+  name: 
+
+secretFiles:
+  enabled: true
+  name: core-secrets          
+  mountPath: /orchestrator-data    
+  defaultMode: 0440
+  items:
+    - key: privateKey.pem
+      path: privateKey.pem
+    - key: publicKey.pem
+      path: publicKey.pem
+
+
+
+envFrom:
+
+
+probes:
+  port: 8080
+  readiness:
+    path: /actuator/health
+    initialDelaySeconds: 20
+    periodSeconds: 10
+    failureThreshold: 6
+  liveness:
+    path: /actuator/health
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    failureThreshold: 6
+  
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
