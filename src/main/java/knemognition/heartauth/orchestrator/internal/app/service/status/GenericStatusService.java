@@ -5,15 +5,17 @@ import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.internal.app.mapper.ResponseStatusMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.UUID;
 
 @Slf4j
-public record GenericStatusService<T>(
-        StatusStore<T> statusStore,
-        ResponseStatusMapper responseStatusMapper) implements StatusService {
+@RequiredArgsConstructor
+public class GenericStatusService<T> implements StatusService {
 
+    private final StatusStore<T> statusStore;
+    private final ResponseStatusMapper responseStatusMapper;
 
     @Override
     public StatusResponse status(UUID id) {
@@ -33,6 +35,4 @@ public record GenericStatusService<T>(
         }
         return change;
     }
-
-
 }

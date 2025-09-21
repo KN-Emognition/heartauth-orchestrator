@@ -13,7 +13,7 @@ import java.security.interfaces.ECPublicKey;
 public interface PemMapper {
 
     @Named("pemToEcPublicKey")
-    default ECPublicKey map(String pem) {
+    default ECPublicKey mapAndValidate(String pem) {
         try (var in = new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8))) {
             ECPublicKey ecPub = KeyLoader.loadEcPublicKey(in);
 

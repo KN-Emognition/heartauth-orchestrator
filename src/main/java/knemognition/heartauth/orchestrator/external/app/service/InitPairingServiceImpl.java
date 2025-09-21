@@ -40,7 +40,7 @@ public class InitPairingServiceImpl implements InitPairingService {
     @Override
     public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
 
-        pemMapper.map(req.getPublicKeyPem());
+        pemMapper.mapAndValidate(req.getPublicKeyPem());
 
         String nonceB64 = createNonce(secureRandom, externalPairingProperties.getNonceLength());
         UUID id = claims.getJti();

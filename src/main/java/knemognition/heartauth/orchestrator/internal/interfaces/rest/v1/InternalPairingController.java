@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingService;
+import knemognition.heartauth.orchestrator.internal.app.service.PairingStatusServiceImpl;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
@@ -22,7 +23,7 @@ import java.util.UUID;
 @PreAuthorize("hasAuthority('keycloak')")
 public class InternalPairingController implements PairingApi {
 
-    private final StatusService<PairingState> pairingStateStatusService;
+    private final PairingStatusServiceImpl pairingStateStatusService;
     private final CreatePairingService createPairingService;
 
 

@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
 import jakarta.validation.Valid;
+import knemognition.heartauth.orchestrator.internal.app.service.ChallengeStatusServiceImpl;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.StatusService;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
@@ -24,7 +25,7 @@ import java.util.UUID;
 public class InternalChallengeController implements ChallengeApi {
 
     private final CreateChallengeService createChallengeService;
-    private final StatusService<ChallengeState> challengeStatusService;
+    private final ChallengeStatusServiceImpl challengeStatusService;
 
 
     @Override
