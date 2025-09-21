@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
 
-import static knemognition.heartauth.orchestrator.shared.utils.Clamp.withinOrDefault;
+import static knemognition.heartauth.orchestrator.shared.utils.Clamp.clampOrDefault;
 
 @Slf4j
 @Service
@@ -39,7 +39,7 @@ public class CreatePairingServiceImpl implements CreatePairingService {
         UUID jti = UUID.randomUUID();
         Instant now = Instant.now();
 
-        Integer effectiveTtl = withinOrDefault(
+        Integer effectiveTtl = clampOrDefault(
                 req.getTtlSeconds(),
                 internalPairingProperties.getMinTtl(),
                 internalPairingProperties.getMaxTtl(),

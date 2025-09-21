@@ -6,29 +6,32 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Clamp {
 
-    public static <T extends Comparable<T>> T withinOrDefault(
+    private static <T extends Comparable<? super T>> void requireRange(T min, T max) {
+        if (min.compareTo(max) > 0) throw new IllegalArgumentException("min must be ≤ max");
+    }
+
+    public static <T extends Comparable<? super T>> T clampOrDefault(
             T value, T min, T max, T defaultValue) {
-
-        if (min.compareTo(max) > 0) {
-            throw new IllegalArgumentException("min must be ≤ max");
-        }
-        if (value == null) return defaultValue;
-        return (value.compareTo(min) >= 0 && value.compareTo(max) <= 0)
-                ? value
-                : defaultValue;
+        requireRange(min, max);
+        T v = (value == null) ? defaultValue : value;
+        if (v.compareTo(min) < 0) return min;
+        if (v.compareTo(max) > 0) return max;
+        return v;
     }
 
-    public static long withinOrDefault(Long value, long min, long max, long defaultValue) {
+    public static int clampOrDefault(Integer value, int min, int max, int defaultValue) {
         if (min > max) throw new IllegalArgumentException("min must be ≤ max");
-        if (value == null) return defaultValue;
-        long v = value;
-        return (v >= min && v <= max) ? v : defaultValue;
+        int v = (value == null) ? defaultValue : value;
+        if (v < min) return min;
+        if (v > max) return max;
+        return v;
     }
 
-    public static int withinOrDefault(Integer value, int min, int max, int defaultValue) {
+    public static long clampOrDefault(Long value, long min, long max, long defaultValue) {
         if (min > max) throw new IllegalArgumentException("min must be ≤ max");
-        if (value == null) return defaultValue;
-        int v = value;
-        return (v >= min && v <= max) ? v : defaultValue;
+        long v = (value == null) ? defaultValue : value;
+        if (v < min) return min;
+        if (v > max) return max;
+        return v;
     }
 }

@@ -22,7 +22,7 @@ import java.security.SecureRandom;
 import java.time.Duration;
 import java.util.List;
 
-import static knemognition.heartauth.orchestrator.shared.utils.Clamp.withinOrDefault;
+import static knemognition.heartauth.orchestrator.shared.utils.Clamp.clampOrDefault;
 import static knemognition.heartauth.orchestrator.shared.utils.NonceUtils.createNonce;
 
 @Slf4j
@@ -47,7 +47,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
             throw new NoActiveDeviceException("No active device");
         }
 
-        Integer effectiveTtl = withinOrDefault(
+        Integer effectiveTtl = clampOrDefault(
                 req.getTtlSeconds(),
                 internalChallengeProperties.getMinTtl(),
                 internalChallengeProperties.getMaxTtl(),

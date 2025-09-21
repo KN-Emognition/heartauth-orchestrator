@@ -4,6 +4,8 @@ import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NonceValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import test.config.HeartauthUnitTest;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -11,30 +13,27 @@ import java.nio.charset.StandardCharsets;
 import static knemognition.heartauth.orchestrator.shared.utils.KeyLoader.loadEcPublicKey;
 import static org.junit.jupiter.api.Assertions.*;
 
-class ValidateNonceServiceImplTest {
+class ValidateNonceServiceImplTest extends HeartauthUnitTest {
 
-    private ValidateNonceServiceImpl service;
+    @InjectMocks
+    ValidateNonceServiceImpl service;
 
-    private static final String PUBLIC_KEY_PEM =
+    final String PUBLIC_KEY_PEM =
             "-----BEGIN PUBLIC KEY-----" +
                     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8/2k2MUkTlixFvR9ooUgBOwKgj5v" +
                     "BMVf3NGFOgV3TJcwaZme8fTcNjPxSmSrMoPd3LS6OJ+IMzNkQO5CVI79Vw==" +
                     "-----END PUBLIC KEY-----";
 
-    private static final String NONCE =
+    final String NONCE =
             "2iS7zMVqgV1dicY3toudE3dvGzi8jsu7fguS3OmYe6Q=";
 
 
-    private static final String VALID_SIGNATURE =
+    final String VALID_SIGNATURE =
             "TF9VYe1eTAHoRq1sj3NbfygmZYSZ_jPHHck7-yDN96PMChMQ8wDzxL2Tbqn0aEpVhLiZoujlkXH6Btn431YRtA";
 
-    private static final String INVALID_SIGNATURE =
+    final String INVALID_SIGNATURE =
             "TF9VYe1eTAHoRq1sjsNbfygmZYSZ_jPHHck7-yDN96PMChMQ8wDzxL2Tbqn0aEpVhLiZoujlkXH6Btn431YRtA";
 
-    @BeforeEach
-    void setUp() {
-        service = new ValidateNonceServiceImpl();
-    }
 
     @Test
     void validate_withCorrectSignature_succeeds() throws Exception {
