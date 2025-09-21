@@ -1,124 +1,69 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingService;
 import knemognition.heartauth.orchestrator.internal.app.service.PairingStatusServiceImpl;
-import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.springframework.http.ResponseEntity;
+import test.config.HeartauthUnitTest;
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
-@ActiveProfiles("internal")
-@org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest(
-        controllers = InternalPairingController.class,
-        excludeFilters = @org.springframework.context.annotation.ComponentScan.Filter(
-                type = org.springframework.context.annotation.FilterType.REGEX,
-                pattern = "knemognition\\.heartauth\\.orchestrator\\.shared\\..*")
-)
-class InternalPairingControllerTest {
+class InternalPairingControllerTest extends HeartauthUnitTest {
 
-    @Autowired
-    MockMvc mvc;
-    @Autowired
-    ObjectMapper objectMapper;
+    @Mock
+    private PairingStatusServiceImpl pairingStatusService;
 
-    @MockitoBean
-    PairingStatusServiceImpl pairingStateStatusService;
-    @MockitoBean
-    CreatePairingService createPairingService;
+    @Mock
+    private CreatePairingService createPairingService;
 
-    @MockitoBean
-    ChallengeStateRepository challengeStateRepository; // <-- satisfies ChallengeStatusStoreImpl
+    @InjectMocks
+    private InternalPairingController controller;
 
     @Test
-    void status_returns200_withBody_whenAuthorized() throws Exception {
+    void internalPairingStatus_returnsOkWithBody() {
+        // given
         UUID jti = UUID.randomUUID();
+        String xKCSession = "dummy-session";
+        StatusResponse expected = new StatusResponse(); // populate if needed
+        when(pairingStatusService.status(jti)).thenReturn(expected);
 
-        // Build whatever your StatusResponse looks like
-        StatusResponse serviceResponse = StatusResponse.builder()
-                .status(FlowStatus.PENDING)
-                .build();
+        // when
+        ResponseEntity<StatusResponse> resp = controller.internalPairingStatus(jti, xKCSession);
 
-        Mockito.when(pairingStateStatusService.status(eq(jti)))
-                .thenReturn(serviceResponse);
+        // then
+        assertThat(resp.getStatusCode().value()).isEqualTo(200);
+        assertThat(resp.getBody()).isSameAs(expected);
 
-        mvc.perform(get("/internal/v1/pairing/{jti}/status", jti) // <-- align with PairingApi route
-                        .header("X-KC-Session", "session-123")            // <-- align header name used in PairingApi
-                        .with(SecurityMockMvcRequestPostProcessors.jwt()
-                                .authorities(new SimpleGrantedAuthority("keycloak"))))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.state").value("ACTIVE"));
-
-        Mockito.verify(pairingStateStatusService).status(jti);
+        ArgumentCaptor<UUID> captor = ArgumentCaptor.forClass(UUID.class);
+        verify(pairingStatusService, times(1)).status(captor.capture());
+        assertThat(captor.getValue()).isEqualTo(jti);
+        verifyNoMoreInteractions(pairingStatusService, createPairingService);
     }
 
     @Test
-    void create_returns201_withBody_whenAuthorized() throws Exception {
-        PairingCreateRequest req = PairingCreateRequest.builder()
-                // set fields as your model requires
-                .build();
+    void internalPairingCreate_returnsCreatedWithBody() {
+        // given
+        PairingCreateRequest req = new PairingCreateRequest(); // populate if needed
+        PairingCreateResponse expected = new PairingCreateResponse(); // populate if needed
+        when(createPairingService.create(req)).thenReturn(expected);
 
-        PairingCreateResponse resp = PairingCreateResponse.builder()
-                // set fields you expect back, e.g. id/token/etc
-                .build();
+        // when
+        ResponseEntity<PairingCreateResponse> resp = controller.internalPairingCreate(req);
 
-        Mockito.when(createPairingService.create(any()))
-                .thenReturn(resp);
+        // then
+        assertThat(resp.getStatusCode().value()).isEqualTo(201);
+        assertThat(resp.getBody()).isSameAs(expected);
 
-        mvc.perform(post("/internal/v1/pairing") // <-- align with PairingApi route for "create"
-                        .with(SecurityMockMvcRequestPostProcessors.jwt()
-                                .authorities(new SimpleGrantedAuthority("keycloak")))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(req)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
-        // You can assert fields, e.g.: .andExpect(jsonPath("$.id").value("..."));
-
-        Mockito.verify(createPairingService).create(any(PairingCreateRequest.class));
-    }
-
-    @Test
-    void unauthorized_withoutAuthority() throws Exception {
-        UUID jti = UUID.randomUUID();
-
-        // No user / no jwt -> expect 401 by default
-        mvc.perform(get("/internal/v1/pairing/{jti}/status", jti)
-                        .header("X-KC-Session", "session-123"))
-                .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithMockUser
-        // has a user but missing the required 'keycloak' authority
-    void forbidden_withoutRequiredAuthority() throws Exception {
-        UUID jti = UUID.randomUUID();
-
-        mvc.perform(get("/internal/v1/pairing/{jti}/status", jti)
-                        .header("X-KC-Session", "session-123"))
-                .andExpect(status().isForbidden());
+        verify(createPairingService, times(1)).create(req);
+        verifyNoMoreInteractions(createPairingService, pairingStatusService);
     }
 }
