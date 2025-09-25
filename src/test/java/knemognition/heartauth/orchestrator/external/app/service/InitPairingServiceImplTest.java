@@ -2,8 +2,7 @@ package knemognition.heartauth.orchestrator.external.app.service;
 
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper;
-import knemognition.heartauth.orchestrator.external.app.mapper.PemMapper;
-import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
+import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
 import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
 import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;
@@ -18,9 +17,7 @@ import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusSer
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
 import test.config.HeartauthUnitTest;
 
 import java.security.SecureRandom;
@@ -88,7 +85,7 @@ class InitPairingServiceImplTest extends HeartauthUnitTest {
 
         PairingInitResponse response = service.init(request, qrClaims);
 
-        verify(pemMapper).mapAndValidate("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqh...\n-----END PUBLIC KEY-----");
+        verify(pemMapper).publicMapAndValidate("-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqh...\n-----END PUBLIC KEY-----");
 
         verify(enrichDeviceDataStore).enrich(mapped);
 

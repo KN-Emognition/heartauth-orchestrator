@@ -4,7 +4,7 @@ package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.external.app.ports.out.CreateDeviceCredentialStore;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.DeviceCredentialEntity;
-import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.CreateDeviceCredentialStoreMapper;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.DeviceCredentialMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceCredentialRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CreateDeviceCredentialStoreImpl implements CreateDeviceCredentialStore {
 
-    private final CreateDeviceCredentialStoreMapper mapper;
+    private final DeviceCredentialMapper mapper;
     private final DeviceCredentialRepository deviceCredentialRepository;
 
     @Override

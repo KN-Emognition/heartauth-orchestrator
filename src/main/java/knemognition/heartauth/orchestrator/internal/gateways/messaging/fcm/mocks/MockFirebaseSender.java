@@ -19,7 +19,7 @@ public class MockFirebaseSender implements FirebaseSender {
 
     @Override
     public void sendData(String token, MessageData messageData, Duration ttl) {
-        log.warn("⚠️ Skipping FCM send.");
+        log.warn("Mock sendData called with token: {}, publicKey: {}", token, messageData.getPublicKey());
     }
 
 }

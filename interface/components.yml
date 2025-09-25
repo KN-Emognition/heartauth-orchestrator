@@ -125,14 +125,17 @@ components:
     ChallengeCompleteRequest:
       type: object
       required:
-        - assertionJwt
+        - data
+        - signature
       properties:
-        assertionJwt:
+        data:
           type: string
           description: |
-            JWS (ES256) signed by the device key. Claims: challengeId, nonce, aud, iat, biometricPassed, matchScore, deviceId.
-        anything:
+            AES encrypted ecg with nonce as salt
+        signature:
           type: string
+          description:  |
+            Signed nonce
     PairingCreateRequest:
       type: object
       required:

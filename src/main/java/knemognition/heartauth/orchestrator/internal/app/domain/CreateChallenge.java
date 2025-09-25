@@ -14,4 +14,6 @@ public class CreateChallenge {
     private UUID userId;
     private String nonceB64;
     private Long ttlSeconds;
+    private String privateKey;
+    private String userPublicKey;
 }

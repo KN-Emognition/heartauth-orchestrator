@@ -43,6 +43,10 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         PairingState pairingState = pairingStateGetFlowStore.getFlow(jti)
                 .orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
 
+        ValidateNonce validateNonce = confirmPairingMapper.toValidateNonce(req, pairingState);
+        validateNonceService.validate(validateNonce);
+        log.info("Nonce has been successfully validated");
+
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(jti);
 
         if (pairingState.getStatus() == FlowStatus.APPROVED) {
@@ -51,11 +55,6 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         if (pairingState.getStatus() != FlowStatus.PENDING) {
             throw new StatusServiceException("Pairing status is not in pending");
         }
-
-        ValidateNonce validateNonce = confirmPairingMapper.toValidateNonce(req, pairingState);
-        validateNonceService.validate(validateNonce);
-        log.info("Nonce has been successfully validated");
-
 
         DeviceCredential deviceCredential = deviceCredentialCreateMapper.fromPairingState(pairingState, objectMapper);
         deviceCredentialStore.create(deviceCredential);

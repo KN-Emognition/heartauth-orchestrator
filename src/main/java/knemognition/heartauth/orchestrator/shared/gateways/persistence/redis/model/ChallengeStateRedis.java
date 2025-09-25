@@ -11,9 +11,13 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @RedisHash("challenge")
-@Data @Builder @AllArgsConstructor @NoArgsConstructor
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChallengeStateRedis implements Serializable {
-    @Id private UUID id;
+    @Id
+    private UUID id;
 
     private FlowStatus status;
 
@@ -22,7 +26,8 @@ public class ChallengeStateRedis implements Serializable {
     private Long exp;
     private Long createdAt;
     private String reason;
-
+    private String privateKeyPem;
+    private String userPublicKeyPem;
     @TimeToLive
     private Long ttlSeconds;
 }

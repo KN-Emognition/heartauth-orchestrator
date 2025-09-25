@@ -3,6 +3,7 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import lombok.*;
 
+import java.security.PrivateKey;
 import java.util.UUID;
 
 @Getter
@@ -18,4 +19,6 @@ public class ChallengeState {
     private Long createdAt;
     private String reason;
     private Long ttlSeconds;
+    private String privateKeyPem;
+    private String userPublicKeyPem;
 }
