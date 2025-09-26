@@ -1,2 +1,2 @@
-src/main/resources/security/**
-src/main/resources/firebase/**
+secrets
+helm

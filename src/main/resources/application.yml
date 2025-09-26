@@ -62,5 +62,5 @@ security:
 jwt:
   kid: "id"
   private-key-password: null
-  private-key-location: classpath:security/privKey.pem
-  public-key-location:  classpath:security/pubKey.pem
+  private-key-location: file:${user.dir}/secrets/privKey.pem
+  public-key-location:  file:${user.dir}/secrets/pubKey.pem
