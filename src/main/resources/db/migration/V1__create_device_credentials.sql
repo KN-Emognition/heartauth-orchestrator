@@ -12,12 +12,12 @@ CREATE TABLE device_credential
     os_version     TEXT,
     model          TEXT,
 
-    attestation    JSONB,       -- raw attestation payload (optional)
+    attestation    JSONB,
 
     created_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
-    last_seen_at   TIMESTAMPTZ, -- updated on app heartbeats / challenge complete
-    revoked_at     TIMESTAMPTZ  -- null => active
+    last_seen_at   TIMESTAMPTZ,
+    revoked_at     TIMESTAMPTZ
 
 );
 
