@@ -7,7 +7,7 @@ replicas: 2
 
 image: 
   repository: poziomk3/orchestrator
-  tag: v0.3.1
+  tag: v1.0.0
   pullPolicy: IfNotPresent
 
 service:
@@ -57,9 +57,8 @@ probes:
   
 resources:
   requests:
-    cpu: 100m
-    memory: 128Mi
+    cpu: 0.25
+    memory: 750Mi
   limits:
-    cpu: 500m
-    memory: 512Mi
-
+    cpu: 0.5
+    memory: 1000Mi
