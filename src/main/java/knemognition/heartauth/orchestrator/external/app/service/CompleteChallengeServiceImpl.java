@@ -1,20 +1,28 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
+import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
+import knemognition.heartauth.orchestrator.external.app.mapper.CompleteChallengeMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
+import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
+import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.modelapi.api.PredictionApi;
 import knemognition.heartauth.orchestrator.modelapi.model.In;
 import knemognition.heartauth.orchestrator.modelapi.model.PredictResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
+import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
+import knemognition.heartauth.orchestrator.shared.utils.AesUtils;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 
@@ -23,17 +31,38 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 
-    private final StatusStore<ChallengeState> challengeStore;
+    private final ChallengeStore challengeStore;
     private final PredictionApi predictionApi;
+    private final StatusStore<ChallengeState> statusStore;
+    private final ValidateNonceService validateNonceService;
+    private final CompleteChallengeMapper completeChallengeMapper;
+    private final PemMapper pemMapper;
 
+    @SneakyThrows
     @Override
-    public void complete(UUID challengeId,
-                         ChallengeCompleteRequest req
-    ) {
-        challengeStore.getStatus(challengeId).
-                orElseThrow(() -> new NoChallengeException("pairing_not_found_or_expired"));
+    public void complete(UUID challengeId, ChallengeCompleteRequest req) {
+        ChallengeState state = challengeStore.getChallengeState(challengeId).orElseThrow(() -> new NoChallengeException("challenge_not_found_or_expired"));
+
+        ValidateNonce validateNonce = completeChallengeMapper.toValidateNonce(req, state);
+        validateNonceService.validate(validateNonce);
+        log.info("Nonce has been successfully validated");
+
+        if (state.getStatus() == FlowStatus.APPROVED) {
+            throw new NoChallengeException("challenge_replayed");
+        }
+        if (state.getStatus() != FlowStatus.PENDING) {
+            throw new NoChallengeException("Challenge status is not in pending");
+        }
+
+
+        byte[] data = AesUtils.decrypt(
+                req.getData().getBytes(StandardCharsets.UTF_8),
+                state.getNonceB64().getBytes(StandardCharsets.UTF_8),
+                validateNonce.getPub(),
+                pemMapper.privateMapAndValidate(state.getPrivateKeyPem()));
 
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(challengeId);
+
 
         In in = new In().anything("anything");
         PredictResponse prediction;
@@ -42,16 +71,16 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
             log.info("Called model for prediction.");
         } catch (Exception e) {
             log.warn("model-api call failed for challenge {}", challengeId, e);
-            challengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED).build());
+            statusStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED).build());
             throw new ChallengeFailedException("Can't access Model API");
         }
 
         boolean approved = prediction != null && prediction.getPrediction();
 
         if (!approved) {
-            challengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED).build());
+            statusStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED).build());
             throw new ChallengeFailedException("ECG Validation failed");
         }
-        challengeStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED).build());
+        statusStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED).build());
     }
 }

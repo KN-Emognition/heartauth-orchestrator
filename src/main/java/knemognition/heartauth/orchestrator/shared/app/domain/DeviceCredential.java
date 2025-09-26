@@ -3,7 +3,10 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import knemognition.heartauth.orchestrator.external.model.Platform;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.UUID;

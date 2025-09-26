@@ -6,7 +6,6 @@ import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;

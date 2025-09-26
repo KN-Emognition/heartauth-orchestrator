@@ -2,7 +2,10 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.mo
 
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -11,9 +14,13 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @RedisHash("challenge")
-@Data @Builder @AllArgsConstructor @NoArgsConstructor
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChallengeStateRedis implements Serializable {
-    @Id private UUID id;
+    @Id
+    private UUID id;
 
     private FlowStatus status;
 
@@ -22,7 +29,8 @@ public class ChallengeStateRedis implements Serializable {
     private Long exp;
     private Long createdAt;
     private String reason;
-
+    private String privateKeyPem;
+    private String userPublicKeyPem;
     @TimeToLive
     private Long ttlSeconds;
 }

@@ -15,4 +15,5 @@ public class MessageData {
     private String nonce;
     private Long ttl;
     private Long exp;
+    private String publicKey;
 }

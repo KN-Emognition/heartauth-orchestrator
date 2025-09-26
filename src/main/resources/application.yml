@@ -58,9 +58,9 @@ security:
     keys:
       - id: KEYCLOAK
         value: ${API_KEY_KEYCLOAK:a-string-secret-at-least-256-bits-long}
-        roles: [keycloak]
+        roles: [ keycloak ]
 jwt:
   kid: "id"
   private-key-password: null
-  private-key-location: classpath:security/privKey.pem
-  public-key-location:  classpath:security/pubKey.pem
+  private-key-location: file:${user.dir}/secrets/privKey.pem
+  public-key-location: file:${user.dir}/secrets/pubKey.pem

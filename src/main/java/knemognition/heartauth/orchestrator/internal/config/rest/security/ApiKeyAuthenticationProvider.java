@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
-import knemognition.heartauth.orchestrator.internal.config.firebase.FirebaseProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;

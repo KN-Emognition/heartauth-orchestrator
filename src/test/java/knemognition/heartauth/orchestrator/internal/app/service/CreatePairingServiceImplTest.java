@@ -10,7 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.*;
 import test.config.HeartauthUnitTest;
@@ -20,15 +21,18 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class CreatePairingServiceImplTest extends HeartauthUnitTest {
 
-    @Mock private CreateFlowStore<CreatePairing> store;
-    @Mock private CreatePairingMapper mapper;
-    @Mock private JwtEncoder jwtEncoder;
-    @Mock private InternalPairingProperties props;
+    @Mock
+    private CreateFlowStore<CreatePairing> store;
+    @Mock
+    private CreatePairingMapper mapper;
+    @Mock
+    private JwtEncoder jwtEncoder;
+    @Mock
+    private InternalPairingProperties props;
 
     private CreatePairingServiceImpl service;
 
@@ -58,15 +62,6 @@ class CreatePairingServiceImplTest extends HeartauthUnitTest {
                 .userId(userId)
                 .ttlSeconds(ttlSeconds)
                 .build();
-    }
-
-    private static class CapturedJwt {
-        final JwsHeader headers;
-        final JwtClaimsSet claims;
-        CapturedJwt(JwtEncoderParameters params) {
-            this.headers = params.getJwsHeader();
-            this.claims = params.getClaims();
-        }
     }
 
     @Test
@@ -118,6 +113,16 @@ class CreatePairingServiceImplTest extends HeartauthUnitTest {
         assertThat(out.getJti()).isEqualTo(jtiCap.getValue());
         // Your generated model appears to expose 'jwt' as the token field:
         assertThat(out.getJwt()).isEqualTo("signed.jwt.value");
+    }
+
+    private static class CapturedJwt {
+        final JwsHeader headers;
+        final JwtClaimsSet claims;
+
+        CapturedJwt(JwtEncoderParameters params) {
+            this.headers = params.getJwsHeader();
+            this.claims = params.getClaims();
+        }
     }
 
     @Nested

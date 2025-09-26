@@ -1,17 +1,18 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
+import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper;
-import knemognition.heartauth.orchestrator.external.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
+import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
-import knemognition.heartauth.orchestrator.external.model.*;
+import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
+import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ public class InitPairingServiceImpl implements InitPairingService {
     @Override
     public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
 
-        pemMapper.mapAndValidate(req.getPublicKeyPem());
+        pemMapper.publicMapAndValidate(req.getPublicKeyPem());
 
         String nonceB64 = createNonce(secureRandom, externalPairingProperties.getNonceLength());
         UUID id = claims.getJti();

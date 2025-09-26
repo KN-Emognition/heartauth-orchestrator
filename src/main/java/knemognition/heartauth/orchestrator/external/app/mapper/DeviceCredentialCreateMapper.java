@@ -6,7 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
-import org.mapstruct.*;
+import org.mapstruct.Context;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface DeviceCredentialCreateMapper {

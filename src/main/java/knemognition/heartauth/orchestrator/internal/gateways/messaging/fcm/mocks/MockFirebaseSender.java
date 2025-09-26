@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.internal.gateways.messaging.fcm.mocks;
 
-import com.google.firebase.messaging.*;
 import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ public class MockFirebaseSender implements FirebaseSender {
 
     @Override
     public void sendData(String token, MessageData messageData, Duration ttl) {
-        log.warn("⚠️ Skipping FCM send.");
+        log.warn("Mock sendData called with token: {}, publicKey: {}", token, messageData.getPublicKey());
     }
 
 }

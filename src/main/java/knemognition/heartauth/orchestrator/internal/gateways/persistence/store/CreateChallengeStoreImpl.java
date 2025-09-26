@@ -27,8 +27,8 @@ public class CreateChallengeStoreImpl implements CreateFlowStore<CreateChallenge
         final UUID id = UUID.randomUUID();
         final long ttl = Optional.ofNullable(state.getTtlSeconds()).filter(v -> v > 0).orElse(DEFAULT_TTL_SECONDS);
 
-        var ent = createChallengeStoreMapper.fromCreate(state, id, ttl); // fills createdAt, exp, ttlSeconds, status
-        challengeStateRepository.save(ent);                               // @TimeToLive drives actual Redis expiry
+        var ent = createChallengeStoreMapper.fromCreate(state, id, ttl);
+        challengeStateRepository.save(ent);
 
         return createChallengeStoreMapper.toCreatedResult(ent);
     }

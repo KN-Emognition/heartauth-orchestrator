@@ -11,6 +11,18 @@ tags:
   - name: Health
     description: Administrative endpoints.
 paths:
+  /.well-known/jwks.json:
+    get:
+      tags: [WellKnown]
+      summary: Get JSON Web Key Set (JWKS)
+      operationId: getJwks
+      security: []
+      responses:
+        '200':
+          description: JWKS document
+          content:
+            application/json:
+              schema: { $ref: './components.yml#/components/schemas/JwkSet' }
   /actuator/health:
     get:
       tags:

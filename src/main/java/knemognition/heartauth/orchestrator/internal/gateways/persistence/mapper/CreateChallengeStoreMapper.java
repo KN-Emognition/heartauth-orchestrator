@@ -21,6 +21,8 @@ public interface CreateChallengeStoreMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "exp", ignore = true)
     @Mapping(target = "ttlSeconds", ignore = true)
+    @Mapping(target = "privateKeyPem", source = "src.privateKey")
+    @Mapping(target = "userPublicKeyPem", source = "src.userPublicKey")
     ChallengeStateRedis baseFromCreate(CreateChallenge src, UUID id);
 
     default ChallengeStateRedis fromCreate(CreateChallenge src, UUID id, long ttlSeconds) {
@@ -28,8 +30,8 @@ public interface CreateChallengeStoreMapper {
         var ent = baseFromCreate(src, id);
         ent.setCreatedAt(now);
         ent.setStatus(FlowStatus.CREATED);
-        ent.setTtlSeconds(ttlSeconds);   // @TimeToLive reads this
-        ent.setExp(now + ttlSeconds);    // absolute expiry for quick guards
+        ent.setTtlSeconds(ttlSeconds);
+        ent.setExp(now + ttlSeconds);
         return ent;
     }
 

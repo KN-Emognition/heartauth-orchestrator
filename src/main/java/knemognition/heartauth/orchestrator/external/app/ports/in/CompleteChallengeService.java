@@ -6,6 +6,6 @@ import java.util.UUID;
 
 public interface CompleteChallengeService {
     void complete(UUID challengeId,
-                            ChallengeCompleteRequest req
+                  ChallengeCompleteRequest req
     );
 }

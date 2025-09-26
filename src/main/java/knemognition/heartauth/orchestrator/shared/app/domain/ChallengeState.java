@@ -18,4 +18,6 @@ public class ChallengeState {
     private Long createdAt;
     private String reason;
     private Long ttlSeconds;
+    private String privateKeyPem;
+    private String userPublicKeyPem;
 }

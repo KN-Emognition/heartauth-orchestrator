@@ -2,7 +2,7 @@ spring:
   application:
     name: internal-orchestrator
 firebase:
-  credentials-location: classpath:firebase/service-account.json
+  credentials-location: file:${user.dir}/secrets/service-account.json
   dry-run: false
 internal-challenge:
   default-ttl: 120
@@ -10,9 +10,9 @@ internal-challenge:
   min-ttl: 60
   nonce-length: 32
 internal-pairing:
-  issuer: "hauth:orchestrator"
+  issuer: hauth:orchestrator
   audience:
-    - "hauth:pairing"
+    - hauth:pairing
   default-ttl: 120
   max-ttl: 600
   min-ttl: 60
