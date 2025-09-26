@@ -21,13 +21,9 @@ public class CreateDeviceCredentialStoreImpl implements CreateDeviceCredentialSt
 
     @Override
     @Transactional
-    public DeviceCredential create(DeviceCredential toCreate) {
-        try {
-            DeviceCredentialEntity saved = deviceCredentialRepository.save(mapper.toEntity(toCreate));
-            return mapper.toDomain(saved);
-        } catch (DataIntegrityViolationException ex) {
-            throw ex;
-        }
+    public void create(DeviceCredential toCreate) {
+        DeviceCredentialEntity saved = deviceCredentialRepository.save(mapper.toEntity(toCreate));
+        mapper.toDomain(saved);
     }
 
 }

@@ -10,8 +10,6 @@ import org.mapstruct.*;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

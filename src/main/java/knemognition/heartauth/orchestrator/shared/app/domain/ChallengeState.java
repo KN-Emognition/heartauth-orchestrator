@@ -3,7 +3,6 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import lombok.*;
 
-import java.security.PrivateKey;
 import java.util.UUID;
 
 @Getter
