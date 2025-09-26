@@ -1,5 +1,6 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
+import knemognition.heartauth.orchestrator.internal.api.PairingApi;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingService;
 import knemognition.heartauth.orchestrator.internal.app.service.PairingStatusServiceImpl;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
@@ -10,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import knemognition.heartauth.orchestrator.internal.api.PairingApi;
 
 import java.util.UUID;
 

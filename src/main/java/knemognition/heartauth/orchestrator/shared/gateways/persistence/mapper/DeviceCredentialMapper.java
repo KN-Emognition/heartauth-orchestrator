@@ -10,5 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface DeviceCredentialMapper {
     DeviceCredential toDomain(DeviceCredentialEntity e);
+
     DeviceCredentialEntity toEntity(DeviceCredential d);
 }

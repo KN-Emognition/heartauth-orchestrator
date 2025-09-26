@@ -5,7 +5,8 @@ import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {PemMapper.class})
 public interface ConfirmPairingMapper {

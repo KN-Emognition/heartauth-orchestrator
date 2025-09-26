@@ -6,6 +6,7 @@ import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallen
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
+import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.modelapi.api.PredictionApi;
 import knemognition.heartauth.orchestrator.modelapi.model.In;
@@ -20,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
+
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 

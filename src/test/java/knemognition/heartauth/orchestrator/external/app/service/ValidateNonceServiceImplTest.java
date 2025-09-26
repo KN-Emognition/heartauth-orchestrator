@@ -10,29 +10,24 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
 import static knemognition.heartauth.orchestrator.shared.utils.KeyLoader.loadEcPublicKey;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ValidateNonceServiceImplTest extends HeartauthUnitTest {
-
-    @InjectMocks
-    ValidateNonceServiceImpl service;
 
     final String PUBLIC_KEY_PEM =
             "-----BEGIN PUBLIC KEY-----" +
                     "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE8/2k2MUkTlixFvR9ooUgBOwKgj5v" +
                     "BMVf3NGFOgV3TJcwaZme8fTcNjPxSmSrMoPd3LS6OJ+IMzNkQO5CVI79Vw==" +
                     "-----END PUBLIC KEY-----";
-
     final String NONCE =
             "2iS7zMVqgV1dicY3toudE3dvGzi8jsu7fguS3OmYe6Q=";
-
-
     final String VALID_SIGNATURE =
             "TF9VYe1eTAHoRq1sj3NbfygmZYSZ_jPHHck7-yDN96PMChMQ8wDzxL2Tbqn0aEpVhLiZoujlkXH6Btn431YRtA";
-
     final String INVALID_SIGNATURE =
             "TF9VYe1eTAHoRq1sjsNbfygmZYSZ_jPHHck7-yDN96PMChMQ8wDzxL2Tbqn0aEpVhLiZoujlkXH6Btn431YRtA";
-
+    @InjectMocks
+    ValidateNonceServiceImpl service;
 
     @Test
     void validate_withCorrectSignature_succeeds() throws Exception {

@@ -24,17 +24,27 @@ import org.springframework.security.web.authentication.AuthenticationFilter;
 @EnableMethodSecurity
 class InternalSecurityConfig {
 
+    private static void writeProblem(HttpServletResponse res,
+                                     org.springframework.http.ProblemDetail pd,
+                                     HttpStatus status,
+                                     ObjectMapper om) throws java.io.IOException {
+        res.setStatus(status.value());
+        res.setContentType("application/problem+json");
+        om.writeValue(res.getOutputStream(), pd);
+    }
+
     @Bean
     @Order(1)
     SecurityFilterChain internal(HttpSecurity http,
                                  ApiKeyAuthenticationProvider provider,
                                  ObjectMapper objectMapper) throws Exception {
 
-        var manager   = new ProviderManager(provider);
+        var manager = new ProviderManager(provider);
         var converter = new ApiKeyAuthenticationConverter();
-        var filter    = new AuthenticationFilter(manager, converter);
+        var filter = new AuthenticationFilter(manager, converter);
 
-        filter.setSuccessHandler((req, res, auth) -> {});
+        filter.setSuccessHandler((req, res, auth) -> {
+        });
         AuthenticationEntryPoint problemEntryPoint = (req, res, ex) -> {
             var pd = ExceptionHandlingUtils.problem(
                     HttpStatus.UNAUTHORIZED,
@@ -60,14 +70,5 @@ class InternalSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .build();
-    }
-
-    private static void writeProblem(HttpServletResponse res,
-                                     org.springframework.http.ProblemDetail pd,
-                                     HttpStatus status,
-                                     ObjectMapper om) throws java.io.IOException {
-        res.setStatus(status.value());
-        res.setContentType("application/problem+json");
-        om.writeValue(res.getOutputStream(), pd);
     }
 }

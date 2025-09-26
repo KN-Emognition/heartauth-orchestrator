@@ -2,7 +2,10 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

@@ -7,8 +7,8 @@ import org.mapstruct.Named;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 
 @Mapper(componentModel = "spring")
 public interface PemMapper {

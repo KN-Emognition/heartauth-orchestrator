@@ -1,7 +1,10 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model;
 
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
@@ -10,9 +13,13 @@ import java.io.Serializable;
 import java.util.UUID;
 
 @RedisHash("pairing")
-@Data @Builder @AllArgsConstructor @NoArgsConstructor
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class PairingStateRedis implements Serializable {
-    @Id private UUID id;
+    @Id
+    private UUID id;
 
     private UUID userId;
     private String deviceId;
@@ -35,5 +42,5 @@ public class PairingStateRedis implements Serializable {
     private Long createdAt;
 
     @TimeToLive
-    private Long ttlSeconds;    
+    private Long ttlSeconds;
 }

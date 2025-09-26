@@ -2,14 +2,15 @@ package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
-import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
-import org.mapstruct.*;
+import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
-
+import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;

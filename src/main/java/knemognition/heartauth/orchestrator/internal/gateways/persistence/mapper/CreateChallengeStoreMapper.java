@@ -22,7 +22,7 @@ public interface CreateChallengeStoreMapper {
     @Mapping(target = "exp", ignore = true)
     @Mapping(target = "ttlSeconds", ignore = true)
     @Mapping(target = "privateKeyPem", source = "src.privateKey")
-    @Mapping(target="userPublicKeyPem",source = "src.userPublicKey")
+    @Mapping(target = "userPublicKeyPem", source = "src.userPublicKey")
     ChallengeStateRedis baseFromCreate(CreateChallenge src, UUID id);
 
     default ChallengeStateRedis fromCreate(CreateChallenge src, UUID id, long ttlSeconds) {

@@ -2,12 +2,10 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 
 
 import knemognition.heartauth.orchestrator.external.model.Platform;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import lombok.*;
 
 import java.util.UUID;
-
-
-import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 
 @Getter
 @Setter

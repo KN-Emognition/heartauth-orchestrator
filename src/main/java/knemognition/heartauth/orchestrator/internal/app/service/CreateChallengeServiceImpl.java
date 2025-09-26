@@ -1,23 +1,22 @@
 package knemognition.heartauth.orchestrator.internal.app.service;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 import knemognition.heartauth.orchestrator.internal.app.mapper.CreateChallengeMapper;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.CreateChallengeService;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
 import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
+import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
-import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.CreateFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.DeviceCredential;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.CreateChallengeService;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.FirebaseSender;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
-
 
 import java.security.KeyPair;
 import java.security.PublicKey;
@@ -62,7 +61,7 @@ public class CreateChallengeServiceImpl implements CreateChallengeService {
         KeyPair keyPair = createEphemeralKeyPair();
 
 
-        CreateChallenge to = createChallengeMapper.toCreateChallenge(req, nonceB64, effectiveTtl, keyPair.getPrivate(), deviceCredentials.get(0).getPublicKeyPem());
+        CreateChallenge to = createChallengeMapper.toCreateChallenge(req, nonceB64, effectiveTtl, keyPair.getPrivate(), deviceCredentials.getFirst().getPublicKeyPem());
         CreatedFlowResult result = createChallengeCreateFlowStore.create(to);
         log.info("Stored challenge in cache {} for user {}", result.getId(), req.getUserId());
 

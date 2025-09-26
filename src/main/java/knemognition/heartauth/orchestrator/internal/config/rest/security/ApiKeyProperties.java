@@ -15,6 +15,10 @@ import java.util.List;
 public record ApiKeyProperties(
         @NotEmpty List<ApiKey> keys
 ) {
+    public ApiKeyProperties {
+        keys = List.copyOf(keys);
+    }
+
     public record ApiKey(
             @NotBlank String id,
             @NotBlank String value,
@@ -30,9 +34,5 @@ public record ApiKeyProperties(
                     value.getBytes(StandardCharsets.UTF_8),
                     provided.getBytes(StandardCharsets.UTF_8));
         }
-    }
-
-    public ApiKeyProperties {
-        keys = List.copyOf(keys);
     }
 }

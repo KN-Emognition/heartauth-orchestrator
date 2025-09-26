@@ -18,6 +18,7 @@ public class ChallengeStoreImpl implements ChallengeStore {
 
     private final ChallengeStateRepository challengeStateRepository;
     private final ChallengeMapper challengeMapper;
+
     @Override
     public Optional<ChallengeState> getChallengeState(UUID id) {
         return challengeStateRepository.findById(id).map(ent -> {

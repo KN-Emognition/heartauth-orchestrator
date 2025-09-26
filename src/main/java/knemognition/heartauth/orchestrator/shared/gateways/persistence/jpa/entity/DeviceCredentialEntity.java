@@ -2,7 +2,9 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.enti
 
 import jakarta.persistence.*;
 import knemognition.heartauth.orchestrator.external.model.Platform;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,7 +22,7 @@ public class DeviceCredentialEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id ;
+    private UUID id;
 
     @Column(name = "user_id", nullable = false)
     private UUID userId;
