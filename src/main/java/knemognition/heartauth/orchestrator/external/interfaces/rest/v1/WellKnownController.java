@@ -6,11 +6,13 @@ import knemognition.heartauth.orchestrator.external.model.ECJwk;
 import knemognition.heartauth.orchestrator.external.model.JwkSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 
 @RequiredArgsConstructor
+@RestController
 public class WellKnownController implements WellKnownApi {
 
     private final ECKey publicJwk;
