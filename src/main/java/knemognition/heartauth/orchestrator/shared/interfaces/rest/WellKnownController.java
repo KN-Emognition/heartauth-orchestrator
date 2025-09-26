@@ -20,7 +20,7 @@ public class WellKnownController implements WellKnownApi {
     public ResponseEntity<JwkSet> getJwks() {
         ECJwk ec = new ECJwk();
         ec.setKty(ECJwk.KtyEnum.EC);
-        ec.setCrv(ECJwk.CrvEnum._256);
+        ec.setCrv(ECJwk.CrvEnum.P_256);
         ec.setX(publicJwk.getX().toString());
         ec.setY(publicJwk.getY().toString());
         ec.setKid(publicJwk.getKeyID());

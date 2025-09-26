@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.5</version>
+        <version>3.5.6</version>
         <relativePath/>
     </parent>
     <groupId>knemognition.heartauth</groupId>
@@ -27,7 +27,7 @@
     </scm>
     <properties>
         <java.version>24</java.version>
-        <openapi.generator.version>7.6.0</openapi.generator.version>
+        <openapi.generator.version>7.15.0</openapi.generator.version>
         <org.mapstruct.version>1.6.3</org.mapstruct.version>
         <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
         <springdoc-openapi-ui.version>1.7.0</springdoc-openapi-ui.version>
@@ -121,11 +121,6 @@
             <version>${jackson-databind-nullable.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.auth</groupId>
             <artifactId>google-auth-library-oauth2-http</artifactId>
             <version>${google-auth-library-oauth2-http.version}</version>
@@ -187,12 +182,15 @@
                             <modelPackage>knemognition.heartauth.orchestrator.internal.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <configOptions>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useSpringController>true</useSpringController>
+                                <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <generateBuilders>true</generateBuilders>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <useJakartaEe>true</useJakartaEe>
                                 <dateLibrary>java8</dateLibrary>
-                                <performBeanValidation>true</performBeanValidation>
                                 <openApiNullable>true</openApiNullable>
                                 <useTags>true</useTags>
                             </configOptions>
@@ -210,12 +208,15 @@
                             <modelPackage>knemognition.heartauth.orchestrator.external.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <configOptions>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useSpringController>true</useSpringController>
+                                <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <generateBuilders>true</generateBuilders>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <useJakartaEe>true</useJakartaEe>
                                 <dateLibrary>java8</dateLibrary>
-                                <performBeanValidation>true</performBeanValidation>
                                 <openApiNullable>true</openApiNullable>
                                 <useTags>true</useTags>
                             </configOptions>
@@ -236,6 +237,8 @@
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
                             <configOptions>
+                                <documentationProvider>none</documentationProvider>
+                                <useSwaggerUI>false</useSwaggerUI>
                                 <dateLibrary>java8</dateLibrary>
                                 <useTags>true</useTags>
                                 <dateLibrary>java8</dateLibrary>
@@ -259,14 +262,17 @@
                             <modelPackage>knemognition.heartauth.orchestrator.wellknown.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <configOptions>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useSpringController>true</useSpringController>
+                                <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <generateBuilders>true</generateBuilders>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>java8</dateLibrary>
+                                <openApiNullable>true</openApiNullable>
                                 <useTags>true</useTags>
-                                <useOneOfInterfaces>false</useOneOfInterfaces>
-                                <useAllOfForInheritance>true</useAllOfForInheritance>
-                                <hideGenerationTimestamp>true</hideGenerationTimestamp>
                             </configOptions>
                         </configuration>
                     </execution>
