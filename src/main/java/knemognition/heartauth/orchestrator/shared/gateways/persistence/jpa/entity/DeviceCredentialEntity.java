@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import knemognition.heartauth.orchestrator.external.model.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,6 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Data
 @Table(name = "device_credential")
 public class DeviceCredentialEntity {
 
