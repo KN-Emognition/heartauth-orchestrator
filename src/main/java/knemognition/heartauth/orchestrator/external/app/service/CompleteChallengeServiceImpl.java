@@ -1,5 +1,6 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
+import com.nimbusds.jwt.JWTClaimsSet;
 import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.app.mapper.CompleteChallengeMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
@@ -16,13 +17,12 @@ import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
-import knemognition.heartauth.orchestrator.shared.utils.AesUtils;
+import knemognition.heartauth.orchestrator.shared.utils.JwtDecryptor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 
@@ -55,11 +55,13 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
         }
 
 
-        byte[] data = AesUtils.decrypt(
-                req.getData().getBytes(StandardCharsets.UTF_8),
-                state.getNonceB64().getBytes(StandardCharsets.UTF_8),
-                validateNonce.getPub(),
-                pemMapper.privateMapAndValidate(state.getPrivateKeyPem()));
+        JWTClaimsSet data = JwtDecryptor.decryptAndVerify(
+                req.getData(),
+                pemMapper.privateMapAndValidate(state.getPrivateKeyPem()),
+                validateNonce.getPub()
+        );
+        log.info("JWT has been successfully verified");
+        log.info(data.getClaimAsString("data"));
 
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(challengeId);
 
