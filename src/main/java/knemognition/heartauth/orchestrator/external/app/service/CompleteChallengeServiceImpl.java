@@ -23,6 +23,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.security.interfaces.ECPrivateKey;
 import java.util.UUID;
 
 
@@ -54,10 +55,16 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 //            throw new NoChallengeException("Challenge status is not in pending");
 //        }
 
-
+        log.info("PEM {}", state.getPrivateKeyPem());
+        ECPrivateKey privateKey;
+        try {
+            privateKey = pemMapper.privateMapAndValidate(state.getPrivateKeyPem());
+        } catch (Exception e) {
+            log.error("Invalid private key PEM for challenge {}", challengeId, e);
+            throw new ChallengeFailedException("Invalid private key PEM");
+        }
         JWTClaimsSet data = JwtDecryptor.decryptAndVerify(
-                req.getData(),
-                pemMapper.privateMapAndValidate(state.getPrivateKeyPem()),
+                req.getData(), privateKey,
                 validateNonce.getPub()
         );
         log.info("JWT has been successfully verified");
