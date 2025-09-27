@@ -23,14 +23,14 @@ public interface CreateChallengeMapper {
     ChallengeCreateResponse toResponse(CreatedFlowResult result);
 
     @Mapping(target = "ttlSeconds", source = "effectiveTtl")
-    @Mapping(target = "privateKey", expression = "java(KeyLoader.toPem(privateKey,\"PRIVATE\"))")
+    @Mapping(target = "privateKey", expression = "java(KeyLoader.toPem(privateKey,\"PRIVATE KEY\"))")
     @Mapping(target = "userPublicKey", source = "publicKeyPem")
     CreateChallenge toCreateChallenge(ChallengeCreateRequest req, String nonceB64, Integer effectiveTtl, PrivateKey privateKey, String publicKeyPem);
 
     @Mapping(target = "type", constant = "ECG_CHALLENGE")
     @Mapping(target = "nonce", source = "nonceB64")
     @Mapping(target = "challengeId", source = "res.id")
-    @Mapping(target = "publicKey", expression = "java(KeyLoader.toPem(publicKey,\"PUBLIC\"))")
+    @Mapping(target = "publicKey", expression = "java(KeyLoader.toPem(publicKey,\"PUBLIC KEY\"))")
     MessageData toMessageData(CreatedFlowResult res, String nonceB64, PublicKey publicKey);
 }
 
