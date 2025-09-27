@@ -4,12 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.io.InputStream;
-import java.security.Key;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
+import java.security.*;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.security.spec.ECGenParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
@@ -46,12 +44,12 @@ public final class KeyLoader {
     }
 
     public static KeyPair createEphemeralKeyPair() {
-        KeyPairGenerator kpg = null;
         try {
-            kpg = KeyPairGenerator.getInstance("EC");
-        } catch (NoSuchAlgorithmException e) {
+            KeyPairGenerator kpg = KeyPairGenerator.getInstance("EC");
+            kpg.initialize(new ECGenParameterSpec("secp256r1"));
+            return kpg.generateKeyPair();
+        } catch (GeneralSecurityException e) {
             throw new RuntimeException(e);
         }
-        return kpg.generateKeyPair();
     }
 }
