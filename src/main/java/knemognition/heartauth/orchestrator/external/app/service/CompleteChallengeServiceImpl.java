@@ -50,9 +50,9 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
         if (state.getStatus() == FlowStatus.APPROVED) {
             throw new NoChallengeException("challenge_replayed");
         }
-        if (state.getStatus() != FlowStatus.PENDING) {
-            throw new NoChallengeException("Challenge status is not in pending");
-        }
+//        if (state.getStatus() != FlowStatus.CREATED) {
+//            throw new NoChallengeException("Challenge status is not in pending");
+//        }
 
 
         JWTClaimsSet data = JwtDecryptor.decryptAndVerify(
