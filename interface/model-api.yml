@@ -12,7 +12,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/In'
+              $ref: '#/components/schemas/PredictRequest'
       responses:
         '200':
           description: OK
@@ -22,13 +22,23 @@ paths:
                 $ref: '#/components/schemas/PredictResponse'
 components:
   schemas:
-    In:
+    PredictRequest:
       type: object
       description: Flexible input payload accepted by the model.
+      required:
+        - refEcg
+        - testEcg
       properties:
-        anything:
-          type: string
-
+        refEcg:
+          type: array
+          items:
+            type: number
+            format: float
+        testEcg:
+          type: array
+          items:
+            type: number
+            format: float
     PredictResponse:
       type: object
       required: [prediction]

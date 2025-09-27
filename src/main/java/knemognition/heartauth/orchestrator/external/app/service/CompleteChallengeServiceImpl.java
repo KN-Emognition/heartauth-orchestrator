@@ -1,8 +1,12 @@
 package knemognition.heartauth.orchestrator.external.app.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nimbusds.jwt.JWTClaimsSet;
+import knemognition.heartauth.orchestrator.external.app.domain.EcgRefToken;
+import knemognition.heartauth.orchestrator.external.app.domain.EcgTestToken;
 import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.app.mapper.CompleteChallengeMapper;
+import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
@@ -10,20 +14,20 @@ import knemognition.heartauth.orchestrator.external.config.errorhandling.excepti
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import knemognition.heartauth.orchestrator.modelapi.api.PredictionApi;
-import knemognition.heartauth.orchestrator.modelapi.model.In;
+import knemognition.heartauth.orchestrator.modelapi.model.PredictRequest;
 import knemognition.heartauth.orchestrator.modelapi.model.PredictResponse;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.ChallengeStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
-import knemognition.heartauth.orchestrator.shared.utils.JwtDecryptor;
+import knemognition.heartauth.orchestrator.shared.utils.EcgDataTokenDecryptor;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.security.interfaces.ECPrivateKey;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -38,6 +42,8 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
     private final ValidateNonceService validateNonceService;
     private final CompleteChallengeMapper completeChallengeMapper;
     private final PemMapper pemMapper;
+    private final EcgTokenMapper ecgTokenMapper;
+    private final ObjectMapper objectMapper;
 
     @SneakyThrows
     @Override
@@ -51,32 +57,22 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
         if (state.getStatus() == FlowStatus.APPROVED) {
             throw new NoChallengeException("challenge_replayed");
         }
-//        if (state.getStatus() != FlowStatus.CREATED) {
-//            throw new NoChallengeException("Challenge status is not in pending");
-//        }
 
-        log.info("PEM {}", state.getPrivateKeyPem());
-        ECPrivateKey privateKey;
-        try {
-            privateKey = pemMapper.privateMapAndValidate(state.getPrivateKeyPem());
-        } catch (Exception e) {
-            log.error("Invalid private key PEM for challenge {}", challengeId, e);
-            throw new ChallengeFailedException("Invalid private key PEM");
-        }
-        JWTClaimsSet data = JwtDecryptor.decryptAndVerify(
-                req.getData(), privateKey,
-                validateNonce.getPub()
-        );
+        JWTClaimsSet claims = EcgDataTokenDecryptor.decryptAndVerify(req.getDataToken(), pemMapper.privateMapAndValidate(state.getPrivateKeyPem()), validateNonce.getPub());
         log.info("JWT has been successfully verified");
-        log.info(data.getClaimAsString("data"));
+
+        EcgTestToken ecgTestToken = ecgTokenMapper.ecgTestFromClaims(claims, objectMapper);
+        EcgRefToken ecgRefToken = EcgRefToken.builder().refEcg(List.of()).build();
+        log.info("Decrypted and verified EcgDataToken {}", ecgTestToken.getTestEcg());
 
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(challengeId);
 
 
-        In in = new In().anything("anything");
+        PredictRequest request = PredictRequest.builder().testEcg(ecgTestToken.getTestEcg()).refEcg(ecgRefToken.getRefEcg()).build();
         PredictResponse prediction;
+
         try {
-            prediction = predictionApi.predict(in);
+            prediction = predictionApi.predict(request);
             log.info("Called model for prediction.");
         } catch (Exception e) {
             log.warn("model-api call failed for challenge {}", challengeId, e);

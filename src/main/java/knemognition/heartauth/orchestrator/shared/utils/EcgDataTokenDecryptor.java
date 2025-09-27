@@ -8,40 +8,32 @@ import com.nimbusds.jose.crypto.ECDHDecrypter;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
+import java.text.ParseException;
 
-public final class JwtDecryptor {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class EcgDataTokenDecryptor {
 
-    private JwtDecryptor() {
-    }
+    public static JWTClaimsSet decryptAndVerify(String compactJwe, ECPrivateKey recipientPrivateKey, ECPublicKey senderPublicKey) throws JOSEException, ParseException {
 
-    public static JWTClaimsSet decryptAndVerify(
-            String compactJwe,
-            ECPrivateKey recipientPrivateKey,
-            ECPublicKey senderPublicKey
-    ) throws JOSEException, java.text.ParseException {
-
-        // 1) Decrypt the outer JWE
         JWEObject jwe = JWEObject.parse(compactJwe);
         JWEDecrypter decrypter = new ECDHDecrypter(recipientPrivateKey);
         jwe.decrypt(decrypter);
 
-        // 2) Parse the inner JWS
         SignedJWT signed = SignedJWT.parse(jwe.getPayload().toString());
 
-        // Enforce expected algorithm (ES256 usually for P-256)
         if (!JWSAlgorithm.ES256.equals(signed.getHeader().getAlgorithm())) {
             throw new JOSEException("Unexpected JWS alg: " + signed.getHeader().getAlgorithm());
         }
 
-        // 3) Verify signature
         if (!signed.verify(new ECDSAVerifier(senderPublicKey))) {
             throw new JOSEException("Invalid signature");
         }
 
-        // 4) Return claims (throws if payload isn’t valid JWT claims)
         return signed.getJWTClaimsSet();
     }
 }

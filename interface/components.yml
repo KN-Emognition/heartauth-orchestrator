@@ -54,10 +54,15 @@ components:
     PairingConfirmRequest:
       type: object
       required:
+        - dataToken
         - deviceId
         - signature
         - alg
       properties:
+        dataToken:
+          type: string
+          description: |
+            JWT encrypted with ecgData
         deviceId:
           type: string
         signature:
@@ -125,13 +130,13 @@ components:
     ChallengeCompleteRequest:
       type: object
       required:
-        - data
+        - dataToken
         - signature
       properties:
-        data:
+        dataToken:
           type: string
           description: |
-            AES encrypted ecg with nonce as salt
+            JWT encrypted with ecgData
         signature:
           type: string
           description:  |
