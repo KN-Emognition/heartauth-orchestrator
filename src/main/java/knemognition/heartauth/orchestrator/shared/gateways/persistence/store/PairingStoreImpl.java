@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
-import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.GetPairingStoreMapper;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.PairingMapper;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class PairingStoreImpl implements GetFlowStore<PairingState> {
 
 
     private final PairingStateRepository pairingStateRepository;
-    private final GetPairingStoreMapper getPairingStoreMapper;
+    private final PairingMapper getPairingStoreMapper;
 
 
     @Override
