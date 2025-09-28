@@ -9,6 +9,7 @@ import knemognition.heartauth.orchestrator.external.app.mapper.CompleteChallenge
 import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
+import knemognition.heartauth.orchestrator.external.app.ports.out.GetEcgRefTokenStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
@@ -28,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 
@@ -39,6 +41,7 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
     private final ChallengeStore challengeStore;
     private final PredictionApi predictionApi;
     private final StatusStore<ChallengeState> statusStore;
+    private final GetEcgRefTokenStore ecgRefTokenGetStore;
     private final ValidateNonceService validateNonceService;
     private final CompleteChallengeMapper completeChallengeMapper;
     private final PemMapper pemMapper;
@@ -60,10 +63,16 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
 
         JWTClaimsSet claims = EcgDataTokenDecryptor.decryptAndVerify(req.getDataToken(), pemMapper.privateMapAndValidate(state.getPrivateKeyPem()), validateNonce.getPub());
         log.info("JWT has been successfully verified");
-
         EcgTestToken ecgTestToken = ecgTokenMapper.ecgTestFromClaims(claims, objectMapper);
-        EcgRefToken ecgRefToken = EcgRefToken.builder().refEcg(List.of()).build();
+        Optional<List<EcgRefToken>> refTokensOpt = ecgRefTokenGetStore.getRefToken(state.getUserId());
+        if (refTokensOpt.isEmpty() || refTokensOpt.get().isEmpty()) {
+            statusStore.setStatus(StatusChange.builder().id(challengeId).status(FlowStatus.DENIED).build());
+            throw new ChallengeFailedException("No reference ECG data found");
+        }
+        EcgRefToken ecgRefToken = ecgRefTokenGetStore.getRefToken(state.getUserId()).get().getFirst();
+
         log.info("Decrypted and verified EcgDataToken {}", ecgTestToken.getTestEcg());
+        log.info("Using EcgRefToken {}", ecgRefToken.getRefEcg());
 
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder().id(challengeId);
 

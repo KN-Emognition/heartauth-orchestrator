@@ -11,6 +11,7 @@ import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.CreateDeviceCredentialStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.CreateEcgRefTokenStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoPairingException;
 import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
@@ -37,6 +38,7 @@ public class CompletePairingServiceImpl implements CompletePairingService {
     private final GetFlowStore<PairingState> pairingStateGetFlowStore;
     private final StatusStore<PairingState> pairingStateStatusStore;
     private final CreateDeviceCredentialStore deviceCredentialStore;
+    private final CreateEcgRefTokenStore ecgRefTokenStore;
     private final DeviceCredentialCreateMapper deviceCredentialCreateMapper;
     private final ConfirmPairingMapper confirmPairingMapper;
     private final ValidateNonceService validateNonceService;
@@ -69,7 +71,8 @@ public class CompletePairingServiceImpl implements CompletePairingService {
         JWTClaimsSet dataToken = EcgDataTokenDecryptor.decryptAndVerify(req.getDataToken(), pairingPrivateKey, validateNonce.getPub());
         log.info("JWT has been successfully verified");
 
-        EcgRefToken ecgRefToken = ecgTokenMapper.ecgRefFromClaims(dataToken, objectMapper);
+        EcgRefToken ecgRefToken = ecgTokenMapper.ecgRefFromClaimsAndState(dataToken, pairingState, objectMapper);
+        ecgRefTokenStore.create(ecgRefToken);
         log.info("Decrypted and verified EcgDataToken {}", ecgRefToken.getRefEcg());
 
         DeviceCredential deviceCredential = deviceCredentialCreateMapper.fromPairingState(pairingState, objectMapper);

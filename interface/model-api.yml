@@ -6,20 +6,21 @@ paths:
   /predict:
     post:
       operationId: predict
-      tags: [Prediction]
+      tags:
+        - Prediction
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PredictRequest'
+              $ref: "#/components/schemas/PredictRequest"
       responses:
-        '200':
+        "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/PredictResponse'
+                $ref: "#/components/schemas/PredictResponse"
 components:
   schemas:
     PredictRequest:
@@ -32,8 +33,10 @@ components:
         refEcg:
           type: array
           items:
-            type: number
-            format: float
+            type: array
+            items:
+              type: number
+              format: float
         testEcg:
           type: array
           items:
@@ -41,7 +44,8 @@ components:
             format: float
     PredictResponse:
       type: object
-      required: [prediction]
+      required:
+        - prediction
       properties:
         prediction:
           type: boolean
