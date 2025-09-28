@@ -51,8 +51,7 @@ public class CompletePairingServiceImpl implements CompletePairingService {
     public void complete(PairingConfirmRequest req, QrClaims claims) {
         UUID jti = claims.getJti();
 
-        PairingState pairingState = pairingStateGetFlowStore.getFlow(jti)
-                .orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
+        PairingState pairingState = pairingStateGetFlowStore.getFlow(jti).orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
 
         ValidateNonce validateNonce = confirmPairingMapper.toValidateNonce(req, pairingState);
         validateNonceService.validate(validateNonce);
@@ -73,15 +72,13 @@ public class CompletePairingServiceImpl implements CompletePairingService {
 
         EcgRefToken ecgRefToken = ecgTokenMapper.ecgRefFromClaimsAndState(dataToken, pairingState, objectMapper);
         ecgRefTokenStore.create(ecgRefToken);
-        log.info("Decrypted and verified EcgDataToken {}", ecgRefToken.getRefEcg());
+        log.info("Decrypted and verified EcgDataToken");
 
         DeviceCredential deviceCredential = deviceCredentialCreateMapper.fromPairingState(pairingState, objectMapper);
         deviceCredentialStore.create(deviceCredential);
         log.info("Saved device credential");
 
-        pairingStateStatusStore.setStatusOrThrow(statusChangeBuilder
-                .status(FlowStatus.APPROVED)
-                .build());
+        pairingStateStatusStore.setStatusOrThrow(statusChangeBuilder.status(FlowStatus.APPROVED).build());
         log.info("Changed cache pairing status to Approved.");
     }
 }

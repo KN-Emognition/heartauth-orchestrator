@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
+package knemognition.heartauth.orchestrator.shared.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.GetPairingStoreMapper;
@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
-public class GetPairingStoreImpl implements GetFlowStore<PairingState> {
+public class PairingStoreImpl implements GetFlowStore<PairingState> {
 
 
     private final PairingStateRepository pairingStateRepository;

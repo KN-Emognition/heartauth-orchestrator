@@ -47,10 +47,14 @@ components:
     PairingInitResponse:
       type: object
       required:
+        - expiresAt
         - nonce
       properties:
         nonce:
           type: string
+        expiresAt:
+          type: integer
+          format: int64
     PairingConfirmRequest:
       type: object
       required:

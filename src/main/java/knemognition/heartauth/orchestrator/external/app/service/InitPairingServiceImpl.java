@@ -5,11 +5,11 @@ import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
+import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
 import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
 import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
@@ -31,6 +31,7 @@ import static knemognition.heartauth.orchestrator.shared.utils.NonceUtils.create
 @EnableConfigurationProperties(ExternalPairingProperties.class)
 public class InitPairingServiceImpl implements InitPairingService {
 
+    private final GetFlowStore<PairingState> pairingStateGetFlowStore;
     private final ExternalPairingProperties externalPairingProperties;
     private final InitPairingMapper initPairingMapper;
     private final SecureRandom secureRandom;
@@ -41,20 +42,21 @@ public class InitPairingServiceImpl implements InitPairingService {
     @Override
     public PairingInitResponse init(PairingInitRequest req, QrClaims claims) {
 
+
         pemMapper.publicMapAndValidate(req.getPublicKeyPem());
 
         String nonceB64 = createNonce(secureRandom, externalPairingProperties.getNonceLength());
         UUID id = claims.getJti();
 
-        FlowStatusDescription status = pairingStateStatusStore.getStatus(id).orElseThrow(() -> new StatusServiceException("Status not found"));
-        if (status.getStatus() != FlowStatus.CREATED) {
+        PairingState state = pairingStateGetFlowStore.getFlow(id).orElseThrow(() -> new StatusServiceException("pairing_not_found_or_expired"));
+        log.info("Pairing state.");
+        if (state.getStatus() != FlowStatus.CREATED) {
             throw new StatusServiceException("Pairing already initialized");
         }
-
         EnrichDeviceData to = initPairingMapper.toEnrichDeviceData(req, nonceB64, id);
         enrichDeviceDataStore.enrich(to);
         log.info("Device data stored");
         pairingStateStatusStore.setStatusOrThrow(StatusChange.builder().id(id).status(FlowStatus.PENDING).build());
-        return new PairingInitResponse().nonce(nonceB64);
+        return PairingInitResponse.builder().nonce(nonceB64).expiresAt(state.getExp()).build();
     }
 }
