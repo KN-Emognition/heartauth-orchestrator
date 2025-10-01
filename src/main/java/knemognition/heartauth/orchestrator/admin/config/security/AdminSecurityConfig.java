@@ -1,9 +1,10 @@
-package knemognition.heartauth.orchestrator.internal.config.rest.security;
+package knemognition.heartauth.orchestrator.admin.config.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
@@ -12,13 +13,14 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 
-import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.ATTR_TENANT_ID;
+import static knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem;
 
 @Configuration
-class InternalSecurityConfig {
+class AdminSecurityConfig {
 
     private static void writeProblem(HttpServletResponse res,
                                      org.springframework.http.ProblemDetail pd,
@@ -29,23 +31,20 @@ class InternalSecurityConfig {
         om.writeValue(res.getOutputStream(), pd);
     }
 
-    @Bean()
-    SecurityFilterChain internal(HttpSecurity http,
-                                 InternalApiKeyAuthenticationProvider provider,
-                                 ObjectMapper objectMapper) throws Exception {
+    @Bean
+    SecurityFilterChain admin(HttpSecurity http,
+                              AdminApiKeyAuthenticationProvider provider,
+                              ObjectMapper objectMapper) throws Exception {
 
         var manager = new ProviderManager(provider);
-        var converter = new InternalApiKeyAuthenticationConverter();
+        var converter = new AdminApiKeyAuthenticationConverter();
         var filter = new AuthenticationFilter(manager, converter);
 
         filter.setSuccessHandler((req, res, auth) -> {
-            if (auth instanceof InternalApiKeyAuthenticationToken tok && tok.isAuthenticated()) {
-                req.setAttribute(ATTR_TENANT_ID, tok.getPrincipal());
-            }
         });
 
         AuthenticationEntryPoint problemEntryPoint = (req, res, ex) -> {
-            var pd = knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem(
+            var pd = problem(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid or missing API key.",
                     req,
@@ -56,16 +55,16 @@ class InternalSecurityConfig {
         filter.setFailureHandler(new AuthenticationEntryPointFailureHandler(problemEntryPoint));
 
         return http
-                .securityMatcher("/internal/**")
+                .securityMatcher("/admin/**")
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/internal/**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e -> e.authenticationEntryPoint(problemEntryPoint))
-                .addFilter(filter)
+                .addFilterBefore(filter, AuthorizationFilter.class)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .build();

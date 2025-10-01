@@ -1,0 +1,50 @@
+package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+@Getter
+@Setter
+@Builder(toBuilder = true)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "tenant_api_keys", uniqueConstraints = @UniqueConstraint(name = "uq_key_per_tenant", columnNames = {"tenants_fk", "key_hash"}))
+public class TenantApiKeyEntity {
+
+    @Id
+    @UuidGenerator
+    @EqualsAndHashCode.Include
+    @Column(name = "id", updatable = false, nullable = false)
+    @ToString.Include
+    private UUID id;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "tenants_fk", nullable = false, foreignKey = @ForeignKey(name = "tenant_api_keys_tenants_fk_fkey"))
+    @ToString.Exclude
+    private TenantEntity tenant;
+
+    @Column(name = "key_hash", nullable = false, columnDefinition = "text")
+    private String keyHash;
+
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime updatedAt;
+
+    @Column(name = "last_used_at")
+    private OffsetDateTime lastUsedAt;
+
+    @Column(name = "expires_at")
+    private OffsetDateTime expiresAt;
+
+    @Column(name = "revoked_at")
+    private OffsetDateTime revokedAt;
+}

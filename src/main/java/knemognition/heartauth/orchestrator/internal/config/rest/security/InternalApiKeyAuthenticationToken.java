@@ -4,22 +4,23 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.UUID;
 
-public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
-    private final String keyId;
+public class InternalApiKeyAuthenticationToken extends AbstractAuthenticationToken {
     private final String rawKey;
+    private final UUID tenantId;
 
-    public ApiKeyAuthenticationToken(String rawKey) {
+    public InternalApiKeyAuthenticationToken(String rawKey) {
         super(null);
         this.rawKey = rawKey;
-        this.keyId = null;
+        this.tenantId = null;
         setAuthenticated(false);
     }
 
-    public ApiKeyAuthenticationToken(String keyId, Collection<? extends GrantedAuthority> auths) {
-        super(auths);
-        this.keyId = keyId;
+    public InternalApiKeyAuthenticationToken(UUID tenantId, Collection<? extends GrantedAuthority> authorities) {
+        super(authorities);
         this.rawKey = null;
+        this.tenantId = tenantId;
         setAuthenticated(true);
     }
 
@@ -30,6 +31,6 @@ public class ApiKeyAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public Object getPrincipal() {
-        return keyId;
+        return tenantId != null ? tenantId : "anonymous";
     }
 }

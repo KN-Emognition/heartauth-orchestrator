@@ -173,7 +173,6 @@
                                 <useTags>true</useTags>
                                 <generateSupportingFiles>false</generateSupportingFiles>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <useSpringController>true</useSpringController>
                                 <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <generateBuilders>true</generateBuilders>
@@ -198,7 +197,30 @@
                                 <useTags>true</useTags>
                                 <generateSupportingFiles>false</generateSupportingFiles>
                                 <skipDefaultInterface>true</skipDefaultInterface>
-                                <useSpringController>true</useSpringController>
+                                <documentationProvider>none</documentationProvider>
+                                <interfaceOnly>true</interfaceOnly>
+                                <generateBuilders>true</generateBuilders>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-admin</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/interface/admin.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>knemognition.heartauth.orchestrator.admin.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.admin.model</modelPackage>
+                            <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
+                            <configOptions>
+                                <useTags>true</useTags>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <documentationProvider>none</documentationProvider>
                                 <interfaceOnly>true</interfaceOnly>
                                 <generateBuilders>true</generateBuilders>

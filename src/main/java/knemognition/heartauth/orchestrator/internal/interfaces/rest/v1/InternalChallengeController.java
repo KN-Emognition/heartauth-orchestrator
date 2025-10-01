@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@PreAuthorize("hasAuthority('keycloak')")
+@PreAuthorize("hasAuthority('KEYCLOAK')")
 public class InternalChallengeController implements ChallengeApi {
 
     private final CreateChallengeService createChallengeService;

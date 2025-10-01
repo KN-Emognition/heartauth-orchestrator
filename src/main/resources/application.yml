@@ -53,12 +53,6 @@ management:
 logging:
   level:
     root: INFO
-security:
-  api:
-    keys:
-      - id: KEYCLOAK
-        value: ${API_KEY_KEYCLOAK:a-string-secret-at-least-256-bits-long}
-        roles: [ keycloak ]
 jwt:
   kid: "id"
   private-key-password: null

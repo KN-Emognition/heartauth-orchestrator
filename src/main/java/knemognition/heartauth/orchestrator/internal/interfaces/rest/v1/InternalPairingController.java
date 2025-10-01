@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@PreAuthorize("hasAuthority('keycloak')")
+@PreAuthorize("hasAuthority('KEYCLOAK')")
 public class InternalPairingController implements PairingApi {
 
     private final PairingStatusServiceImpl pairingStateStatusService;
