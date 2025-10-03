@@ -17,7 +17,7 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "tenants", uniqueConstraints = @UniqueConstraint(name = "uq_tenants_external", columnNames = "external_id"))
+@Table(name = "tenants", uniqueConstraints = @UniqueConstraint(name = "uq_tenants_external", columnNames = "tenant_id"))
 public class TenantEntity {
 
     @Id
@@ -27,8 +27,8 @@ public class TenantEntity {
     @ToString.Include
     private UUID id;
 
-    @Column(name = "external_id", nullable = false)
-    private UUID externalId;
+    @Column(name = "tenant_id", nullable = false)
+    private UUID tenantId;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;

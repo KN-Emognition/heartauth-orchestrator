@@ -4,10 +4,10 @@ EXTENSION IF NOT EXISTS pgcrypto;
 CREATE TABLE tenants
 (
     id          UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
-    external_id UUID        NOT NULL,
+    tenant_id UUID        NOT NULL,
     created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    CONSTRAINT uq_tenants_external UNIQUE (external_id)
+    CONSTRAINT uq_tenants_id UNIQUE (tenant_id)
 );
 
 CREATE TABLE tenant_api_keys

@@ -29,9 +29,9 @@ public class TenantStoreImpl implements TenantStore {
     @Transactional
     public UUID createTenant(UUID externalId) {
         TenantEntity saved = tenantRepository.save(
-                TenantEntity.builder().externalId(externalId).build()
+                TenantEntity.builder().tenantId(externalId).build()
         );
-        return saved.getExternalId();
+        return saved.getTenantId();
     }
 
     @Override
