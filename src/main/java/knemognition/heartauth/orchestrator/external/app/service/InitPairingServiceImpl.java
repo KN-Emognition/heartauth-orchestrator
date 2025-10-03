@@ -5,7 +5,7 @@ import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.app.mapper.InitPairingMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.EnrichDeviceDataStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
 import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
 import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;

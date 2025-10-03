@@ -38,7 +38,7 @@ public class TenantServiceImpl implements TenantService {
 
         UUID apiKeyPlain = UUID.randomUUID();
         String apiKeyHash = apiKeyHasher.hash(apiKeyPlain.toString());
-        tenantStore.storeApiKey(tenantId, apiKeyHash);
+        tenantStore.storeApiKeyByExternalId(tenantId, apiKeyHash);
         log.info("Stored key hash for tenant {}", tenantId);
 
         return new CreateTenantResponse()

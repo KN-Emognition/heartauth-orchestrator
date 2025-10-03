@@ -3,35 +3,31 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 
 import knemognition.heartauth.orchestrator.external.model.Platform;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class PairingState {
-    private UUID userId;
-    private String deviceId;
-    private String displayName;
-    private String publicKeyPem;
-    private String fcmToken;
-    private Platform platform;
-    private String osVersion;
-    private String model;
+    UUID userId;
+    UUID tenantId;
 
-    private String attestationType;
-    private String attestationVerdict;
-    private String attestationPayloadJson;
+    FlowStatus status;
+    String reason;
 
-    private FlowStatus status;
-    private String reason;
+    String deviceId;
+    String displayName;
+    String publicKey;
+    String fcmToken;
+    Platform platform;
+    String osVersion;
+    String model;
+    String nonceB64;
 
-    private String nonceB64;
-    private Long exp;
-    private Long createdAt;
-    private Long ttlSeconds;
+    Long exp;
+    Long createdAt;
+    Long ttlSeconds;
 }
 

@@ -5,15 +5,13 @@ import lombok.Value;
 
 import java.util.UUID;
 
-
 /**
- * Result object representing the outcome of creating a new flow.
+ * Command object representing the intent to identify a user
+ * within a whole system.
  */
 @Value
 @Builder
-public class CreatedFlowResult {
-    UUID id;
-
-    Long exp;
-    Long ttlSeconds;
+public class IdentifyUser {
+    UUID userId;
+    UUID tenantId;
 }

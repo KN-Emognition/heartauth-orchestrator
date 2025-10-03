@@ -13,7 +13,7 @@ public interface CompleteChallengeMapper {
 
     @Mapping(target = "nonce", source = "state.nonceB64")
     @Mapping(target = "signature", source = "req.signature")
-    @Mapping(target = "pub", source = "state.userPublicKeyPem", qualifiedByName = "pemToEcPublicKey")
+    @Mapping(target = "pub", source = "state.userPublicKey", qualifiedByName = "pemToEcPublicKey")
     ValidateNonce toValidateNonce(ChallengeCompleteRequest req, ChallengeState state);
 
 }

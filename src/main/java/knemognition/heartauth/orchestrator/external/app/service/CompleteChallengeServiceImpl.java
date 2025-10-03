@@ -10,7 +10,7 @@ import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.GetEcgRefTokenStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
@@ -61,7 +61,7 @@ public class CompleteChallengeServiceImpl implements CompleteChallengeService {
             throw new NoChallengeException("challenge_replayed");
         }
 
-        JWTClaimsSet claims = EcgDataTokenDecryptor.decryptAndVerify(req.getDataToken(), pemMapper.privateMapAndValidate(state.getPrivateKeyPem()), validateNonce.getPub());
+        JWTClaimsSet claims = EcgDataTokenDecryptor.decryptAndVerify(req.getDataToken(), pemMapper.privateMapAndValidate(state.getEphemeralPrivateKey()), validateNonce.getPub());
         log.info("JWT has been successfully verified");
         EcgTestToken ecgTestToken = ecgTokenMapper.ecgTestFromClaims(claims, objectMapper);
         log.info("Decrypted and verified EcgDataToken");

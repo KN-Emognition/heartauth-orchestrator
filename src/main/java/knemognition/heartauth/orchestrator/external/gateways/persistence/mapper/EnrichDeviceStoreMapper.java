@@ -10,9 +10,6 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EnrichDeviceStoreMapper {
 
-    @Mapping(target = "attestationType", ignore = true)
-    @Mapping(target = "attestationVerdict", ignore = true)
-    @Mapping(target = "attestationPayloadJson", ignore = true)
     void applyEnrichment(@MappingTarget PairingStateRedis target, EnrichDeviceData src);
 }
 

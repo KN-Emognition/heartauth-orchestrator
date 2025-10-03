@@ -12,7 +12,7 @@ import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairing
 import knemognition.heartauth.orchestrator.external.app.ports.in.ValidateNonceService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.CreateDeviceCredentialStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.CreateEcgRefTokenStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoPairingException;
 import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
 import knemognition.heartauth.orchestrator.internal.model.FlowStatus;

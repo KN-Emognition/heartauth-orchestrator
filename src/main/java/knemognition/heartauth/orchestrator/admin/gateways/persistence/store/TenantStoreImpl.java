@@ -31,16 +31,18 @@ public class TenantStoreImpl implements TenantStore {
         TenantEntity saved = tenantRepository.save(
                 TenantEntity.builder().externalId(externalId).build()
         );
-        return saved.getId();
+        return saved.getExternalId();
     }
 
     @Override
     @Transactional
-    public void storeApiKey(UUID tenantId, String keyHash) {
-        TenantEntity tenantRef = tenantRepository.getReferenceById(tenantId);
-
+    public void storeApiKeyByExternalId(UUID tenantId, String keyHash) {
+        Optional<TenantEntity> tenantRef = tenantRepository.findByExternalId(tenantId);
+        if (tenantRef.isEmpty()) {
+            throw new IllegalStateException("Tenant with id " + tenantId + " does not exist");
+        }
         TenantApiKeyEntity key = TenantApiKeyEntity.builder()
-                .tenant(tenantRef)
+                .tenant(tenantRef.get())
                 .keyHash(keyHash)
                 .build();
 

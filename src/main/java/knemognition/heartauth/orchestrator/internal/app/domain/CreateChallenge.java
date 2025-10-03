@@ -1,19 +1,23 @@
 package knemognition.heartauth.orchestrator.internal.app.domain;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.UUID;
 
-
-@Getter
-@Setter
+/**
+ * Command object representing the intent to create a challenge for a user
+ * within a tenant context.
+ */
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreateChallenge {
-    private UUID userId;
-    private String nonceB64;
-    private Long ttlSeconds;
-    private String privateKey;
-    private String userPublicKey;
+    UUID tenantId;
+    UUID userId;
+
+    String nonceB64;
+    String ephemeralPrivateKey;
+    String userPublicKey;
+
+    Long ttlSeconds;
 }

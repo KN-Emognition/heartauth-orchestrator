@@ -13,7 +13,7 @@ public interface ConfirmPairingMapper {
 
     @Mapping(target = "nonce", source = "state.nonceB64")
     @Mapping(target = "signature", source = "req.signature")
-    @Mapping(target = "pub", source = "state.publicKeyPem",
+    @Mapping(target = "pub", source = "state.publicKey",
             qualifiedByName = "pemToEcPublicKey")
     ValidateNonce toValidateNonce(PairingConfirmRequest req, PairingState state);
 

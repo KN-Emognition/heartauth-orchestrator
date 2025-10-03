@@ -8,5 +8,5 @@ public interface TenantStore {
 
     UUID createTenant(UUID externalId);
 
-    void storeApiKey(UUID tenantId, String keyHash);
+    void storeApiKeyByExternalId(UUID tenantId, String keyHash);
 }

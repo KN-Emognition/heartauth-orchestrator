@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
+import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.internal.api.PairingApi;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.CreatePairingService;
-import knemognition.heartauth.orchestrator.internal.app.service.PairingStatusServiceImpl;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalPairingService;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
 import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
 import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
@@ -15,25 +15,32 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
+import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.ATTR_TENANT_ID;
+
 @Slf4j
 @RequiredArgsConstructor
 @RestController
 @PreAuthorize("hasAuthority('KEYCLOAK')")
 public class InternalPairingController implements PairingApi {
 
-    private final PairingStatusServiceImpl pairingStateStatusService;
-    private final CreatePairingService createPairingService;
-
+    private final InternalPairingService internalPairingService;
+    private final HttpServletRequest httpServletRequest;
 
     @Override
     public ResponseEntity<StatusResponse> internalPairingStatus(UUID jti, String xKCSession) {
         log.info("Received status request for jti: {}", jti);
-        return ResponseEntity.ok().body(pairingStateStatusService.status(jti));
+        UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
+        log.info("tenantId: {}", tenantId);
+        return ResponseEntity.ok()
+                .body(internalPairingService.getPairingStatus(jti, tenantId));
     }
 
     @Override
     public ResponseEntity<PairingCreateResponse> internalPairingCreate(PairingCreateRequest req) {
         log.info("Received status request for token issue");
-        return ResponseEntity.status(HttpStatus.CREATED).body(createPairingService.create(req));
+        UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
+        log.info("tenantId: {}", tenantId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(internalPairingService.createPairing(req, tenantId));
     }
 }

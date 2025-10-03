@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
-import knemognition.heartauth.orchestrator.internal.app.ports.out.ApiKeyLookup;
+import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.in.ApiKeyHasher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,7 +18,7 @@ import java.util.List;
 public class InternalApiKeyAuthenticationProvider implements AuthenticationProvider {
 
     private final ApiKeyHasher hasher;
-    private final ApiKeyLookup apiKeyLookup;
+    private final InternalMainStore apiKeyLookup;
 
     @Override
     public Authentication authenticate(Authentication authentication) {

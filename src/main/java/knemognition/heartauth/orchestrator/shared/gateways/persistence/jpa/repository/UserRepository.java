@@ -19,4 +19,12 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
                                                          @Param("userId") UUID userId);
 
     List<UserEntity> findAllByTenant_Id(UUID tenantId);
+
+    @Query("""
+              select (count(u) > 0) from UserEntity u
+              join u.tenant t
+              where t.externalId = :tenantExternalId and u.userId = :userId
+            """)
+    boolean existsByTenantExternalIdAndUserId(@Param("tenantExternalId") UUID tenantExternalId,
+                                              @Param("userId") UUID userId);
 }
