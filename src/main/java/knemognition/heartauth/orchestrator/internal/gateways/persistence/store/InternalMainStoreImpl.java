@@ -31,17 +31,26 @@ public class InternalMainStoreImpl implements InternalMainStore {
     private final UserRepository userRepository;
     private final DeviceRepository deviceRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean checkIfUserExists(IdentifyUser data) {
         return userRepository.existsByTenantExternalIdAndUserId(data.getTenantId(), data.getUserId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<TenantApiKey> findActiveByHash(String keyHash) {
         return tenantApiKeyRepository.findActiveByHash(keyHash)
                 .map(tenantApiKeyMapper::toDomain);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional
     public void updateLastUsedAt(UUID apiKeyId, OffsetDateTime when) {
@@ -50,6 +59,9 @@ public class InternalMainStoreImpl implements InternalMainStore {
         tenantApiKeyRepository.save(key);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Device> findDevices(
             IdentifyUser data) {

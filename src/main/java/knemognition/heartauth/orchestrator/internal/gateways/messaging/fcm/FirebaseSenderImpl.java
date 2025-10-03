@@ -23,6 +23,9 @@ public class FirebaseSenderImpl implements PushSender {
     private final ObjectMapper objectMapper;
     private final FirebaseMessaging firebaseMessaging;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void sendData(String token, SendPushMessage messageData, Duration ttl) {
         if (token == null || token.isBlank()) {

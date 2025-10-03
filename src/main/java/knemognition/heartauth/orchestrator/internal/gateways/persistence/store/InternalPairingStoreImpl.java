@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
-
 @Component
 @Slf4j
 @RequiredArgsConstructor
@@ -19,6 +17,9 @@ public class InternalPairingStoreImpl implements InternalPairingStore {
     private final InternalPairingStoreMapper createPairingStoreMapper;
     private final PairingStateRepository pairingStateRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CreatedFlowResult createPairing(CreatePairing state) {
         var ent = createPairingStoreMapper.fromCreate(state);

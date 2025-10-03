@@ -18,6 +18,9 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
     private final InternalChallengeStoreMapper createChallengeStoreMapper;
     private final ChallengeStateRepository challengeStateRepository;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public CreatedFlowResult createChallenge(CreateChallenge state) {
         var ent = createChallengeStoreMapper.fromCreate(state);
