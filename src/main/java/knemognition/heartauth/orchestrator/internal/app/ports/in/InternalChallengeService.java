@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.internal.app.ports.in;
 
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
 
 import java.util.UUID;
 
@@ -25,12 +25,12 @@ public interface InternalChallengeService {
      *
      * @param req      the challenge creation request (must include the target user ID; may include a TTL)
      * @param tenantId the tenant to which the challenge belongs; used for isolation
-     * @return a {@link ChallengeCreateResponse} describing the created challenge (e.g., ID, effective TTL)
+     * @return a {@link CreateChallengeResponseDto} describing the created challenge (e.g., ID, effective TTL)
      * @throws IllegalStateException   if the user does not exist
      * @throws knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException
      *                                 if the user has no active devices
      */
-    ChallengeCreateResponse createChallenge(ChallengeCreateRequest req, UUID tenantId);
+    CreateChallengeResponseDto createChallenge(CreateChallengeRequestDto req, UUID tenantId);
 
     /**
      * Get the status of a previously created challenge.
@@ -45,7 +45,7 @@ public interface InternalChallengeService {
      *
      * @param id       the challenge ID
      * @param tenantId the tenant requesting access; must match the challenge tenant
-     * @return a {@link StatusResponse} containing the status or {@code Not found}
+     * @return a {@link StatusResponseDto} containing the status or {@code Not found}
      */
-    StatusResponse getChallengeStatus(UUID id, UUID tenantId);
+    StatusResponseDto getChallengeStatus(UUID id, UUID tenantId);
 }

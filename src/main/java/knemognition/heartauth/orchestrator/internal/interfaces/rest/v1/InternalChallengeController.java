@@ -3,9 +3,9 @@ package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.internal.api.ChallengeApi;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class InternalChallengeController implements ChallengeApi {
     private final HttpServletRequest httpServletRequest;
 
     @Override
-    public ResponseEntity<ChallengeCreateResponse> internalChallengeCreate(ChallengeCreateRequest request) {
+    public ResponseEntity<CreateChallengeResponseDto> createChallenge(CreateChallengeRequestDto request) {
         log.info("Received challenge create request for user {}", request.getUserId());
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
 
@@ -37,7 +37,7 @@ public class InternalChallengeController implements ChallengeApi {
 
 
     @Override
-    public ResponseEntity<StatusResponse> internalChallengeStatus(UUID id, String xKCSession) {
+    public ResponseEntity<StatusResponseDto> getChallengeStatus(UUID id) {
         log.info("Received status request for id {}", id);
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
         return ResponseEntity.ok()

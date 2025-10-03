@@ -1,9 +1,9 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.store;
 
 import jakarta.transaction.Transactional;
-import knemognition.heartauth.orchestrator.internal.app.domain.IdentifyUser;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
+import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.domain.TenantApiKey;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantApiKeyEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
@@ -35,8 +35,8 @@ public class InternalMainStoreImpl implements InternalMainStore {
      * {@inheritDoc}
      */
     @Override
-    public boolean checkIfUserExists(IdentifyUser data) {
-        return userRepository.existsByTenantExternalIdAndUserId(data.getTenantId(), data.getUserId());
+    public boolean checkIfUserExists(IdentifiableUser data) {
+        return userRepository.existsByTenantIdAndUserId(data.getTenantId(), data.getUserId());
     }
 
     /**
@@ -64,8 +64,8 @@ public class InternalMainStoreImpl implements InternalMainStore {
      */
     @Override
     public List<Device> findDevices(
-            IdentifyUser data) {
-        return deviceRepository.findAllByTenantExternalIdAndUserId(data.getTenantId(), data.getUserId())
+            IdentifiableUser data) {
+        return deviceRepository.findAllByTenantIdAndUserId(data.getTenantId(), data.getUserId())
                 .stream()
                 .map(deviceMapper::toDomain)
                 .toList();

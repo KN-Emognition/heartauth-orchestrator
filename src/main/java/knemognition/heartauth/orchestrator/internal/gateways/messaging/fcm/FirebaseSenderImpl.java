@@ -20,7 +20,6 @@ import java.util.Objects;
 public class FirebaseSenderImpl implements PushSender {
 
     private final RecordMapper recordMapper;
-    private final ObjectMapper objectMapper;
     private final FirebaseMessaging firebaseMessaging;
 
     /**
@@ -39,7 +38,7 @@ public class FirebaseSenderImpl implements PushSender {
         android.setTtl(Objects.requireNonNull(ttl)
                 .toMillis());
 
-        Map<String, String> data = recordMapper.convertObjectToMap(messageData, objectMapper);
+        Map<String, String> data = recordMapper.convertObjectToMap(messageData);
         Message message = createMessage(token, data, android);
         try {
             firebaseMessaging.send(message);

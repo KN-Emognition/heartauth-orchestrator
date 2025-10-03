@@ -3,9 +3,9 @@ package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.internal.api.PairingApi;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalPairingService;
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -27,7 +27,7 @@ public class InternalPairingController implements PairingApi {
     private final HttpServletRequest httpServletRequest;
 
     @Override
-    public ResponseEntity<StatusResponse> internalPairingStatus(UUID jti, String xKCSession) {
+    public ResponseEntity<StatusResponseDto> getPairingStatus(UUID jti) {
         log.info("Received status request for jti: {}", jti);
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
         log.info("tenantId: {}", tenantId);
@@ -36,7 +36,7 @@ public class InternalPairingController implements PairingApi {
     }
 
     @Override
-    public ResponseEntity<PairingCreateResponse> internalPairingCreate(PairingCreateRequest req) {
+    public ResponseEntity<CreatePairingResponseDto> createPairing(CreatePairingRequestDto req) {
         log.info("Received status request for token issue");
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
         log.info("tenantId: {}", tenantId);

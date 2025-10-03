@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.internal.app.ports.in;
 
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
 
 import java.util.UUID;
 
@@ -24,10 +24,10 @@ public interface InternalPairingService {
      *
      * @param req      the pairing creation request (must include target user ID; may include a TTL)
      * @param tenantId the tenant under which the pairing is created
-     * @return {@link PairingCreateResponse} containing the JTI and signed JWT
+     * @return {@link CreatePairingResponseDto} containing the JTI and signed JWT
      * @throws IllegalStateException if the user already exists (i.e., pairing already present)
      */
-    PairingCreateResponse createPairing(PairingCreateRequest req, UUID tenantId);
+    CreatePairingResponseDto createPairing(CreatePairingRequestDto req, UUID tenantId);
 
     /**
      * Get the status of a pairing by its ID and tenant.
@@ -36,7 +36,7 @@ public interface InternalPairingService {
      *
      * @param id       the pairing ID (JTI)
      * @param tenantId the tenant attempting to access the pairing
-     * @return a {@link StatusResponse} containing the current status or {@code Not found}
+     * @return a {@link StatusResponseDto} containing the current status or {@code Not found}
      */
-    StatusResponse getPairingStatus(UUID id, UUID tenantId);
+    StatusResponseDto getPairingStatus(UUID id, UUID tenantId);
 }

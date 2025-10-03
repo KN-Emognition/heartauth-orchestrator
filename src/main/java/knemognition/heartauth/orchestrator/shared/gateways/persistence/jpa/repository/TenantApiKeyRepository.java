@@ -13,9 +13,9 @@ public interface TenantApiKeyRepository extends JpaRepository<TenantApiKeyEntity
     @Query("""
                 select k from TenantApiKeyEntity k
                 join k.tenant t
-                where t.externalId = :tenantExternalId and k.keyHash = :keyHash
+                where t.tenantId = :tenantId and k.keyHash = :keyHash
             """)
-    Optional<TenantApiKeyEntity> findByTenantExternalIdAndKeyHash(@Param("tenantExternalId") UUID tenantExternalId,
+    Optional<TenantApiKeyEntity> findByTenantExternalIdAndKeyHash(@Param("tenantId") UUID tenantId,
                                                                   @Param("keyHash") String keyHash);
 
     List<TenantApiKeyEntity> findAllByTenant_Id(UUID tenantId);

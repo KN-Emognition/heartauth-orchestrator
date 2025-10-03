@@ -2,7 +2,6 @@ package knemognition.heartauth.orchestrator.internal.app.impl;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.internal.app.domain.IdentifyUser;
 import knemognition.heartauth.orchestrator.internal.app.domain.SendPushMessage;
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
@@ -12,11 +11,13 @@ import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainSt
 import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatusDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
+import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -55,9 +56,9 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
      * {@inheritDoc}
      */
     @Override
-    public ChallengeCreateResponse createChallenge(ChallengeCreateRequest req, UUID tenantId) {
+    public CreateChallengeResponseDto createChallenge(CreateChallengeRequestDto req, UUID tenantId) {
 
-        IdentifyUser user = IdentifyUser.builder()
+        IdentifiableUser user = IdentifiableUser.builder()
                 .userId(req.getUserId())
                 .tenantId(tenantId)
                 .build();
@@ -97,7 +98,7 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
      * {@inheritDoc}
      */
     @Override
-    public StatusResponse getChallengeStatus(UUID id, UUID tenantId) {
+    public StatusResponseDto getChallengeStatus(UUID id, UUID tenantId) {
         Optional<ChallengeState> state = challengeStateGetFlowStore.getFlow(id);
         log.info("Queried state for {}", id);
 
@@ -107,9 +108,12 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
             return internalChallengeMapper.notFoundStatus();
         }
 
-        return StatusResponse.builder()
-                .status(state.get()
-                        .getStatus())
+        return StatusResponseDto.builder()
+                .status(
+                        FlowStatusDto.fromValue(state.get()
+                                .getStatus()
+                                .getValue())
+                )
                 .build();
     }
 

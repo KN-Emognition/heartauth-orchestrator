@@ -22,7 +22,7 @@ public class TenantStoreImpl implements TenantStore {
 
     @Override
     public Optional<UUID> findIdByExternalId(UUID externalId) {
-        return tenantRepository.findByExternalId(externalId).map(TenantEntity::getId);
+        return tenantRepository.findByTenantId(externalId).map(TenantEntity::getId);
     }
 
     @Override
@@ -37,7 +37,7 @@ public class TenantStoreImpl implements TenantStore {
     @Override
     @Transactional
     public void storeApiKeyByExternalId(UUID tenantId, String keyHash) {
-        Optional<TenantEntity> tenantRef = tenantRepository.findByExternalId(tenantId);
+        Optional<TenantEntity> tenantRef = tenantRepository.findByTenantId(tenantId);
         if (tenantRef.isEmpty()) {
             throw new IllegalStateException("Tenant with id " + tenantId + " does not exist");
         }

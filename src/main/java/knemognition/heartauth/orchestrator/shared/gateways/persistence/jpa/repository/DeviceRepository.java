@@ -13,9 +13,9 @@ public interface DeviceRepository extends JpaRepository<DeviceEntity, UUID> {
                 select d from DeviceEntity d
                 join d.appUser u
                 join u.tenant t
-                where t.externalId = :tenantExternalId and u.userId = :userId
+                where t.tenantId = :tenantExternalId and u.userId = :userId
                 order by d.createdAt asc
             """)
-    List<DeviceEntity> findAllByTenantExternalIdAndUserId(@Param("tenantExternalId") UUID tenantExternalId,
+    List<DeviceEntity> findAllByTenantIdAndUserId(@Param("tenantExternalId") UUID tenantId,
                                                           @Param("userId") UUID userId);
 }

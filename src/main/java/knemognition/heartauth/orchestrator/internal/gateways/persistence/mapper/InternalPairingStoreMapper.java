@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import org.mapstruct.*;
 

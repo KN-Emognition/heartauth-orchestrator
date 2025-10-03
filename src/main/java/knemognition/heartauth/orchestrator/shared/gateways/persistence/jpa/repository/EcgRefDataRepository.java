@@ -14,8 +14,8 @@ public interface EcgRefDataRepository extends JpaRepository<EcgRefDataEntity, UU
                 select e from EcgRefDataEntity e
                 join e.appUser u
                 join u.tenant t
-                where t.externalId = :tenantExternalId and u.userId = :userId
+                where t.tenantId = :tenantId and u.userId = :userId
             """)
-    Optional<EcgRefDataEntity> findByTenantExternalIdAndUserId(@Param("tenantExternalId") UUID tenantExternalId,
+    Optional<EcgRefDataEntity> findByTenantIdAndUserId(@Param("tenantId") UUID tenantId,
                                                                @Param("userId") UUID userId);
 }

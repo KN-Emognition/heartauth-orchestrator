@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.shared.app.domain;
 
-import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 import lombok.*;
 
 import java.util.UUID;

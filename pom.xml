@@ -169,6 +169,7 @@
                             <apiPackage>knemognition.heartauth.orchestrator.internal.api</apiPackage>
                             <modelPackage>knemognition.heartauth.orchestrator.internal.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <useTags>true</useTags>
                                 <generateSupportingFiles>false</generateSupportingFiles>
@@ -226,6 +227,31 @@
                                 <generateBuilders>true</generateBuilders>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <useJakartaEe>true</useJakartaEe>
+                                <dateLibrary>java8</dateLibrary>
+                            </configOptions>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-models</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/interface/domain.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>ignore.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.shared.app.domain</modelPackage>
+                            <invokerPackage>ignore.invoker</invokerPackage>
+                            <generateApis>false</generateApis>
+                            <generateModels>true</generateModels>
+                            <generateSupportingFiles>false</generateSupportingFiles>
+                            <configOptions>
+                                <generateSupportingFiles>false</generateSupportingFiles>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <documentationProvider>none</documentationProvider>
+                                <generateBuilders>true</generateBuilders>
+                                <useJakartaEe>true</useJakartaEe>
+                                <useSpringBoot3>true</useSpringBoot3>
                                 <dateLibrary>java8</dateLibrary>
                             </configOptions>
                         </configuration>

@@ -1,15 +1,18 @@
 package knemognition.heartauth.orchestrator.internal.app.impl;
 
-import knemognition.heartauth.orchestrator.internal.app.domain.IdentifyUser;
+
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalPairingMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalPairingService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalPairingStore;
 import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairingProperties;
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateRequest;
-import knemognition.heartauth.orchestrator.internal.model.PairingCreateResponse;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.model.CreatePairingResponseDto;
+import knemognition.heartauth.orchestrator.internal.model.FlowStatusDto;
+import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
+import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +40,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
     private final JwtEncoder jwtEncoder;
     private final InternalPairingProperties internalPairingProperties;
     private final InternalPairingMapper internalPairingMapper;
+    private final RecordMapper recordMapper;
     // persistence
     private final InternalPairingStore internalPairingStore;
     private final InternalMainStore internalMainStore;
@@ -46,10 +50,10 @@ public class InternalPairingServiceImpl implements InternalPairingService {
      * {@inheritDoc}
      */
     @Override
-    public PairingCreateResponse createPairing(PairingCreateRequest req, UUID tenantId) {
+    public CreatePairingResponseDto createPairing(CreatePairingRequestDto req, UUID tenantId) {
 
 
-        boolean exists = internalMainStore.checkIfUserExists(IdentifyUser.builder()
+        boolean exists = internalMainStore.checkIfUserExists(IdentifiableUser.builder()
                 .userId(req.getUserId())
                 .tenantId(tenantId)
                 .build());
@@ -63,15 +67,18 @@ public class InternalPairingServiceImpl implements InternalPairingService {
         Integer effectiveTtl = clampOrDefault(req.getTtlSeconds(), internalPairingProperties.getMinTtl(),
                 internalPairingProperties.getMaxTtl(), internalPairingProperties.getDefaultTtl());
 
+        IdentifiableUser user = IdentifiableUser.builder()
+                .userId(req.getUserId())
+                .tenantId(tenantId)
+                .build();
+
         JwtClaimsSet claims = JwtClaimsSet.builder()
                 .id(jti.toString())
                 .issuer(internalPairingProperties.getIssuer())
                 .audience(internalPairingProperties.getAudience())
                 .issuedAt(now)
                 .expiresAt(now.plusSeconds(effectiveTtl))
-                .claim("tenantId", tenantId.toString())
-                .claim("userId", req.getUserId()
-                        .toString())
+                .claims(claimsMap -> claimsMap.putAll(recordMapper.convertObjectToMap(user)))
                 .build();
         JwsHeader headers = JwsHeader.with(SignatureAlgorithm.ES256)
                 .build();
@@ -82,7 +89,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
         internalPairingStore.createPairing(internalPairingMapper.toCreatePairing(tenantId, req, jti, effectiveTtl));
         log.info("Created pairing for user {}", req.getUserId());
 
-        return PairingCreateResponse.builder()
+        return CreatePairingResponseDto.builder()
                 .jti(jti)
                 .jwt(token)
                 .build();
@@ -92,7 +99,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
      * {@inheritDoc}
      */
     @Override
-    public StatusResponse getPairingStatus(UUID id, UUID tenantId) {
+    public StatusResponseDto getPairingStatus(UUID id, UUID tenantId) {
         Optional<PairingState> state = pairingStateGetFlowStore.getFlow(id);
         log.info("Queried state for {}", id);
 
@@ -102,9 +109,13 @@ public class InternalPairingServiceImpl implements InternalPairingService {
             return internalPairingMapper.notFoundStatus();
         }
 
-        return StatusResponse.builder()
-                .status(state.get()
-                        .getStatus())
+        return StatusResponseDto.builder()
+                .status(
+                        FlowStatusDto.fromValue(state.get()
+                                .getStatus()
+                                .getValue())
+
+                )
                 .build();
     }
 }
