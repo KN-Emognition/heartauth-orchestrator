@@ -5,9 +5,8 @@ import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescripti
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import org.mapstruct.*;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring")
 public interface PairingStatusStoreMapper {
-
 
     FlowStatusDescription toStatus(PairingStateRedis src);
 

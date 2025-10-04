@@ -166,8 +166,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/interface/internal.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.internal.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.internal.model</modelPackage>
+                            <apiPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
@@ -191,9 +191,10 @@
                         <configuration>
                             <inputSpec>${project.basedir}/interface/external.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.external.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.external.model</modelPackage>
+                            <apiPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <useTags>true</useTags>
                                 <generateSupportingFiles>false</generateSupportingFiles>
@@ -215,9 +216,10 @@
                         <configuration>
                             <inputSpec>${project.basedir}/interface/admin.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.admin.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.admin.model</modelPackage>
+                            <apiPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1.model</modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <useTags>true</useTags>
                                 <generateSupportingFiles>false</generateSupportingFiles>
@@ -257,7 +259,7 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-model-api-models</id>
+                        <id>generate-model-api-client</id>
                         <goals>
                             <goal>generate</goal>
                         </goals>
@@ -265,11 +267,12 @@
                             <inputSpec>${project.basedir}/interface/model-api.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>restclient</library>
-                            <modelPackage>knemognition.heartauth.orchestrator.modelapi.model</modelPackage>
-                            <apiPackage>knemognition.heartauth.orchestrator.modelapi.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.model</modelPackage>
+                            <apiPackage>knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.api</apiPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <generateApiTests>false</generateApiTests>
                             <generateModelTests>false</generateModelTests>
+                            <modelNameSuffix>Dto</modelNameSuffix>
                             <configOptions>
                                 <documentationProvider>none</documentationProvider>
                                 <generateSupportingFiles>false</generateSupportingFiles>

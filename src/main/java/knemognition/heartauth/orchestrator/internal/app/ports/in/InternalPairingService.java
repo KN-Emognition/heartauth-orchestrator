@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.internal.app.ports.in;
 
-import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
-import knemognition.heartauth.orchestrator.internal.model.CreatePairingResponseDto;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 
 import java.util.UUID;
 

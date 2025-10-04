@@ -1,36 +1,21 @@
 package knemognition.heartauth.orchestrator.external.app.domain;
 
-import knemognition.heartauth.orchestrator.external.model.Attestation;
-import knemognition.heartauth.orchestrator.external.model.Platform;
-import lombok.AllArgsConstructor;
+import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import java.util.UUID;
 
-@Data
+@Value
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class EnrichDeviceData {
-    private UUID jti;
-
-    private String nonceB64;
-
-    private String deviceId;
-
-    private String displayName;
-
-    private String publicKeyPem;
-
-    private String fcmToken;
-
-    private Platform platform;
-
-    private String osVersion;
-
-    private String model;
-
-    private Attestation attestation;
+    UUID jti;
+    String nonceB64;
+    String deviceId;
+    String displayName;
+    String publicKeyPem;
+    String fcmToken;
+    Platform platform;
+    String osVersion;
+    String model;
 }

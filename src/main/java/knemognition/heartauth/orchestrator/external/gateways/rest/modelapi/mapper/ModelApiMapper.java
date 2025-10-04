@@ -1,0 +1,10 @@
+package knemognition.heartauth.orchestrator.external.gateways.rest.modelapi.mapper;
+
+import knemognition.heartauth.orchestrator.shared.app.domain.EcgPrediction;
+import knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.model.PredictRequestDto;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface ModelApiMapper {
+    PredictRequestDto toPredictRequestDto(EcgPrediction ecgPrediction);
+}

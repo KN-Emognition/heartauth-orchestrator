@@ -6,12 +6,13 @@ import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalPairing
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalPairingStore;
 import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairingProperties;
-import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
-import knemognition.heartauth.orchestrator.internal.model.CreatePairingResponseDto;
-import knemognition.heartauth.orchestrator.internal.model.FlowStatusDto;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
+import knemognition.heartauth.orchestrator.shared.app.domain.QrCodeClaims;
 import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import lombok.RequiredArgsConstructor;
@@ -67,18 +68,19 @@ public class InternalPairingServiceImpl implements InternalPairingService {
         Integer effectiveTtl = clampOrDefault(req.getTtlSeconds(), internalPairingProperties.getMinTtl(),
                 internalPairingProperties.getMaxTtl(), internalPairingProperties.getDefaultTtl());
 
-        IdentifiableUser user = IdentifiableUser.builder()
+        QrCodeClaims qrCodeClaims = QrCodeClaims.builder()
+                .jti(jti)
                 .userId(req.getUserId())
                 .tenantId(tenantId)
+                .exp(now.plusSeconds(effectiveTtl)
+                        .getEpochSecond())
                 .build();
 
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .id(jti.toString())
                 .issuer(internalPairingProperties.getIssuer())
                 .audience(internalPairingProperties.getAudience())
                 .issuedAt(now)
-                .expiresAt(now.plusSeconds(effectiveTtl))
-                .claims(claimsMap -> claimsMap.putAll(recordMapper.convertObjectToMap(user)))
+                .claims(claimsMap -> claimsMap.putAll(recordMapper.convertObjectToMap(qrCodeClaims)))
                 .build();
         JwsHeader headers = JwsHeader.with(SignatureAlgorithm.ES256)
                 .build();

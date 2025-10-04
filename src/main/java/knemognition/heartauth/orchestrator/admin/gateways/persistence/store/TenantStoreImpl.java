@@ -14,7 +14,6 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class TenantStoreImpl implements TenantStore {
 
     private final TenantRepository tenantRepository;
@@ -22,14 +21,17 @@ public class TenantStoreImpl implements TenantStore {
 
     @Override
     public Optional<UUID> findIdByExternalId(UUID externalId) {
-        return tenantRepository.findByTenantId(externalId).map(TenantEntity::getId);
+        return tenantRepository.findByTenantId(externalId)
+                .map(TenantEntity::getId);
     }
 
     @Override
     @Transactional
     public UUID createTenant(UUID externalId) {
         TenantEntity saved = tenantRepository.save(
-                TenantEntity.builder().tenantId(externalId).build()
+                TenantEntity.builder()
+                        .tenantId(externalId)
+                        .build()
         );
         return saved.getTenantId();
     }

@@ -1,10 +1,9 @@
 package knemognition.heartauth.orchestrator.internal.gateways.messaging.fcm;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
-import knemognition.heartauth.orchestrator.internal.app.domain.SendPushMessage;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FirebaseSendException;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,10 +25,11 @@ public class FirebaseSenderImpl implements PushSender {
      * {@inheritDoc}
      */
     @Override
-    public void sendData(String token, SendPushMessage messageData, Duration ttl) {
+    public void sendData(String token, ChallengePushMessage messageData) {
         if (token == null || token.isBlank()) {
             throw new FirebaseSendException("FCM token is null/blank");
         }
+        Duration ttl = Duration.ofSeconds(messageData.getTtl());
         if (ttl != null && ttl.isNegative()) {
             throw new FirebaseSendException("ttl must be non-negative");
         }

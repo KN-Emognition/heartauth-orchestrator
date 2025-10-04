@@ -196,7 +196,7 @@ components:
         - status
       properties:
         status:
-          $ref: 'components.yml#/components/schemas/FlowStatus'
+          $ref: 'domain.yml#/components/schemas/FlowStatus'
         reason:
           type: string
           description: Optional human-readable reason for non-success states (e.g., "TTL exceeded", "User denied").

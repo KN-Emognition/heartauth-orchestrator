@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
 
 import jakarta.persistence.*;
-import knemognition.heartauth.orchestrator.external.model.Platform;
+import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -28,7 +28,6 @@ public class DeviceEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "app_user_fk", nullable = false, foreignKey = @ForeignKey(name = "user_device_app_user_fk_fkey"))
-    @ToString.Exclude
     private UserEntity appUser;
 
     @Column(name = "device_id", nullable = false)
@@ -38,7 +37,7 @@ public class DeviceEntity {
     private String displayName;
 
     @Column(name = "public_key_pem", nullable = false, columnDefinition = "text")
-    private String publicKeyPem;
+    private String publicKey;
 
     @Column(name = "fcm_token")
     private String fcmToken;

@@ -1,8 +1,7 @@
 package knemognition.heartauth.orchestrator.admin.interfaces.rest.v1;
 
-import knemognition.heartauth.orchestrator.admin.api.TenantsApi;
 import knemognition.heartauth.orchestrator.admin.app.ports.in.TenantService;
-import knemognition.heartauth.orchestrator.admin.model.CreateTenantResponse;
+import knemognition.heartauth.orchestrator.admin.interfaces.rest.v1.model.CreateTenantResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -19,8 +18,9 @@ public class TenantController implements TenantsApi {
     private final TenantService tenantService;
 
     @Override
-    public ResponseEntity<CreateTenantResponse> registerTenant() {
+    public ResponseEntity<CreateTenantResponseDto> registerTenant() {
         log.info("Received request to register tenant");
-        return ResponseEntity.status(HttpStatus.CREATED).body(tenantService.register());
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(tenantService.register());
     }
 }

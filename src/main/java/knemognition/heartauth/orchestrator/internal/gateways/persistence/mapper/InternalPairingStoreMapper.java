@@ -13,7 +13,10 @@ import java.time.Instant;
 public interface InternalPairingStoreMapper {
 
 
-    @BeanMapping(qualifiedByName = "createPairing")
+    @BeanMapping(
+            qualifiedByName = "createPairing",
+            unmappedTargetPolicy = ReportingPolicy.IGNORE
+    )
     @Mapping(target = "id", source = "jti")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "exp", ignore = true)

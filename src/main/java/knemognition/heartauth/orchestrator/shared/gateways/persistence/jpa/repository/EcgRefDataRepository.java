@@ -17,5 +17,5 @@ public interface EcgRefDataRepository extends JpaRepository<EcgRefDataEntity, UU
                 where t.tenantId = :tenantId and u.userId = :userId
             """)
     Optional<EcgRefDataEntity> findByTenantIdAndUserId(@Param("tenantId") UUID tenantId,
-                                                               @Param("userId") UUID userId);
+                                                       @Param("userId") UUID userId);
 }

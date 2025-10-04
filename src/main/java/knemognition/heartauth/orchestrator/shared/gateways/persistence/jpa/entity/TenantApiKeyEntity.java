@@ -27,7 +27,6 @@ public class TenantApiKeyEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "tenants_fk", nullable = false, foreignKey = @ForeignKey(name = "tenant_api_keys_tenants_fk_fkey"))
-    @ToString.Exclude
     private TenantEntity tenant;
 
     @Column(name = "key_hash", nullable = false, columnDefinition = "text")

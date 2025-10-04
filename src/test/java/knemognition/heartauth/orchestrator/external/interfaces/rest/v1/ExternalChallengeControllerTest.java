@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.external.interfaces.rest.v1;
 
-import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
+import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
 import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class ExternalChallengeControllerTest extends HeartauthUnitTest {
 
     @Mock
-    private CompleteChallengeService completeChallengeService;
+    private ExternalChallengeService completeChallengeService;
 
     @InjectMocks
     private ExternalChallengeController controller;
@@ -34,7 +34,7 @@ class ExternalChallengeControllerTest extends HeartauthUnitTest {
         // then
         assertThat(resp.getStatusCode().value()).isEqualTo(204);
         assertThat(resp.getBody()).isNull();
-        verify(completeChallengeService, times(1)).complete(id, req);
+        verify(completeChallengeService, times(1)).completeChallenge(id, req);
         verifyNoMoreInteractions(completeChallengeService);
     }
 }

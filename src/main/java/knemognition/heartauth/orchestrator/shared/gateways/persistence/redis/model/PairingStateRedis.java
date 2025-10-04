@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model;
 
-import knemognition.heartauth.orchestrator.external.model.Platform;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

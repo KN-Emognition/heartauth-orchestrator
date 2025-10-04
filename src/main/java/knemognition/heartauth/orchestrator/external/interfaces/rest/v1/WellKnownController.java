@@ -1,9 +1,9 @@
 package knemognition.heartauth.orchestrator.external.interfaces.rest.v1;
 
 import com.nimbusds.jose.jwk.ECKey;
-import knemognition.heartauth.orchestrator.external.api.WellKnownApi;
-import knemognition.heartauth.orchestrator.external.model.ECJwk;
-import knemognition.heartauth.orchestrator.external.model.JwkSet;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api.WellKnownApi;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.ECJwkDto;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.JwkSetDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,14 +18,16 @@ public class WellKnownController implements WellKnownApi {
     private final ECKey publicJwk;
 
     @Override
-    public ResponseEntity<JwkSet> getJwks() {
-        ECJwk ec = new ECJwk();
-        ec.setKty(ECJwk.KtyEnum.EC);
-        ec.setCrv(ECJwk.CrvEnum.P_256);
-        ec.setX(publicJwk.getX().toString());
-        ec.setY(publicJwk.getY().toString());
+    public ResponseEntity<JwkSetDto> getWellKnown() {
+        ECJwkDto ec = new ECJwkDto();
+        ec.setKty(ECJwkDto.KtyEnum.EC);
+        ec.setCrv(ECJwkDto.CrvEnum.P_256);
+        ec.setX(publicJwk.getX()
+                .toString());
+        ec.setY(publicJwk.getY()
+                .toString());
         ec.setKid(publicJwk.getKeyID());
-        ec.setUse(ECJwk.UseEnum.SIG);
+        ec.setUse(ECJwkDto.UseEnum.SIG);
         ec.setAlg("ES256");
 
         ec.setX5u(null);
@@ -33,7 +35,7 @@ public class WellKnownController implements WellKnownApi {
         ec.setX5t(null);
         ec.setX5tHashS256(null);
 
-        JwkSet body = new JwkSet();
+        JwkSetDto body = new JwkSetDto();
         body.setKeys(List.of(ec));
 
         return ResponseEntity.ok(body);

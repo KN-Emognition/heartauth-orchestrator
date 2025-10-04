@@ -6,12 +6,13 @@ import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChalle
 import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.InternalChallengeStoreMapper;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class InternalChallengeStoreImpl implements InternalChallengeStore {
 

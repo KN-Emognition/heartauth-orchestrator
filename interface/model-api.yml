@@ -3,7 +3,7 @@ info:
   title: Model API
   version: 1.0.0
 paths:
-  /predict:
+  /v1/predict:
     post:
       operationId: predict
       tags:

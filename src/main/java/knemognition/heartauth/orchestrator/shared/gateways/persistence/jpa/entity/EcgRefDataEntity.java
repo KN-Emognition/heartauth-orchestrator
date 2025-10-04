@@ -31,7 +31,7 @@ public class EcgRefDataEntity {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "ecg_data", nullable = false, columnDefinition = "jsonb")
-    private List<List<Float>> ecgData;
+    private List<List<Float>> refEcg;
 
     @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime createdAt;

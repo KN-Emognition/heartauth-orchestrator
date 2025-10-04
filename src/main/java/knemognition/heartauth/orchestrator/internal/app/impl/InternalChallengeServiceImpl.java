@@ -2,19 +2,19 @@ package knemognition.heartauth.orchestrator.internal.app.impl;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.internal.app.domain.SendPushMessage;
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.NonceService;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
-import knemognition.heartauth.orchestrator.internal.model.CreateChallengeRequestDto;
-import knemognition.heartauth.orchestrator.internal.model.CreateChallengeResponseDto;
-import knemognition.heartauth.orchestrator.internal.model.FlowStatusDto;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
 import java.security.PublicKey;
-import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -85,7 +84,7 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
 
         CreateChallenge to = internalChallengeMapper.toCreateChallenge(tenantId, req, nonceB64, effectiveTtl,
                 keyPair.getPrivate(), deviceCredentials.getFirst()
-                        .getPublicKeyPem());
+                        .getPublicKey());
         CreatedFlowResult result = internalChallengeStore.createChallenge(to);
         log.info("Stored challenge in cache {} for user {}", result.getId(), req.getUserId());
 
@@ -119,10 +118,10 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
 
 
     private void sendToDevices(List<Device> deviceCredentials, String nonceB64, CreatedFlowResult result, PublicKey publicKey) {
-        SendPushMessage to = internalChallengeMapper.toMessageData(result, nonceB64, publicKey);
+        ChallengePushMessage to = internalChallengeMapper.toChallengePushMessage(result, nonceB64, publicKey);
 
         for (Device item : deviceCredentials) {
-            pushSender.sendData(item.getFcmToken(), to, Duration.ofSeconds(result.getTtlSeconds()));
+            pushSender.sendData(item.getFcmToken(), to);
         }
     }
 }

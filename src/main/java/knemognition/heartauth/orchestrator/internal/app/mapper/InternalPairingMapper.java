@@ -1,9 +1,9 @@
 package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatePairing;
-import knemognition.heartauth.orchestrator.internal.model.CreatePairingRequestDto;
-import knemognition.heartauth.orchestrator.internal.model.FlowStatusDto;
-import knemognition.heartauth.orchestrator.internal.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import org.mapstruct.Mapper;
 

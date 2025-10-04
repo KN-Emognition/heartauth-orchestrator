@@ -29,7 +29,6 @@ public class UserEntity {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "tenants_fk", nullable = false, foreignKey = @ForeignKey(name = "app_user_tenants_fk_fkey"))
-    @ToString.Exclude
     private TenantEntity tenant;
 
     @Column(name = "user_id", nullable = false)
@@ -43,10 +42,8 @@ public class UserEntity {
 
     @Builder.Default
     @OneToMany(mappedBy = "appUser", orphanRemoval = true)
-    @ToString.Exclude
     private Set<DeviceEntity> devices = new HashSet<>();
 
     @OneToOne(mappedBy = "appUser", fetch = FetchType.LAZY, orphanRemoval = true)
-    @ToString.Exclude
     private EcgRefDataEntity ecgRefData;
 }
