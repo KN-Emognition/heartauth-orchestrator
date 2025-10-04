@@ -143,7 +143,7 @@ components:
       required:
         - deviceId
         - displayName
-        - publicKeyPem
+        - publicKey
         - fcmToken
         - platform
       properties:
@@ -151,7 +151,7 @@ components:
           type: string
         displayName:
           type: string
-        publicKeyPem:
+        publicKey:
           type: string
         fcmToken:
           type: string
@@ -212,7 +212,7 @@ components:
       required:
         - deviceId
         - displayName
-        - publicKeyPem
+        - publicKey
         - fcmToken
         - createdAt
       properties:
@@ -220,7 +220,7 @@ components:
           type: string
         displayName:
           type: string
-        publicKeyPem:
+        publicKey:
           type: string
         fcmToken:
           type: string

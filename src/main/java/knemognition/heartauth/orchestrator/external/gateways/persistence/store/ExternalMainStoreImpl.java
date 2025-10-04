@@ -5,10 +5,11 @@ import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.EcgRefData;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.EcgRefDataEntity;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.UserEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.EcgRefDataRepository;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class ExternalMainStoreImpl implements ExternalMainStore {
     // repository
     private final EcgRefDataRepository ecgRefDataRepository;
     private final UserRepository userRepository;
-    private final DeviceRepository deviceRepository;
+    private final TenantRepository tenantRepository;
 
     @Override
     public Optional<EcgRefData> findRefData(IdentifiableUser identUser) {
@@ -36,11 +37,13 @@ public class ExternalMainStoreImpl implements ExternalMainStore {
     @Override
     @Transactional
     public void savePairingArtifacts(EcgRefData ref, Device device, IdentifiableUser identUser) {
-        UserEntity user = userRepository
-                .findByTenantIdAndUserId(identUser.getTenantId(), identUser.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
-        ecgRefDataRepository.save(externalMainStoreMapper.toEntity(ref, user));
-        deviceRepository.save(externalMainStoreMapper.toEntity(device, user));
+        // todo: graceful handling, if user already exists or if tenant does not exist
+        TenantEntity tenant = tenantRepository.findByTenantId(identUser.getTenantId())
+                .orElseThrow();
+        UserEntity user = externalMainStoreMapper.toEntity(identUser);
+        user.setTenant(tenant);
+        user.replaceRefData(externalMainStoreMapper.toEntity(ref));
+        user.addDevice(externalMainStoreMapper.toEntity(device));
+        userRepository.save(user);
     }
 }

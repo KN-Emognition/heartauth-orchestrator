@@ -57,7 +57,7 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
     @Override
     public InitPairingResponseDto initPairing(InitPairingRequestDto req, QrCodeClaims qrCodeClaims) {
 
-        externalValidationService.validatePublicKeyPem(req.getPublicKeyPem());
+        externalValidationService.validatePublicKeyPem(req.getPublicKey());
 
         String nonceB64 = nonceService.createNonce(externalPairingProperties.getNonceLength());
         UUID id = qrCodeClaims.getJti();
@@ -95,6 +95,7 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
 
         PairingState state = pairingStateGetFlowStore.getFlow(jti)
                 .orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
+
 
         ValidateNonce validateNonce = externalPairingMapper.toValidateNonce(req, state);
         externalValidationService.validateNonce(validateNonce);

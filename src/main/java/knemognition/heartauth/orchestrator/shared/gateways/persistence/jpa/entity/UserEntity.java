@@ -41,9 +41,22 @@ public class UserEntity {
     private OffsetDateTime updatedAt;
 
     @Builder.Default
-    @OneToMany(mappedBy = "appUser", orphanRemoval = true)
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DeviceEntity> devices = new HashSet<>();
 
-    @OneToOne(mappedBy = "appUser", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private EcgRefDataEntity ecgRefData;
+
+
+    public void addDevice(DeviceEntity device) {
+        if (device == null) return;
+        device.setAppUser(this);
+        this.devices.add(device);
+    }
+
+    public void replaceRefData(EcgRefDataEntity ref) {
+        if (this.ecgRefData != null) this.ecgRefData.setAppUser(null);
+        this.ecgRefData = ref;
+        if (ref != null) ref.setAppUser(this);
+    }
 }

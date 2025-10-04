@@ -13,7 +13,7 @@ public class EnrichDeviceData {
     String nonceB64;
     String deviceId;
     String displayName;
-    String publicKeyPem;
+    String publicKey;
     String fcmToken;
     Platform platform;
     String osVersion;

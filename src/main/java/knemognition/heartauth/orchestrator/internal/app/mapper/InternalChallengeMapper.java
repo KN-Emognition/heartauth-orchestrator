@@ -8,7 +8,6 @@ import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.Cre
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.app.domain.MessageType;
 import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
 import org.mapstruct.Mapper;
@@ -29,8 +28,6 @@ public interface InternalChallengeMapper {
     @Mapping(target = "ephemeralPrivateKey", expression = "java(KeyLoader.toPem(privateKey,\"PRIVATE KEY\"))")
     CreateChallenge toCreateChallenge(UUID tenantId, CreateChallengeRequestDto req, String nonceB64, Integer ttlSeconds, PrivateKey privateKey, String userPublicKey);
 
-
-    StatusResponseDto map(FlowStatusDescription description);
 
     default StatusResponseDto notFoundStatus() {
         var r = new StatusResponseDto();

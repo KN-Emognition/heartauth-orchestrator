@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Component
 @RequestScope
@@ -27,14 +28,10 @@ public class QrClaimsProvider {
         Instant exp = jwt.getExpiresAt();
         if (exp == null) throw new InvalidTokenException("missing_exp");
         return QrCodeClaims.builder()
-                .jti(jwt.getClaim("jti"))
-                .tenantId(jwt.getClaim("tenantId"))
-                .userId(jwt.getClaim("userId"))
-                .exp(jwt.getClaim("exp"))
+                .jti(UUID.fromString(jwt.getClaim("jti")))
+                .tenantId(UUID.fromString(jwt.getClaim("tenantId")))
+                .userId(UUID.fromString(jwt.getClaim("userId")))
+                .exp(jwt.getExpiresAt().getEpochSecond())
                 .build();
-//                UUID.fromString(jwt.getId()),
-//                UUID.fromString(jwt.getSubject()),
-//                exp
-
     }
 }

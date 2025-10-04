@@ -3,7 +3,9 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.enti
 import jakarta.persistence.*;
 import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
 import lombok.*;
+import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -42,7 +44,9 @@ public class DeviceEntity {
     @Column(name = "fcm_token")
     private String fcmToken;
 
+
     @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
     @Column(name = "platform", nullable = false, columnDefinition = "platform_enum")
     private Platform platform;
 

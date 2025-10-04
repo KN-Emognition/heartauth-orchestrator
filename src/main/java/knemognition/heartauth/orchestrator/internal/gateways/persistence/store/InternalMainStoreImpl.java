@@ -4,7 +4,6 @@ import jakarta.transaction.Transactional;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
-import knemognition.heartauth.orchestrator.shared.app.domain.TenantApiKey;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantApiKeyEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantApiKeyRepository;
@@ -43,20 +42,10 @@ public class InternalMainStoreImpl implements InternalMainStore {
      * {@inheritDoc}
      */
     @Override
-    public Optional<TenantApiKey> findActiveByHash(String keyHash) {
+    public Optional<UUID> getTenantIdForActiveKeyHash(String keyHash) {
         return tenantApiKeyRepository.findActiveByHash(keyHash)
-                .map(tenantApiKeyMapper::toDomain);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    @Transactional
-    public void updateLastUsedAt(UUID apiKeyId, OffsetDateTime when) {
-        TenantApiKeyEntity key = tenantApiKeyRepository.getReferenceById(apiKeyId);
-        key.setLastUsedAt(when);
-        tenantApiKeyRepository.save(key);
+                .map(apiKey -> apiKey.getTenant()
+                        .getTenantId());
     }
 
     /**

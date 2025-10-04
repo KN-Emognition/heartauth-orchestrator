@@ -17,7 +17,7 @@ class ExternalSecurityConfig {
 
     @Bean
     SecurityFilterChain pairing(HttpSecurity http, JwtDecoder decoder) throws Exception {
-        return http.securityMatcher("/external/**")
+        return http.securityMatcher("/external/v1/pairing/**")
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

@@ -3,7 +3,6 @@ package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import org.mapstruct.*;
 
