@@ -7,11 +7,7 @@ import org.hibernate.annotations.UuidGenerator;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Getter
-@Setter
-@Builder(toBuilder = true)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
@@ -37,13 +33,4 @@ public class TenantApiKeyEntity {
 
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
-
-    @Column(name = "last_used_at")
-    private OffsetDateTime lastUsedAt;
-
-    @Column(name = "expires_at")
-    private OffsetDateTime expiresAt;
-
-    @Column(name = "revoked_at")
-    private OffsetDateTime revokedAt;
 }

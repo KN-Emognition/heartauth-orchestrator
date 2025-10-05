@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public abstract class EcgTokenMapper {
 
+    @Autowired
     protected ObjectMapper objectMapper;
 
 
@@ -29,7 +31,7 @@ public abstract class EcgTokenMapper {
     List<List<Float>> toRefEcg(JWTClaimsSet claimsSet) {
         Object raw = claimsSet.getClaim("refEcg");
         if (raw == null) return null;
-        return objectMapper.convertValue(raw, new TypeReference<>() {
+        return objectMapper.convertValue(raw, new TypeReference<List<List<Float>>>() {
         });
     }
 
@@ -37,7 +39,7 @@ public abstract class EcgTokenMapper {
     List<Float> toTestEcg(JWTClaimsSet claimsSet) {
         Object raw = claimsSet.getClaim("testEcg");
         if (raw == null) return null;
-        return objectMapper.convertValue(raw, new TypeReference<>() {
+        return objectMapper.convertValue(raw, new TypeReference<List<Float>>() {
         });
     }
 }

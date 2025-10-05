@@ -1,12 +1,9 @@
 package knemognition.heartauth.orchestrator.admin.app.ports.out;
 
-import java.util.Optional;
-import java.util.UUID;
+import knemognition.heartauth.orchestrator.shared.app.domain.Tenant;
+import knemognition.heartauth.orchestrator.shared.app.domain.TenantApiKey;
 
 public interface TenantStore {
-    Optional<UUID> findIdByExternalId(UUID externalId);
 
-    UUID createTenant(UUID externalId);
-
-    void storeApiKeyByExternalId(UUID tenantId, String keyHash);
+    void createTenantWithApiKey(Tenant tenant, TenantApiKey tenantApiKey);
 }

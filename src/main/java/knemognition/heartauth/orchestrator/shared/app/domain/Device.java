@@ -4,10 +4,8 @@ package knemognition.heartauth.orchestrator.shared.app.domain;
 import lombok.Builder;
 import lombok.Value;
 
-import java.time.OffsetDateTime;
-
 @Value
-@Builder(toBuilder = true)
+@Builder
 public class Device {
     String deviceId;
     String displayName;
@@ -16,8 +14,4 @@ public class Device {
     Platform platform;
     String osVersion;
     String model;
-    OffsetDateTime createdAt;
-    OffsetDateTime updatedAt;
-    OffsetDateTime lastSeenAt;
-    OffsetDateTime revokedAt;
 }

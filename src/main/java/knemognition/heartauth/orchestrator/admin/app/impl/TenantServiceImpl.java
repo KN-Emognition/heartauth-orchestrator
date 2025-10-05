@@ -3,11 +3,12 @@ package knemognition.heartauth.orchestrator.admin.app.impl;
 import knemognition.heartauth.orchestrator.admin.app.ports.in.TenantService;
 import knemognition.heartauth.orchestrator.admin.app.ports.out.TenantStore;
 import knemognition.heartauth.orchestrator.admin.interfaces.rest.v1.model.CreateTenantResponseDto;
+import knemognition.heartauth.orchestrator.shared.app.domain.Tenant;
+import knemognition.heartauth.orchestrator.shared.app.domain.TenantApiKey;
 import knemognition.heartauth.orchestrator.shared.app.ports.in.ApiKeyHasher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -26,25 +27,24 @@ public class TenantServiceImpl implements TenantService {
      *  {@inheritDoc}
      */
     @Override
-    @Transactional
     public CreateTenantResponseDto register() {
-        UUID externalId = UUID.randomUUID();
+        UUID tenantId = UUID.randomUUID();
+        Tenant tenant = Tenant.builder()
+                .tenantId(tenantId)
+                .build();
 
-        if (tenantStore.findIdByExternalId(externalId)
-                .isPresent()) {
-            throw new IllegalStateException("externalId collision, retry");
-        }
+        UUID apiKey = UUID.randomUUID();
+        String apiKeyHash = apiKeyHasher.hash(apiKey
+                .toString());
 
-        UUID tenantId = tenantStore.createTenant(externalId);
-        log.info("register tenant: {}", tenantId);
-
-        UUID apiKeyPlain = UUID.randomUUID();
-        String apiKeyHash = apiKeyHasher.hash(apiKeyPlain.toString());
-        tenantStore.storeApiKeyByExternalId(tenantId, apiKeyHash);
-        log.info("Stored key hash for tenant {}", tenantId);
+        TenantApiKey tenantApiKey = TenantApiKey.builder()
+                .keyHash(apiKeyHash)
+                .build();
+        tenantStore.createTenantWithApiKey(tenant, tenantApiKey);
+        log.info("Stored tenant with apiKey");
 
         return new CreateTenantResponseDto()
                 .id(tenantId)
-                .apiKey(apiKeyPlain);
+                .apiKey(apiKey);
     }
 }

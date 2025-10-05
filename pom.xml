@@ -164,7 +164,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/interface/internal.yml</inputSpec>
+                            <inputSpec>${project.basedir}/contract/internal.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.api</apiPackage>
                             <modelPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model</modelPackage>
@@ -189,7 +189,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/interface/external.yml</inputSpec>
+                            <inputSpec>${project.basedir}/contract/external.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api</apiPackage>
                             <modelPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model</modelPackage>
@@ -214,7 +214,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/interface/admin.yml</inputSpec>
+                            <inputSpec>${project.basedir}/contract/admin.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1</apiPackage>
                             <modelPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1.model</modelPackage>
@@ -239,7 +239,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/interface/domain.yml</inputSpec>
+                            <inputSpec>${project.basedir}/contract/domain.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>ignore.api</apiPackage>
                             <modelPackage>knemognition.heartauth.orchestrator.shared.app.domain</modelPackage>
@@ -264,7 +264,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/interface/model-api.yml</inputSpec>
+                            <inputSpec>${project.basedir}/contract/model-api.yml</inputSpec>
                             <generatorName>java</generatorName>
                             <library>restclient</library>
                             <modelPackage>knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.model</modelPackage>

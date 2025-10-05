@@ -17,6 +17,4 @@ public class AdminExceptionHandler {
     public ProblemDetail handleNoActiveDevice(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No active device for given user.", req, ex);
     }
-
-
 }

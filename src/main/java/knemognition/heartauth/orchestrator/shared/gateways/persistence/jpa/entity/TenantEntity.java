@@ -1,7 +1,9 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.OffsetDateTime;
@@ -9,15 +11,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
-@Builder(toBuilder = true)
-@NoArgsConstructor()
-@AllArgsConstructor
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
-@Table(name = "tenants", uniqueConstraints = @UniqueConstraint(name = "uq_tenants_external", columnNames = "tenant_id"))
+@Table(name = "tenants", uniqueConstraints = @UniqueConstraint(name = "uq_tenant_id", columnNames = "tenant_id"))
 public class TenantEntity {
 
     @Id
@@ -36,11 +34,15 @@ public class TenantEntity {
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "tenant", orphanRemoval = true)
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<TenantApiKeyEntity> apiKeys = new HashSet<>();
 
-    @Builder.Default
-    @OneToMany(mappedBy = "tenant", orphanRemoval = true)
+    @OneToMany(mappedBy = "tenant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserEntity> users = new HashSet<>();
+
+    public void addKey(TenantApiKeyEntity key) {
+        if (key == null) return;
+        key.setTenant(this);
+        this.apiKeys.add(key);
+    }
 }

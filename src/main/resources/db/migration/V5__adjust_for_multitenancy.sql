@@ -1,25 +1,26 @@
+DROP TABLE device_credential;
+DROP TABLE ecg_ref_token;
+
+
 CREATE
 EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE tenants
 (
-    id          UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
-    tenant_id UUID        NOT NULL,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
-    CONSTRAINT uq_tenants_id UNIQUE (tenant_id)
+    id         UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
+    tenant_id  UUID        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CONSTRAINT uq_tenant_id UNIQUE (tenant_id)
 );
 
 CREATE TABLE tenant_api_keys
 (
-    id           UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
-    tenants_fk   UUID        NOT NULL REFERENCES tenants (id) ON DELETE CASCADE,
-    key_hash     TEXT        NOT NULL, -- e.g. base64(sha256(key+salt))
-    created_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
-    last_used_at TIMESTAMPTZ,
-    expires_at   TIMESTAMPTZ,
-    revoked_at   TIMESTAMPTZ,
+    id         UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
+    tenants_fk UUID        NOT NULL REFERENCES tenants (id) ON DELETE CASCADE,
+    key_hash   TEXT        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT uq_key_per_tenant UNIQUE (tenants_fk, key_hash)
 );
 
@@ -27,7 +28,7 @@ CREATE TABLE app_user
 (
     id         UUID PRIMARY KEY     DEFAULT gen_random_uuid(),
     tenants_fk UUID        NOT NULL REFERENCES tenants (id) ON DELETE CASCADE,
-    user_id    UUID        NOT NULL, -- Keycloak user ID
+    user_id    UUID        NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT uq_user_per_tenant UNIQUE (tenants_fk, user_id)
@@ -55,8 +56,6 @@ CREATE TABLE user_device
     model          TEXT,
     created_at     TIMESTAMPTZ   NOT NULL DEFAULT now(),
     updated_at     TIMESTAMPTZ   NOT NULL DEFAULT now(),
-    last_seen_at   TIMESTAMPTZ,
-    revoked_at     TIMESTAMPTZ,
     CONSTRAINT uq_device_per_user UNIQUE (app_user_fk, device_id)
 );
 

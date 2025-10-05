@@ -66,9 +66,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
         log.info("JWT has been successfully verified");
 
         EcgTestTokenClaims ecgTestTokenClaims = ecgTokenMapper.ecgTestFromClaims(claims);
-
         Optional<EcgRefData> refData = externalMainStore.findRefData(externalChallengeMapper.toIdentifiableUser(state));
-
         if (refData.isEmpty()) {
             challengeStateStatusStore.setStatus(StatusChange.builder()
                     .id(challengeId)

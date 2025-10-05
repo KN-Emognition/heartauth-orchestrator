@@ -26,9 +26,5 @@ public interface ExternalPairingMapper {
 
     EcgRefData toEcgRefData(EcgRefTokenClaims claims);
 
-    @Mapping(target = "createdAt", ignore = true)
-    @Mapping(target = "updatedAt", ignore = true)
-    @Mapping(target = "lastSeenAt", ignore = true)
-    @Mapping(target = "revokedAt", ignore = true)
     Device toDevice(PairingState state);
 }

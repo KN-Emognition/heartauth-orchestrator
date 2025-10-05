@@ -1,16 +1,15 @@
 package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
-import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.ExternalMainStoreMapper;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.EcgRefData;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.UserEntity;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.EcgRefDataRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.UserRepository;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.MainStoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +21,7 @@ import java.util.Optional;
 public class ExternalMainStoreImpl implements ExternalMainStore {
 
     // mapper
-    private final ExternalMainStoreMapper externalMainStoreMapper;
+    private final MainStoreMapper mainStoreMapper;
     // repository
     private final EcgRefDataRepository ecgRefDataRepository;
     private final UserRepository userRepository;
@@ -31,7 +30,7 @@ public class ExternalMainStoreImpl implements ExternalMainStore {
     @Override
     public Optional<EcgRefData> findRefData(IdentifiableUser identUser) {
         return ecgRefDataRepository.findByTenantIdAndUserId(identUser.getTenantId(), identUser.getUserId())
-                .map(externalMainStoreMapper::toDomain);
+                .map(mainStoreMapper::toDomain);
     }
 
     @Override
@@ -40,10 +39,10 @@ public class ExternalMainStoreImpl implements ExternalMainStore {
         // todo: graceful handling, if user already exists or if tenant does not exist
         TenantEntity tenant = tenantRepository.findByTenantId(identUser.getTenantId())
                 .orElseThrow();
-        UserEntity user = externalMainStoreMapper.toEntity(identUser);
+        UserEntity user = mainStoreMapper.toEntity(identUser);
         user.setTenant(tenant);
-        user.replaceRefData(externalMainStoreMapper.toEntity(ref));
-        user.addDevice(externalMainStoreMapper.toEntity(device));
+        user.replaceRefData(mainStoreMapper.toEntity(ref));
+        user.addDevice(mainStoreMapper.toEntity(device));
         userRepository.save(user);
     }
 }

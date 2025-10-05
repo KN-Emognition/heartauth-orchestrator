@@ -9,11 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Getter
-@Setter
-@Builder(toBuilder = true)
-@NoArgsConstructor()
-@AllArgsConstructor
+@Data
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString(onlyExplicitlyIncluded = true)
 @Entity
@@ -40,7 +36,6 @@ public class UserEntity {
     @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
     private OffsetDateTime updatedAt;
 
-    @Builder.Default
     @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<DeviceEntity> devices = new HashSet<>();
 

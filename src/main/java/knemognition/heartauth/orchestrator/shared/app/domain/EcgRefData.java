@@ -6,7 +6,7 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-@Builder(toBuilder = true)
+@Builder
 public class EcgRefData {
     List<List<Float>> refEcg;
 }

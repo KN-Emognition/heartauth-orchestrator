@@ -26,7 +26,7 @@ services:
     volumes:
       - redis-data:/data
   model-api:
-    image: poziomk3/model-api:v0.1.0
+    image: poziomk3/model-api:v2.0.0
     ports:
       - "8000:8000"
     healthcheck:

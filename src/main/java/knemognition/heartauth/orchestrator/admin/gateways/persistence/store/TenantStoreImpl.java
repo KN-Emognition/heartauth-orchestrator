@@ -1,53 +1,31 @@
 package knemognition.heartauth.orchestrator.admin.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.admin.app.ports.out.TenantStore;
+import knemognition.heartauth.orchestrator.shared.app.domain.Tenant;
+import knemognition.heartauth.orchestrator.shared.app.domain.TenantApiKey;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantApiKeyEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantEntity;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantApiKeyRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantRepository;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.MainStoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class TenantStoreImpl implements TenantStore {
 
+    private final MainStoreMapper mainStoreMapper;
+    // repository
     private final TenantRepository tenantRepository;
-    private final TenantApiKeyRepository apiKeyRepository;
-
-    @Override
-    public Optional<UUID> findIdByExternalId(UUID externalId) {
-        return tenantRepository.findByTenantId(externalId)
-                .map(TenantEntity::getId);
-    }
 
     @Override
     @Transactional
-    public UUID createTenant(UUID externalId) {
-        TenantEntity saved = tenantRepository.save(
-                TenantEntity.builder()
-                        .tenantId(externalId)
-                        .build()
-        );
-        return saved.getTenantId();
-    }
-
-    @Override
-    @Transactional
-    public void storeApiKeyByExternalId(UUID tenantId, String keyHash) {
-        Optional<TenantEntity> tenantRef = tenantRepository.findByTenantId(tenantId);
-        if (tenantRef.isEmpty()) {
-            throw new IllegalStateException("Tenant with id " + tenantId + " does not exist");
-        }
-        TenantApiKeyEntity key = TenantApiKeyEntity.builder()
-                .tenant(tenantRef.get())
-                .keyHash(keyHash)
-                .build();
-
-        apiKeyRepository.save(key);
+    public void createTenantWithApiKey(Tenant tenant, TenantApiKey tenantApiKey) {
+        // todo: graceful handling
+        TenantEntity tenantEntity = mainStoreMapper.toEntity(tenant);
+        TenantApiKeyEntity key = mainStoreMapper.toEntity(tenantApiKey);
+        tenantEntity.addKey(key);
+        tenantRepository.save(tenantEntity);
     }
 }

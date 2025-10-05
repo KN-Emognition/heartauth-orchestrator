@@ -1,19 +1,14 @@
 package knemognition.heartauth.orchestrator.shared.app.domain;
 
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Data
+@Value
+@Builder
 public class TenantApiKey {
-    UUID id;
     UUID tenantId;
     String keyHash;
-    OffsetDateTime createdAt;
-    OffsetDateTime updatedAt;
-    OffsetDateTime lastUsedAt;
-    OffsetDateTime expiresAt;
-    OffsetDateTime revokedAt;
 }

@@ -12,9 +12,6 @@ public interface TenantApiKeyRepository extends JpaRepository<TenantApiKeyEntity
     @Query("""
                 select k from TenantApiKeyEntity k
                 join fetch k.tenant t
-                where k.keyHash = :hash
-                  and (k.revokedAt is null)
-                  and (k.expiresAt is null or k.expiresAt > CURRENT_TIMESTAMP)
             """)
     Optional<TenantApiKeyEntity> findActiveByHash(@Param("hash") String hash);
 }

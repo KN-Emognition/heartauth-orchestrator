@@ -1,19 +1,15 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.store;
 
-import jakarta.transaction.Transactional;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity.TenantApiKeyEntity;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantApiKeyRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.UserRepository;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.DeviceMapper;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.TenantApiKeyMapper;
+import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.MainStoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -23,8 +19,7 @@ import java.util.UUID;
 public class InternalMainStoreImpl implements InternalMainStore {
 
     // mappers
-    private final TenantApiKeyMapper tenantApiKeyMapper;
-    private final DeviceMapper deviceMapper;
+    private final MainStoreMapper mainStoreMapper;
     // repositories
     private final TenantApiKeyRepository tenantApiKeyRepository;
     private final UserRepository userRepository;
@@ -56,7 +51,7 @@ public class InternalMainStoreImpl implements InternalMainStore {
             IdentifiableUser data) {
         return deviceRepository.findAllByTenantIdAndUserId(data.getTenantId(), data.getUserId())
                 .stream()
-                .map(deviceMapper::toDomain)
+                .map(mainStoreMapper::toDomain)
                 .toList();
     }
 }
