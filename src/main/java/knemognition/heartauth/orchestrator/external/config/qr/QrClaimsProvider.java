@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.external.config.qr;
 
 
-import knemognition.heartauth.orchestrator.external.app.domain.QrClaims;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.InvalidTokenException;
+import knemognition.heartauth.orchestrator.shared.app.domain.QrCodeClaims;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -17,8 +17,9 @@ import java.util.UUID;
 @RequestScope
 public class QrClaimsProvider {
 
-    public QrClaims get() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    public QrCodeClaims get() {
+        Authentication auth = SecurityContextHolder.getContext()
+                .getAuthentication();
         if (!(auth instanceof JwtAuthenticationToken jat)) {
             throw new InvalidTokenException("unauthenticated");
         }
@@ -26,10 +27,11 @@ public class QrClaimsProvider {
 
         Instant exp = jwt.getExpiresAt();
         if (exp == null) throw new InvalidTokenException("missing_exp");
-        return new QrClaims(
-                UUID.fromString(jwt.getId()),
-                UUID.fromString(jwt.getSubject()),
-                exp
-        );
+        return QrCodeClaims.builder()
+                .jti(UUID.fromString(jwt.getClaim("jti")))
+                .tenantId(UUID.fromString(jwt.getClaim("tenantId")))
+                .userId(UUID.fromString(jwt.getClaim("userId")))
+                .exp(jwt.getExpiresAt().getEpochSecond())
+                .build();
     }
 }

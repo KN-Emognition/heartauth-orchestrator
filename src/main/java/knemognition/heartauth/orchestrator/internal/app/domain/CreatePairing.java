@@ -1,16 +1,21 @@
 package knemognition.heartauth.orchestrator.internal.app.domain;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+/**
+ * Command object representing the intent to create a pairing for a user
+ * within a tenant context.
+ */
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreatePairing {
-    private UUID userId;
-    private UUID jti;
-    private Long ttlSeconds;
+    UUID tenantId;
+    UUID userId;
+
+    UUID jti;
+
+    Long ttlSeconds;
 }

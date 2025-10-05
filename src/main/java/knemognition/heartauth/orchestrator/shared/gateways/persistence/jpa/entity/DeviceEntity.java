@@ -1,0 +1,60 @@
+package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
+
+import jakarta.persistence.*;
+import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
+import lombok.*;
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.UuidGenerator;
+import org.hibernate.dialect.PostgreSQLEnumJdbcType;
+
+import java.time.OffsetDateTime;
+import java.util.UUID;
+
+@Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@ToString(onlyExplicitlyIncluded = true)
+@Entity
+@Table(name = "user_device", uniqueConstraints = @UniqueConstraint(name = "uq_device_per_user", columnNames = {"app_user_fk", "device_id"}))
+public class DeviceEntity {
+
+    @Id
+    @UuidGenerator
+    @EqualsAndHashCode.Include
+    @Column(name = "id", updatable = false, nullable = false)
+    @ToString.Include
+    private UUID id;
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "app_user_fk", nullable = false, foreignKey = @ForeignKey(name = "user_device_app_user_fk_fkey"))
+    private UserEntity appUser;
+
+    @Column(name = "device_id", nullable = false)
+    private String deviceId;
+
+    @Column(name = "display_name", nullable = false)
+    private String displayName;
+
+    @Column(name = "public_key_pem", nullable = false, columnDefinition = "text")
+    private String publicKey;
+
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
+
+    @Enumerated(EnumType.STRING)
+    @JdbcType(PostgreSQLEnumJdbcType.class)
+    @Column(name = "platform", nullable = false, columnDefinition = "platform_enum")
+    private Platform platform;
+
+    @Column(name = "os_version")
+    private String osVersion;
+
+    @Column(name = "model")
+    private String model;
+
+    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime createdAt;
+
+    @Column(name = "updated_at", nullable = false, insertable = false, updatable = false)
+    private OffsetDateTime updatedAt;
+}

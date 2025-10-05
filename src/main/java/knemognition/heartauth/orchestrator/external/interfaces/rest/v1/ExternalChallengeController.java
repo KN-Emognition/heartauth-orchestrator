@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.external.interfaces.rest.v1;
 
-import knemognition.heartauth.orchestrator.external.api.ChallengeApi;
-import knemognition.heartauth.orchestrator.external.app.ports.in.CompleteChallengeService;
-import knemognition.heartauth.orchestrator.external.model.ChallengeCompleteRequest;
+import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api.ChallengeApi;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ExternalChallengeController implements ChallengeApi {
 
-    private final CompleteChallengeService completeChallengeService;
+    private final ExternalChallengeService completeChallengeService;
 
     @Override
-    public ResponseEntity<Void> externalChallengeComplete(UUID id, ChallengeCompleteRequest request) {
+    public ResponseEntity<Void> completeChallenge(UUID id, CompleteChallengeRequestDto request) {
         log.info("Received challenge completion request for id {}", id);
-        completeChallengeService.complete(id, request);
+        completeChallengeService.completeChallenge(id, request);
         return ResponseEntity.noContent().build();
     }
 }

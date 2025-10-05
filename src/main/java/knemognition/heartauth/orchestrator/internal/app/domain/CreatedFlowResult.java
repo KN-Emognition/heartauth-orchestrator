@@ -1,16 +1,19 @@
 package knemognition.heartauth.orchestrator.internal.app.domain;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.UUID;
 
-@Getter
-@Setter
+
+/**
+ * Result object representing the outcome of creating a new flow.
+ */
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class CreatedFlowResult {
-    private UUID id;
-    private Long exp;
-    private Long ttl;
+    UUID id;
+
+    Long exp;
+    Long ttlSeconds;
 }

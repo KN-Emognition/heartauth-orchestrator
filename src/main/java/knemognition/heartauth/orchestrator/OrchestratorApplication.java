@@ -1,5 +1,6 @@
 package knemognition.heartauth.orchestrator;
 
+import knemognition.heartauth.orchestrator.admin.config.AdminConfig;
 import knemognition.heartauth.orchestrator.external.config.ExternalConfig;
 import knemognition.heartauth.orchestrator.internal.config.InternalConfig;
 import knemognition.heartauth.orchestrator.shared.SharedMarker;
@@ -13,7 +14,7 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @ComponentScan(basePackageClasses = {SharedMarker.class})
 @ConfigurationPropertiesScan(basePackages = "knemognition.heartauth.orchestrator.shared")
-@Import({ExternalConfig.class, InternalConfig.class})
+@Import({ExternalConfig.class, InternalConfig.class, AdminConfig.class})
 public class OrchestratorApplication {
 
     public static void main(String[] args) {

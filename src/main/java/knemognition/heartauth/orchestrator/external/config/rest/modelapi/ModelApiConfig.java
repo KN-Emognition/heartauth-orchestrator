@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.external.config.rest.modelapi;
 
 import knemognition.heartauth.orchestrator.ApiClient;
-import knemognition.heartauth.orchestrator.modelapi.api.PredictionApi;
+import knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.api.PredictionApi;
 import org.slf4j.MDC;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;

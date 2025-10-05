@@ -21,10 +21,8 @@ public class MdcFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String routeId = request.getHeader(HeaderNames.HEADER_ROUTE_ID);
         if (routeId == null || routeId.isBlank()) {
-            routeId = request.getRequestURI();
-            if (routeId == null || routeId.isBlank()) {
-                routeId = UUID.randomUUID().toString();
-            }
+            routeId = UUID.randomUUID()
+                    .toString();
         }
         MDC.put(HeaderNames.MDC_ROUTE_ID, routeId);
         try {

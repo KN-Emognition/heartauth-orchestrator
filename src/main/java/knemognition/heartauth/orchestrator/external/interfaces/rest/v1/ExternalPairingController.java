@@ -1,12 +1,11 @@
 package knemognition.heartauth.orchestrator.external.interfaces.rest.v1;
 
-import knemognition.heartauth.orchestrator.external.api.PairingApi;
-import knemognition.heartauth.orchestrator.external.app.ports.in.CompletePairingService;
-import knemognition.heartauth.orchestrator.external.app.ports.in.InitPairingService;
+import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalPairingService;
 import knemognition.heartauth.orchestrator.external.config.qr.QrClaimsProvider;
-import knemognition.heartauth.orchestrator.external.model.PairingConfirmRequest;
-import knemognition.heartauth.orchestrator.external.model.PairingInitRequest;
-import knemognition.heartauth.orchestrator.external.model.PairingInitResponse;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api.PairingApi;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompletePairingRequestDto;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingRequestDto;
+import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -17,20 +16,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class ExternalPairingController implements PairingApi {
 
-    private final InitPairingService initPairingService;
-    private final CompletePairingService completePairingService;
+    private final ExternalPairingService externalPairingService;
     private final QrClaimsProvider qrClaimsProvider;
 
     @Override
-    public ResponseEntity<Void> externalPairingConfirm(PairingConfirmRequest pairingConfirmRequest) {
-        log.info("Received pairing confirmation request for device {}", pairingConfirmRequest.getDeviceId());
-        completePairingService.complete(pairingConfirmRequest, qrClaimsProvider.get());
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Void> completePairing(CompletePairingRequestDto pairingConfirmRequest) {
+        log.info("Received pairing confirmation request");
+        externalPairingService.completePairing(pairingConfirmRequest, qrClaimsProvider.get());
+        return ResponseEntity.noContent()
+                .build();
     }
 
     @Override
-    public ResponseEntity<PairingInitResponse> externalPairingInit(PairingInitRequest pairingInitRequest) {
+    public ResponseEntity<InitPairingResponseDto> initPairing(InitPairingRequestDto pairingInitRequest) {
         log.info("Received pairing initialization request for device {}", pairingInitRequest.getDeviceId());
-        return ResponseEntity.ok(initPairingService.init(pairingInitRequest, qrClaimsProvider.get()));
+        return ResponseEntity.ok(externalPairingService.initPairing(pairingInitRequest, qrClaimsProvider.get()));
     }
 }

@@ -2,16 +2,12 @@ package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
-import knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -19,9 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 
+import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.ATTR_TENANT_ID;
+
 @Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
 class InternalSecurityConfig {
 
     private static void writeProblem(HttpServletResponse res,
@@ -33,20 +29,23 @@ class InternalSecurityConfig {
         om.writeValue(res.getOutputStream(), pd);
     }
 
-    @Bean
-    @Order(1)
+    @Bean()
     SecurityFilterChain internal(HttpSecurity http,
-                                 ApiKeyAuthenticationProvider provider,
+                                 InternalApiKeyAuthenticationProvider provider,
                                  ObjectMapper objectMapper) throws Exception {
 
         var manager = new ProviderManager(provider);
-        var converter = new ApiKeyAuthenticationConverter();
+        var converter = new InternalApiKeyAuthenticationConverter();
         var filter = new AuthenticationFilter(manager, converter);
 
         filter.setSuccessHandler((req, res, auth) -> {
+            if (auth instanceof InternalApiKeyAuthenticationToken tok && tok.isAuthenticated()) {
+                req.setAttribute(ATTR_TENANT_ID, tok.getPrincipal());
+            }
         });
+
         AuthenticationEntryPoint problemEntryPoint = (req, res, ex) -> {
-            var pd = ExceptionHandlingUtils.problem(
+            var pd = knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem(
                     HttpStatus.UNAUTHORIZED,
                     "Invalid or missing API key.",
                     req,

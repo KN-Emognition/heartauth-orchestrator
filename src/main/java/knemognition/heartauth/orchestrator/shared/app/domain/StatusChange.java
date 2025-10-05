@@ -1,18 +1,15 @@
 package knemognition.heartauth.orchestrator.shared.app.domain;
 
-import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
-import lombok.*;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.UUID;
 
 
-@Getter
-@Setter
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class StatusChange {
-    private UUID id;
-    private FlowStatus status;
-    private String reason;
+    UUID id;
+    FlowStatus status;
+    String reason;
 }
