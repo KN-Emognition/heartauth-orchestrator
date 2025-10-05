@@ -21,7 +21,7 @@ public class ExternalPairingController implements PairingApi {
 
     @Override
     public ResponseEntity<Void> completePairing(CompletePairingRequestDto pairingConfirmRequest) {
-        log.info("Received pairing confirmation request for device {}", pairingConfirmRequest.getDeviceId());
+        log.info("Received pairing confirmation request");
         externalPairingService.completePairing(pairingConfirmRequest, qrClaimsProvider.get());
         return ResponseEntity.noContent()
                 .build();
