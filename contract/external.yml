@@ -52,7 +52,7 @@ paths:
             schema:
               $ref: '#/components/schemas/InitPairingRequest'
       responses:
-        '201':
+        '200':
           description: Pairing initiated; device must confirm proof-of-possession.
           content:
             application/json:
@@ -187,12 +187,8 @@ components:
           type: string
           description: |
             JWT encrypted with ecgData
-        deviceId:
-          type: string
         signature:
           type: string
-        alg:
-          $ref: '#/components/schemas/EncryptionAlgo'
     CompleteChallengeRequest:
       type: object
       required:
@@ -205,7 +201,7 @@ components:
             JWT encrypted with ecgData
         signature:
           type: string
-          description:  |
+          description: |
             Signed nonce
     DeviceInfo:
       type: object

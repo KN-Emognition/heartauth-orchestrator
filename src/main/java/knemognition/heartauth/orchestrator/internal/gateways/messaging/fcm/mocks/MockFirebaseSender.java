@@ -16,7 +16,7 @@ public class MockFirebaseSender implements PushSender {
 
     @Override
     public void sendData(String token, ChallengePushMessage messageData) {
-        log.warn("Mock sendData called with token: {}", token);
+        log.warn("Mock sendData called with token");
     }
 
 }

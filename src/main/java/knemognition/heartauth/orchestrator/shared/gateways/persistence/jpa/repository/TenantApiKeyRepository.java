@@ -10,8 +10,9 @@ import java.util.UUID;
 
 public interface TenantApiKeyRepository extends JpaRepository<TenantApiKeyEntity, UUID> {
     @Query("""
-                select k from TenantApiKeyEntity k
+              select k from TenantApiKeyEntity k
                 join fetch k.tenant t
+              where k.keyHash = :hash 
             """)
     Optional<TenantApiKeyEntity> findActiveByHash(@Param("hash") String hash);
 }
