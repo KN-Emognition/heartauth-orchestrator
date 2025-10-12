@@ -23,6 +23,7 @@ public class ExternalChallengeController implements ChallengeApi {
     public ResponseEntity<Void> completeChallenge(UUID id, CompleteChallengeRequestDto request) {
         log.info("Received challenge completion request for id {}", id);
         completeChallengeService.completeChallenge(id, request);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 }

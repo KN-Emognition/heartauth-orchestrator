@@ -25,7 +25,8 @@ public class JwtConfig {
 
     @Bean("pairingPrivateKey")
     ECPrivateKey pairingPrivateKey(JwtProperties p) throws Exception {
-        try (var in = p.privateKeyLocation().getInputStream()) {
+        try (var in = p.privateKeyLocation()
+                .getInputStream()) {
             return KeyLoader.loadEcPrivateKey(in);
         }
     }
@@ -41,7 +42,8 @@ public class JwtConfig {
 
     @Bean("pairingPublicKey")
     ECPublicKey pairingPublicKey(JwtProperties p) throws Exception {
-        try (var in = p.publicKeyLocation().getInputStream()) {
+        try (var in = p.publicKeyLocation()
+                .getInputStream()) {
             return KeyLoader.loadEcPublicKey(in);
         }
     }

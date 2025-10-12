@@ -99,7 +99,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
             throw new ChallengeFailedException("ECG Validation failed");
         }
         challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
-                        .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
+                .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
                 .build());
     }
 }

@@ -5,9 +5,9 @@ import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.InternalChallengeStoreMapper;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

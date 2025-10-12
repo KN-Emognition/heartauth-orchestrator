@@ -31,7 +31,8 @@ class ValidateNonceServiceImplTest extends HeartauthUnitTest {
 
     @Test
     void validate_withCorrectSignature_succeeds() throws Exception {
-        ValidateNonce req = ValidateNonce.builder().nonce(NONCE)
+        ValidateNonce req = ValidateNonce.builder()
+                .nonce(NONCE)
                 .signature(VALID_SIGNATURE)
                 .pub(loadEcPublicKey(new ByteArrayInputStream(PUBLIC_KEY_PEM.getBytes(StandardCharsets.UTF_8))))
                 .build();
@@ -41,7 +42,8 @@ class ValidateNonceServiceImplTest extends HeartauthUnitTest {
 
     @Test
     void validate_withIncorrectSignature_fails() throws Exception {
-        ValidateNonce req = ValidateNonce.builder().nonce(NONCE)
+        ValidateNonce req = ValidateNonce.builder()
+                .nonce(NONCE)
                 .signature(INVALID_SIGNATURE)
                 .pub(loadEcPublicKey(new ByteArrayInputStream(PUBLIC_KEY_PEM.getBytes(StandardCharsets.UTF_8))))
                 .build();

@@ -34,7 +34,8 @@ public class FirebaseConfig {
             credentials = GoogleCredentials.getApplicationDefault();
         }
 
-        FirebaseOptions.Builder b = FirebaseOptions.builder().setCredentials(credentials);
+        FirebaseOptions.Builder b = FirebaseOptions.builder()
+                .setCredentials(credentials);
         return FirebaseApp.initializeApp(b.build());
     }
 

@@ -5,9 +5,9 @@ import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalPairingStore;
 import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.InternalPairingStoreMapper;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

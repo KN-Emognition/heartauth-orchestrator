@@ -20,7 +20,7 @@ services:
   redis:
     image: redis:7-alpine
     container_name: orchestrator-redis
-    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
+    command: [ "redis-server", "--appendonly", "yes", "--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru" ]
     ports:
       - "6379:6379"
     volumes:
@@ -34,22 +34,22 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  orchestrator:
-    image: orchestrator:latest # local
-    container_name: orchestrator-app
-    restart: unless-stopped
-    environment:
-      SPRING_PROFILES_ACTIVE: internal,external,admin,dev
-      DB_URL: jdbc:postgresql://postgres:5432/orchestrator
-      REDIS_URL: redis://redis:6379
-      MODEL_API_BASE_URL: http://model-api:8000
-      JWT_PRIVATE_KEY_LOCATION: file:/secrets/privKey.pem
-      JWT_PUBLIC_KEY_LOCATION: file:/secrets/pubKey.pem
-      FIREBASE_CREDENTIALS_LOCATION: file:/secrets/service-account.json
-    volumes:
-      - ./secrets:/secrets:ro
-    ports:
-      - "8080:8080"
+#  orchestrator:
+#    image: orchestrator:latest # local
+#    container_name: orchestrator-app
+#    restart: unless-stopped
+#    environment:
+#      SPRING_PROFILES_ACTIVE: internal,external,admin,dev
+#      DB_URL: jdbc:postgresql://postgres:5432/orchestrator
+#      REDIS_URL: redis://redis:6379
+#      MODEL_API_BASE_URL: http://model-api:8000
+#      JWT_PRIVATE_KEY_LOCATION: file:/secrets/privKey.pem
+#      JWT_PUBLIC_KEY_LOCATION: file:/secrets/pubKey.pem
+#      FIREBASE_CREDENTIALS_LOCATION: file:/secrets/service-account.json
+#    volumes:
+#      - ./secrets:/secrets:ro
+#    ports:
+#      - "8080:8080"
 volumes:
   pgdata:
   redis-data:

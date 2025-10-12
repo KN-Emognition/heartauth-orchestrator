@@ -23,7 +23,9 @@ public interface PemMapper {
             }
 
             var params = ecPub.getParams();
-            if (params == null || params.getCurve().getField().getFieldSize() != 256) {
+            if (params == null || params.getCurve()
+                    .getField()
+                    .getFieldSize() != 256) {
                 throw new PemParsingException("EC key must be P-256 (secp256r1)");
             }
 
@@ -43,7 +45,9 @@ public interface PemMapper {
             }
 
             var params = ecPriv.getParams();
-            if (params == null || params.getCurve().getField().getFieldSize() != 256) {
+            if (params == null || params.getCurve()
+                    .getField()
+                    .getFieldSize() != 256) {
                 throw new PemParsingException("EC key must be P-256 (secp256r1)");
             }
 

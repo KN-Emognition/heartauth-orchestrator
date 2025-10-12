@@ -1,4 +1,3 @@
-
 package knemognition.heartauth.orchestrator.shared.constants;
 
 import lombok.AccessLevel;

@@ -31,7 +31,8 @@ public final class ExceptionHandlingUtils {
         } else {
             pd.setDetail(ex.getMessage());
         }
-        pd.setProperty("timestamp", OffsetDateTime.now(ZoneOffset.UTC).toString());
+        pd.setProperty("timestamp", OffsetDateTime.now(ZoneOffset.UTC)
+                .toString());
 
 
         if (status.is5xxServerError()) {

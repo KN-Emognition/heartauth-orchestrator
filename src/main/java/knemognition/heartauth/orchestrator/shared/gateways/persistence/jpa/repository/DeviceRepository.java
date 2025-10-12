@@ -17,5 +17,5 @@ public interface DeviceRepository extends JpaRepository<DeviceEntity, UUID> {
                 order by d.createdAt asc
             """)
     List<DeviceEntity> findAllByTenantIdAndUserId(@Param("tenantId") UUID tenantId,
-                                                          @Param("userId") UUID userId);
+                                                  @Param("userId") UUID userId);
 }

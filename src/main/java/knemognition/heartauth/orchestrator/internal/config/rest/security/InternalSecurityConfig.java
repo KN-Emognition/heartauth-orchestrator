@@ -61,8 +61,10 @@ class InternalSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/internal/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/internal/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
                 .exceptionHandling(e -> e.authenticationEntryPoint(problemEntryPoint))
                 .addFilter(filter)

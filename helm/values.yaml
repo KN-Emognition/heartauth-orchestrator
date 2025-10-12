@@ -5,7 +5,7 @@ fullnameOverride: orchestrator
 replicas: 2
 
 
-image: 
+image:
   repository: poziomk3/orchestrator
   tag: v2.1.0
   pullPolicy: IfNotPresent
@@ -24,12 +24,12 @@ secretEnv:
   DB_USER: DB_USER
   DB_PASSWORD: DB_PASSWORD
 secret:
-  name: 
+  name:
 
 secretFiles:
   enabled: true
-  name: core-secrets          
-  mountPath: /orchestrator-data    
+  name: core-secrets
+  mountPath: /orchestrator-data
   defaultMode: 0440
   items:
     - key: privateKey.pem
@@ -54,7 +54,7 @@ probes:
     initialDelaySeconds: 60
     periodSeconds: 10
     failureThreshold: 6
-  
+
 resources:
   requests:
     cpu: 200m

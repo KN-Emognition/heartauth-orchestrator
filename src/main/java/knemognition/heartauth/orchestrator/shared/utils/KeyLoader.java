@@ -4,7 +4,10 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 import java.io.InputStream;
-import java.security.*;
+import java.security.GeneralSecurityException;
+import java.security.Key;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.interfaces.ECPrivateKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
@@ -17,13 +20,15 @@ public final class KeyLoader {
     public static ECPrivateKey loadEcPrivateKey(InputStream in) throws Exception {
         byte[] der = pemToDer(in, "PRIVATE KEY"); // PKCS#8
         var spec = new PKCS8EncodedKeySpec(der);
-        return (ECPrivateKey) java.security.KeyFactory.getInstance("EC").generatePrivate(spec);
+        return (ECPrivateKey) java.security.KeyFactory.getInstance("EC")
+                .generatePrivate(spec);
     }
 
     public static ECPublicKey loadEcPublicKey(InputStream in) throws Exception {
         byte[] der = pemToDer(in, "PUBLIC KEY");
         var spec = new X509EncodedKeySpec(der);
-        return (ECPublicKey) java.security.KeyFactory.getInstance("EC").generatePublic(spec);
+        return (ECPublicKey) java.security.KeyFactory.getInstance("EC")
+                .generatePublic(spec);
     }
 
     private static byte[] pemToDer(InputStream in, String type) throws Exception {
@@ -32,7 +37,8 @@ public final class KeyLoader {
         String end = "-----END " + type + "-----";
         String base64 = pem.substring(pem.indexOf(start) + start.length(), pem.indexOf(end))
                 .replaceAll("\\s", "");
-        return java.util.Base64.getDecoder().decode(base64);
+        return java.util.Base64.getDecoder()
+                .decode(base64);
     }
 
     public static String toPem(Key key, String type) {

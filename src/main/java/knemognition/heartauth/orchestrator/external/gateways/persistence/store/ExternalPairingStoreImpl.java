@@ -33,7 +33,8 @@ public class ExternalPairingStoreImpl implements ExternalPairingStore {
         var ent = pairingStateRepository.findById(req.getJti())
                 .orElseThrow(() -> new DeviceEnrichException("pairing_not_found_or_expired"));
 
-        long now = Instant.now().getEpochSecond();
+        long now = Instant.now()
+                .getEpochSecond();
         Long exp = ent.getExp();
 
         if (exp != null && exp <= now) {

@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
     env:
-      CHART_DIR: ./helm 
+      CHART_DIR: ./helm
       HELM_VERSION: 0.1.0
       SERVICE_NAME: orchestrator
     steps:

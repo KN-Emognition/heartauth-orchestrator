@@ -60,8 +60,10 @@ class AdminSecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(HttpMethod.OPTIONS, "/admin/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(HttpMethod.OPTIONS, "/admin/**")
+                        .permitAll()
+                        .anyRequest()
+                        .authenticated()
                 )
                 .exceptionHandling(e -> e.authenticationEntryPoint(problemEntryPoint))
                 .addFilterBefore(filter, AuthorizationFilter.class)
