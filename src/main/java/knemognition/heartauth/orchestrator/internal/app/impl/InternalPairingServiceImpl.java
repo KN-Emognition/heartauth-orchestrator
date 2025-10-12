@@ -8,7 +8,6 @@ import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalPairin
 import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairingProperties;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingResponseDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
@@ -111,14 +110,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
             return internalPairingMapper.notFoundStatus();
         }
 
-        return StatusResponseDto.builder()
-                .status(
-                        FlowStatusDto.fromValue(state.get()
-                                .getStatus()
-                                .getValue())
-
-                )
-                .build();
+        return internalPairingMapper.toStatusResponseDto(state.get());
     }
 }
 

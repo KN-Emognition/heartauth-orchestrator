@@ -1,5 +1,6 @@
 package knemognition.heartauth.orchestrator.admin.config.security;
 
+import knemognition.heartauth.orchestrator.shared.constants.Authorities;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -28,9 +29,9 @@ public class AdminApiKeyAuthenticationProvider implements AuthenticationProvider
         }
 
 
-        var authorities = List.of(new SimpleGrantedAuthority("ADMIN"));
+        var authorities = List.of(new SimpleGrantedAuthority(Authorities.ADMIN));
 
-        var authed = new AdminApiKeyAuthenticationToken("ADMIN", authorities);
+        var authed = new AdminApiKeyAuthenticationToken(Authorities.ADMIN, authorities);
 
         authed.setDetails(authentication.getDetails());
         return authed;

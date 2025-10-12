@@ -2,7 +2,7 @@ name: Release (tagged)
 on:
   push:
     tags:
-      - '*' 
+      - '*'
 jobs:
   release-image:
     runs-on: ubuntu-latest

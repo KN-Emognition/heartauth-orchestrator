@@ -1,7 +1,9 @@
 package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.OffsetDateTime;

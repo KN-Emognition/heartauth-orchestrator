@@ -19,6 +19,7 @@ import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -78,6 +79,7 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
         externalPairingStore.setStatusOrThrow(StatusChange.builder()
                 .id(id)
                 .status(FlowStatus.PENDING)
+                .reason(FlowStatusReason.FLOW_INITIALIZED_ON_MOBILE_DEVICE)
                 .build());
         return InitPairingResponseDto.builder()
                 .nonce(nonceB64)
@@ -133,6 +135,7 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
         log.info("Saved artifacts to main store");
 
         externalPairingStore.setStatusOrThrow(statusChangeBuilder.status(FlowStatus.APPROVED)
+                .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY)
                 .build());
         log.info("Changed cache pairing status to Approved.");
     }

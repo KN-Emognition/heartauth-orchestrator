@@ -4,6 +4,7 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
 import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -16,7 +17,7 @@ import java.util.Random;
 @Slf4j
 @Service
 @Primary
-@Profile("dev")
+@Profile(SpringProfiles.DEV)
 public class MockValidationService implements ExternalValidationService {
 
     @Override

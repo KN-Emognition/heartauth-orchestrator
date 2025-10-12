@@ -19,6 +19,7 @@ class ExternalMarkerTest extends HeartauthSpringBootTest {
     void contextLoads_withExternalProfile() {
         assertThat(ctx).isNotNull();
         assertThat(ctx.getBean(ExternalConfig.class)).isNotNull();
-        assertThat(ctx.getBeanProvider(InternalConfig.class).getIfAvailable()).isNull();
+        assertThat(ctx.getBeanProvider(InternalConfig.class)
+                .getIfAvailable()).isNull();
     }
 }

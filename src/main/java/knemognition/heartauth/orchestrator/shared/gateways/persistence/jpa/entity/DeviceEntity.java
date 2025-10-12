@@ -2,7 +2,9 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.enti
 
 import jakarta.persistence.*;
 import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;

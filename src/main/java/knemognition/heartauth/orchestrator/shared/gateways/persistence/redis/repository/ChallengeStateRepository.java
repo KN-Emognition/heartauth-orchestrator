@@ -4,7 +4,9 @@ package knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.re
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ChallengeStateRepository extends CrudRepository<ChallengeStateRedis, UUID> {
+    List<ChallengeStateRedis> findAllByTenantIdAndUserIdOrderByCreatedAtDesc(UUID tenantId, UUID userId);
 }

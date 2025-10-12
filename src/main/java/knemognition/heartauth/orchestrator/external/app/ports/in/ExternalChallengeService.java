@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.external.app.ports.in;
 
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
+
 import java.util.UUID;
 
 /**

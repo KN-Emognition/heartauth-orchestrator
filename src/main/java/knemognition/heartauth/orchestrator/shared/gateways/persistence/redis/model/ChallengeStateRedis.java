@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -22,7 +23,9 @@ public class ChallengeStateRedis implements Serializable {
     @Id
     private UUID id;
 
+    @Indexed
     private UUID userId;
+    @Indexed
     private UUID tenantId;
 
     private FlowStatus status;

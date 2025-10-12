@@ -20,6 +20,7 @@ class InternalMarkerTest extends HeartauthSpringBootTest {
     void contextLoads_withInternalProfile() {
         assertThat(ctx).isNotNull();
         assertThat(ctx.getBean(InternalConfig.class)).isNotNull();
-        assertThat(ctx.getBeanProvider(ExternalConfig.class).getIfAvailable()).isNull();
+        assertThat(ctx.getBeanProvider(ExternalConfig.class)
+                .getIfAvailable()).isNull();
     }
 }

@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
 
-import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.ATTR_TENANT_ID;
+import static knemognition.heartauth.orchestrator.shared.constants.HeaderNames.ATTR_TENANT_ID;
 
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@PreAuthorize("hasAuthority('KEYCLOAK')")
+@PreAuthorize("hasAuthority(T(knemognition.heartauth.orchestrator.shared.constants.Authorities).TENANT)")
 public class InternalChallengeController implements ChallengeApi {
 
     private final InternalChallengeService internalChallengeService;

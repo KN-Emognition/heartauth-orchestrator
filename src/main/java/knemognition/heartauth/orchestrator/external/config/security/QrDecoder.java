@@ -43,7 +43,8 @@ public class QrDecoder {
                 JwtValidators.createDefaultWithIssuer(externalPairingProperties.getIssuer());
 
         OAuth2TokenValidator<Jwt> withAudience = jwt ->
-                (jwt.getAudience() != null && !Collections.disjoint(jwt.getAudience(), externalPairingProperties.getAudience()))
+                (jwt.getAudience() != null && !Collections.disjoint(jwt.getAudience(),
+                        externalPairingProperties.getAudience()))
                         ? OAuth2TokenValidatorResult.success()
                         : OAuth2TokenValidatorResult.failure(
                         new OAuth2Error("invalid_token", "missing/invalid audience", ""));

@@ -1,4 +1,6 @@
 spring:
+  jackson:
+    default-property-inclusion: non_null
   data:
     redis:
       url: ${REDIS_URL:redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}}
@@ -55,6 +57,5 @@ logging:
     root: INFO
 jwt:
   kid: "id"
-  private-key-password: null
   private-key-location: file:${user.dir}/secrets/privKey.pem
   public-key-location: file:${user.dir}/secrets/pubKey.pem

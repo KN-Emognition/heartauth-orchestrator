@@ -7,7 +7,6 @@ import org.springframework.core.io.Resource;
 public record JwtProperties(
         String kid,
         Resource privateKeyLocation,
-        Resource publicKeyLocation,
-        String privateKeyPassword
+        Resource publicKeyLocation
 ) {
 }

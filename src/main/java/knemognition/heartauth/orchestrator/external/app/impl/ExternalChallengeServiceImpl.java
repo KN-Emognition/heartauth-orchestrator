@@ -15,6 +15,7 @@ import knemognition.heartauth.orchestrator.external.config.errorhandling.excepti
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -71,6 +72,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
             challengeStateStatusStore.setStatus(StatusChange.builder()
                     .id(challengeId)
                     .status(FlowStatus.DENIED)
+                    .reason(FlowStatusReason.FLOW_DENIED_WITHOUT_AUTHENTICATION)
                     .build());
             log.info("Reference ECG data not found for user {}", state.getUserId());
 
@@ -92,10 +94,12 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
 
         if (!approved) {
             challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
+                    .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
                     .build());
             throw new ChallengeFailedException("ECG Validation failed");
         }
         challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
+                .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
                 .build());
     }
 }

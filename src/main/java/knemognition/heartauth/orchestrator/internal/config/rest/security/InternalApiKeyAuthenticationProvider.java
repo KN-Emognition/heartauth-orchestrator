@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.in.ApiKeyHasher;
+import knemognition.heartauth.orchestrator.shared.constants.Authorities;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,8 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalApiKeyAuthenticationProvider implements AuthenticationProvider {
 
-    private final ApiKeyHasher hasher;
-    private final InternalMainStore apiKeyLookup;
+    private final ApiKeyHasher apiKeyHasher;
+    private final InternalMainStore internalMainStore;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -29,14 +30,14 @@ public class InternalApiKeyAuthenticationProvider implements AuthenticationProvi
             throw new BadCredentialsException("invalid_api_key");
         }
 
-        String hash = hasher.hash(provided);
+        String hash = apiKeyHasher.hash(provided);
 
-        UUID tenantId = apiKeyLookup.getTenantIdForActiveKeyHash(hash)
+        UUID tenantId = internalMainStore.getTenantIdForActiveKeyHash(hash)
                 .orElseThrow(() -> new BadCredentialsException("invalid_api_key"));
 
 
         var authorities = List.of(
-                new SimpleGrantedAuthority("KEYCLOAK")
+                new SimpleGrantedAuthority(Authorities.TENANT)
         );
         log.info("Internal API key used for tenant {}", tenantId);
         var authed = new InternalApiKeyAuthenticationToken(tenantId, authorities);

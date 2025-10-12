@@ -31,7 +31,8 @@ public class QrClaimsProvider {
                 .jti(UUID.fromString(jwt.getClaim("jti")))
                 .tenantId(UUID.fromString(jwt.getClaim("tenantId")))
                 .userId(UUID.fromString(jwt.getClaim("userId")))
-                .exp(jwt.getExpiresAt().getEpochSecond())
+                .exp(jwt.getExpiresAt()
+                        .getEpochSecond())
                 .build();
     }
 }

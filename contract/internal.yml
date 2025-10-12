@@ -196,8 +196,12 @@ components:
         - status
       properties:
         status:
-          $ref: 'domain.yml#/components/schemas/FlowStatus'
+          $ref: '#/components/schemas/FlowStatus'
         reason:
           type: string
           description: Optional human-readable reason for non-success states (e.g., "TTL exceeded", "User denied").
           example: "User denied on device"
+    FlowStatus:
+      type: string
+      description: Lifecycle state of a pairing/challenge flow.
+      enum: [ CREATED, PENDING, APPROVED, DENIED, EXPIRED, NOT_FOUND ]
