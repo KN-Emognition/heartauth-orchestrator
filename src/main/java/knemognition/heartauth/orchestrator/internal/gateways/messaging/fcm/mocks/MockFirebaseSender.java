@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @Primary
-@Profile(SpringProfiles.DEV)
+@Profile(SpringProfiles.FCM_MOCK)
 public class MockFirebaseSender implements PushSender {
 
     @Override

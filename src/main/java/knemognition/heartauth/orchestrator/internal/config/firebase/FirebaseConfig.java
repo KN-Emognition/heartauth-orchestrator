@@ -4,10 +4,12 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.util.StringUtils;
@@ -16,6 +18,7 @@ import java.io.InputStream;
 
 @Configuration
 @EnableConfigurationProperties(FirebaseProperties.class)
+@Profile("!" + SpringProfiles.FCM_MOCK)
 @RequiredArgsConstructor
 public class FirebaseConfig {
 

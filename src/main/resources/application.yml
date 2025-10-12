@@ -57,6 +57,5 @@ logging:
     root: INFO
 jwt:
   kid: "id"
-  private-key-password: null
   private-key-location: file:${user.dir}/secrets/privKey.pem
   public-key-location: file:${user.dir}/secrets/pubKey.pem

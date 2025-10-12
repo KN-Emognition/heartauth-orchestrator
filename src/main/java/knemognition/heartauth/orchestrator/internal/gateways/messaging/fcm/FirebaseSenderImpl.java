@@ -5,8 +5,10 @@ import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FirebaseSendException;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -16,6 +18,7 @@ import java.util.Objects;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Profile("!" + SpringProfiles.FCM_MOCK)
 public class FirebaseSenderImpl implements PushSender {
 
     private final RecordMapper recordMapper;

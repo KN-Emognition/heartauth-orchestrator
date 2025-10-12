@@ -9,4 +9,5 @@ public class SpringProfiles {
     public static final String INTERNAL = "internal";
     public static final String EXTERNAL = "external";
     public static final String ADMIN = "admin";
+    public static final String FCM_MOCK = "fcm-mock";
 }
