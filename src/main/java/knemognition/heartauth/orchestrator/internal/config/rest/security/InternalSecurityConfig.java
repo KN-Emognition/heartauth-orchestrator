@@ -15,7 +15,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
 
-import static knemognition.heartauth.orchestrator.shared.config.mdc.HeaderNames.ATTR_TENANT_ID;
+import static knemognition.heartauth.orchestrator.shared.constants.HeaderNames.ATTR_TENANT_ID;
 
 @Configuration
 class InternalSecurityConfig {

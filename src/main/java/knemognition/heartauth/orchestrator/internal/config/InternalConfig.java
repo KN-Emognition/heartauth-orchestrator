@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.internal.config;
 
 import knemognition.heartauth.orchestrator.internal.InternalMarker;
 import knemognition.heartauth.orchestrator.shared.SharedMarker;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -18,7 +19,7 @@ import org.springframework.context.annotation.Profile;
  *       (via the {@link SharedMarker} class marker)</li>
  * </ul>
  */
-@Profile({"internal"})
+@Profile(SpringProfiles.INTERNAL)
 @Configuration
 @ComponentScan(basePackageClasses = {InternalMarker.class, SharedMarker.class})
 public class InternalConfig {

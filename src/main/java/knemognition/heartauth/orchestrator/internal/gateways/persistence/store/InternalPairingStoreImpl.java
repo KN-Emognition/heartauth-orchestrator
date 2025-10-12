@@ -7,12 +7,14 @@ import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.PairingStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 @Component
@@ -20,10 +22,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalPairingStoreImpl implements InternalPairingStore {
 
-    static final String PREVIOUS_PAIRING_SUPERSEDED_REASON = "Superseded by new pairing request";
-    private static final EnumSet<FlowStatus> TERMINAL_STATUSES = EnumSet.of(
-            FlowStatus.APPROVED, FlowStatus.DENIED, FlowStatus.EXPIRED
-    );
+    private static final EnumSet<FlowStatus> TERMINAL_STATUSES = EnumSet.of(FlowStatus.APPROVED, FlowStatus.DENIED,
+            FlowStatus.EXPIRED);
 
     private final InternalPairingStoreMapper createPairingStoreMapper;
     private final PairingStateRepository pairingStateRepository;
@@ -33,20 +33,30 @@ public class InternalPairingStoreImpl implements InternalPairingStore {
      */
     @Override
     public CreatedFlowResult createPairing(CreatePairing state) {
-        denyPreviousActivePairing(state.getTenantId(), state.getUserId());
-        var ent = createPairingStoreMapper.fromCreate(state);
+        boolean recreated = denyPreviousActivePairing(state.getTenantId(), state.getUserId());
+
+        PairingStateRedis ent = createPairingStoreMapper.fromCreate(state);
+        ent.setReason(recreated ? FlowStatusReason.FLOW_RECREATED : FlowStatusReason.FLOW_CREATED);
+
         pairingStateRepository.save(ent);
         return createPairingStoreMapper.toCreatedResult(ent);
     }
 
-    private void denyPreviousActivePairing(UUID tenantId, UUID userId) {
-        pairingStateRepository.findTopByTenantIdAndUserIdOrderByCreatedAtDesc(tenantId, userId)
+
+    private boolean denyPreviousActivePairing(UUID tenantId, UUID userId) {
+        List<PairingStateRedis> actives = pairingStateRepository.findAllByTenantIdAndUserIdOrderByCreatedAtDesc(
+                        tenantId, userId)
+                .stream()
                 .filter(this::isActive)
-                .ifPresent(existing -> {
-                    existing.setStatus(FlowStatus.DENIED);
-                    existing.setReason(PREVIOUS_PAIRING_SUPERSEDED_REASON);
-                    pairingStateRepository.save(existing);
-                });
+                .toList();
+
+        for (PairingStateRedis existing : actives) {
+            existing.setStatus(FlowStatus.DENIED);
+            existing.setReason(FlowStatusReason.FLOW_DENIED_BY_RECREATING_FLOW);
+            pairingStateRepository.save(existing);
+        }
+
+        return !actives.isEmpty();
     }
 
     private boolean isActive(PairingStateRedis state) {

@@ -1,0 +1,12 @@
+package knemognition.heartauth.orchestrator.shared.constants;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class SpringProfiles {
+    public static final String DEV = "dev";
+    public static final String INTERNAL = "internal";
+    public static final String EXTERNAL = "external";
+    public static final String ADMIN = "admin";
+}

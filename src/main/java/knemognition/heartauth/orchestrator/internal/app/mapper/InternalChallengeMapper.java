@@ -8,6 +8,7 @@ import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.Cre
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.MessageType;
 import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
 import org.mapstruct.Mapper;
@@ -40,5 +41,8 @@ public interface InternalChallengeMapper {
     @Mapping(target = "ttl", source = "res.ttlSeconds")
     @Mapping(target = "publicKey", expression = "java(KeyLoader.toPem(publicKey,\"PUBLIC KEY\"))")
     ChallengePushMessage toChallengePushMessage(CreatedFlowResult res, String nonce, PublicKey publicKey);
+
+
+    StatusResponseDto toStatusResponseDto(ChallengeState state);
 }
 

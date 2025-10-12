@@ -4,21 +4,20 @@ import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.Device;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -107,13 +106,7 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
             return internalChallengeMapper.notFoundStatus();
         }
 
-        return StatusResponseDto.builder()
-                .status(
-                        FlowStatusDto.fromValue(state.get()
-                                .getStatus()
-                                .getValue())
-                )
-                .build();
+        return internalChallengeMapper.toStatusResponseDto(state.get());
     }
 
 

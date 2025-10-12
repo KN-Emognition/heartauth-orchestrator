@@ -7,18 +7,19 @@ import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
 public class InternalChallengeStoreImpl implements InternalChallengeStore {
 
-    static final String PREVIOUS_CHALLENGE_SUPERSEDED_REASON = "Superseded by new challenge request";
     private static final EnumSet<FlowStatus> TERMINAL_STATUSES = EnumSet.of(
             FlowStatus.APPROVED, FlowStatus.DENIED, FlowStatus.EXPIRED
     );
@@ -31,20 +32,31 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
      */
     @Override
     public CreatedFlowResult createChallenge(CreateChallenge state) {
-        denyPreviousActiveChallenge(state.getTenantId(), state.getUserId());
+        boolean recreated = denyPreviousActiveChallenge(state.getTenantId(), state.getUserId());
+
         var ent = createChallengeStoreMapper.fromCreate(state);
+        ent.setReason(recreated
+                ? FlowStatusReason.FLOW_RECREATED
+                : FlowStatusReason.FLOW_CREATED);
+
         challengeStateRepository.save(ent);
         return createChallengeStoreMapper.toCreatedResult(ent);
     }
 
-    private void denyPreviousActiveChallenge(UUID tenantId, UUID userId) {
-        challengeStateRepository.findTopByTenantIdAndUserIdOrderByCreatedAtDesc(tenantId, userId)
+    private boolean denyPreviousActiveChallenge(UUID tenantId, UUID userId) {
+        List<ChallengeStateRedis> actives = challengeStateRepository
+                .findAllByTenantIdAndUserIdOrderByCreatedAtDesc(tenantId, userId)
+                .stream()
                 .filter(this::isActive)
-                .ifPresent(existing -> {
-                    existing.setStatus(FlowStatus.DENIED);
-                    existing.setReason(PREVIOUS_CHALLENGE_SUPERSEDED_REASON);
-                    challengeStateRepository.save(existing);
-                });
+                .toList();
+
+        for (ChallengeStateRedis existing : actives) {
+            existing.setStatus(FlowStatus.DENIED);
+            existing.setReason(FlowStatusReason.FLOW_DENIED_BY_RECREATING_FLOW);
+            challengeStateRepository.save(existing);
+        }
+
+        return !actives.isEmpty();
     }
 
     private boolean isActive(ChallengeStateRedis state) {
