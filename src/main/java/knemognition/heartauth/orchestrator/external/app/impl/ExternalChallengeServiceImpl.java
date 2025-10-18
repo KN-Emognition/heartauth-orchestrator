@@ -90,7 +90,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
                 .build();
 
 
-        modelApiKafka.predict(state.getCorrelationId(), request);
+        modelApiKafka.predict(state.getModelApiTryId(), request);
         log.info("Posted Kafka message for ECG prediction for challengeId {}", challengeId);
         challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)
                 .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)

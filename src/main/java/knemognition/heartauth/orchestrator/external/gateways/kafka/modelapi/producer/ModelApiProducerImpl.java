@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -34,18 +35,19 @@ public class ModelApiProducerImpl implements ModelApiKafka {
             PredictRequestDto dto = mapper.toPredictRequestDto(payload);
             String message = objectMapper.writeValueAsString(dto);
 
-            String correlationId = id.toString();
-
+            String challengeUniqueId = id.toString();
+            String correlationId = MDC.get(HeaderNames.MDC_CORRELATION_ID);
             Headers headers = new RecordHeaders()
-                    .add(HeaderNames.HEADER_CORRELATION_ID, correlationId.getBytes(StandardCharsets.UTF_8));
+                    .add(HeaderNames.HEADER_CORRELATION_ID, correlationId.getBytes(StandardCharsets.UTF_8))
+                    .add(HeaderNames.HEADER_MODEL_API_UNIQUE_ID, challengeUniqueId.getBytes(StandardCharsets.UTF_8));
 
             ProducerRecord<String, String> record =
                     new ProducerRecord<>(properties.getRequest(), null, null, correlationId, message, headers);
 
             producer.send(record);
 
-            log.info("Queued prediction request | topic={} | correlationId={}",
-                    properties.getRequest(), correlationId);
+            log.info("Queued prediction request | topic={} ",
+                    properties.getRequest());
 
         } catch (Exception e) {
             log.error("Failed to build Kafka message: {}", e.getMessage(), e);

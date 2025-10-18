@@ -112,15 +112,19 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
     public void completeChallengeWithPrediction(UUID correlationId, PredictResponseDto to) {
         ChallengeState state = internalChallengeStore.getChallengeStateByCorrelationId(correlationId);
         PredictResponse prediction = internalChallengeMapper.toPredictResponse(to);
-        if (!(state.getStatus() == FlowStatus.PENDING))
+        if (!(state.getStatus() == FlowStatus.PENDING)) {
+            log.info("Prediction received for non-pending challenge {}, ignoring", state.getId());
             return;
+        }
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
                 .id(state.getId());
         if (prediction.getPrediction() == true) {
+            log.info("Prediction approved for challenge {}", state.getId());
             internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
                     .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
                     .build());
         } else {
+            log.info("Prediction rejected for challenge {}", state.getId());
             internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
                     .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
                     .build());

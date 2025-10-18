@@ -11,5 +11,5 @@ import java.util.UUID;
 public interface ChallengeStateRepository extends CrudRepository<ChallengeStateRedis, UUID> {
     List<ChallengeStateRedis> findAllByTenantIdAndUserIdOrderByCreatedAtDesc(UUID tenantId, UUID userId);
 
-    Optional<ChallengeStateRedis> findFirstByCorrelationIdOrderByCreatedAtDesc(UUID correlationId);
+    Optional<ChallengeStateRedis> findFirstByModelApiTryIdOrderByCreatedAtDesc(UUID correlationId);
 }

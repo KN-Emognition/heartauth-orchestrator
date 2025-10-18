@@ -21,7 +21,7 @@ public interface InternalChallengeStoreMapper {
     @Mapping(target = "ttlSeconds", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "reason", ignore = true)
-    @Mapping(target = "correlationId", ignore = true)
+    @Mapping(target = "modelApiTryId", ignore = true)
     ChallengeStateRedis fromCreate(CreateChallenge src);
 
     @AfterMapping
@@ -30,7 +30,7 @@ public interface InternalChallengeStoreMapper {
                           CreateChallenge src
     ) {
         ent.setId(UUID.randomUUID());
-        ent.setCorrelationId(UUID.randomUUID());
+        ent.setModelApiTryId(UUID.randomUUID());
         long now = Instant.now()
                 .getEpochSecond();
         long ttl = src.getTtlSeconds();

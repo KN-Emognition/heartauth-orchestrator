@@ -49,7 +49,7 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
     @Override
     public ChallengeState getChallengeStateByCorrelationId(UUID correlationId) {
         return challengeStateRepository
-                .findFirstByCorrelationIdOrderByCreatedAtDesc(correlationId)
+                .findFirstByModelApiTryIdOrderByCreatedAtDesc(correlationId)
                 .map(internalChallengeStoreMapper::toDomain)
                 .orElseThrow(() -> new NoChallengeException("challenge_not_found"));
     }

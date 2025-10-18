@@ -63,7 +63,7 @@ components:
               type: string
               description: Base64-encoded nonce used in the challenge.
               example: "k0b1c2d3e4f5g6h7i8j9=="
-            correlationId:
+            modelApiTryId:
               type: string
               format: uuid
               example: "8d8a4b2e-1a56-4a3a-8c08-9c3c5a2d5c01"

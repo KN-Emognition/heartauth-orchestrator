@@ -9,4 +9,5 @@ public class HeaderNames {
     public static final String HEADER_CORRELATION_ID = "X-Correlation-Id";
     public static final String HEADER_API_KEY = "X-API-Key";
     public static final String ATTR_TENANT_ID = "X-Tenant-Id";
+    public static final String HEADER_MODEL_API_UNIQUE_ID = "X-Model-Evaluation-Id";
 }
