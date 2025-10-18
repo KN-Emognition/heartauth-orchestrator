@@ -5,6 +5,6 @@ import knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.model.P
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
-public interface ModelApiMapper {
+public interface ModelApiRestMapper {
     PredictRequestDto toPredictRequestDto(EcgPrediction ecgPrediction);
 }

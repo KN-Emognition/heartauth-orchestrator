@@ -6,7 +6,7 @@ import knemognition.heartauth.orchestrator.shared.app.domain.EcgPrediction;
 /**
  * Port for model prediction
  */
-public interface ModelApi {
+public interface ModelApiRest {
     /**
      * @param prediction includes reference data and test data
      * @return true if the model predicts positive

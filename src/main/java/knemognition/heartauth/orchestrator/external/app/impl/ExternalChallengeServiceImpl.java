@@ -9,7 +9,8 @@ import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallen
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApi;
+import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiKafka;
+import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiRest;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
@@ -38,7 +39,8 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
     private final EcgTokenMapper ecgTokenMapper;
     private final ExternalChallengeMapper externalChallengeMapper;
     // out
-    private final ModelApi modelApi;
+    private final ModelApiRest modelApi;
+    private final ModelApiKafka modelApiKafka;
     private final ExternalMainStore externalMainStore;
     private final ExternalChallengeStore challengeStateStatusStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
@@ -90,8 +92,8 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
                 .build();
 
         boolean approved = modelApi.predict(request);
+        modelApiKafka.predict(request);
         log.info("Called model for prediction.");
-
         if (!approved) {
             challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
                     .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)

@@ -25,10 +25,10 @@ public class ModelApiConfig {
                             .setContentType(MediaType.APPLICATION_JSON);
                     request.getHeaders()
                             .setAccept(List.of(MediaType.APPLICATION_JSON));
-                    String routeId = MDC.get(HeaderNames.MDC_ROUTE_ID);
+                    String routeId = MDC.get(HeaderNames.MDC_CORRELATION_ID);
                     if (routeId != null && !routeId.isBlank()) {
                         request.getHeaders()
-                                .set(HeaderNames.HEADER_ROUTE_ID, routeId);
+                                .set(HeaderNames.HEADER_CORRELATION_ID, routeId);
                     }
                     return execution.execute(request, body);
                 })

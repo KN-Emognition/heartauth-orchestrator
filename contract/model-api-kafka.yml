@@ -2,25 +2,7 @@ openapi: 3.0.3
 info:
   title: Model API
   version: 1.0.0
-paths:
-  /v1/predict:
-    post:
-      operationId: predict
-      tags:
-        - Prediction
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PredictRequest"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PredictResponse"
+paths: { }
 components:
   schemas:
     PredictRequest:
