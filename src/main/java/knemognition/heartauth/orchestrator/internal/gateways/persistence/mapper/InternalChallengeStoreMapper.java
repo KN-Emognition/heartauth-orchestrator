@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper
 
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import org.mapstruct.*;
@@ -20,6 +21,7 @@ public interface InternalChallengeStoreMapper {
     @Mapping(target = "ttlSeconds", ignore = true)
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "reason", ignore = true)
+    @Mapping(target = "correlationId", ignore = true)
     ChallengeStateRedis fromCreate(CreateChallenge src);
 
     @AfterMapping
@@ -28,6 +30,7 @@ public interface InternalChallengeStoreMapper {
                           CreateChallenge src
     ) {
         ent.setId(UUID.randomUUID());
+        ent.setCorrelationId(UUID.randomUUID());
         long now = Instant.now()
                 .getEpochSecond();
         long ttl = src.getTtlSeconds();
@@ -39,5 +42,13 @@ public interface InternalChallengeStoreMapper {
 
     CreatedFlowResult toCreatedResult(ChallengeStateRedis ent);
 
+    ChallengeState toDomain(ChallengeStateRedis ent);
 
+
+    @BeanMapping(ignoreByDefault = true)
+    @Mapping(target = "status", source = "status")
+    @Mapping(target = "reason", source = "reason")
+    void applyStatus(@MappingTarget ChallengeStateRedis target,
+                     FlowStatus status,
+                     String reason);
 }

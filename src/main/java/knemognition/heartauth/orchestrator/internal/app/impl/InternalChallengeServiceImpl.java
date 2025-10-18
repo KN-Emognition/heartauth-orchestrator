@@ -12,12 +12,11 @@ import knemognition.heartauth.orchestrator.internal.config.errorhandling.excepti
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.domain.Device;
-import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
+import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
+import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
+import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -107,6 +106,25 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
         }
 
         return internalChallengeMapper.toStatusResponseDto(state.get());
+    }
+
+    @Override
+    public void completeChallengeWithPrediction(UUID correlationId, PredictResponseDto to) {
+        ChallengeState state = internalChallengeStore.getChallengeStateByCorrelationId(correlationId);
+        PredictResponse prediction = internalChallengeMapper.toPredictResponse(to);
+        if (!(state.getStatus() == FlowStatus.PENDING))
+            return;
+        StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
+                .id(state.getId());
+        if (prediction.getPrediction() == true) {
+            internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
+                    .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
+                    .build());
+        } else {
+            internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
+                    .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
+                    .build());
+        }
     }
 
 

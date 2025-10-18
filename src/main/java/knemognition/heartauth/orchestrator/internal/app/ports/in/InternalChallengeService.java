@@ -3,6 +3,7 @@ package knemognition.heartauth.orchestrator.internal.app.ports.in;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
+import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
 
 import java.util.UUID;
 
@@ -48,4 +49,6 @@ public interface InternalChallengeService {
      * @return a {@link StatusResponseDto} containing the status or {@code Not found}
      */
     StatusResponseDto getChallengeStatus(UUID id, UUID tenantId);
+
+    void completeChallengeWithPrediction(UUID correlationId, PredictResponseDto to);
 }

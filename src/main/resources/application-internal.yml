@@ -16,3 +16,11 @@ internal-pairing:
   default-ttl: 120
   max-ttl: 600
   min-ttl: 60
+
+model:
+  api:
+    kafka:
+      topics:
+        request: model-api-request
+        reply: model-api-reply
+        combined: model-api-combined

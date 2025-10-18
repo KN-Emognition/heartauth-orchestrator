@@ -13,4 +13,5 @@ public class FlowStatusReason {
     public static final String FLOW_DENIED_WITH_AUTHENTICATION_FAILURE = "Flow denied with authentication failure.";
     public static final String FLOW_DENIED_BY_RECREATING_FLOW = "Flow denied by recreating flow.";
     public static final String FLOW_INITIALIZED_ON_MOBILE_DEVICE = "Flow initialized on mobile device.";
+    public static final String FLOW_WAITING_FOR_MODEL = "Waiting for model.";
 }

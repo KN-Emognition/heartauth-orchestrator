@@ -28,9 +28,28 @@ components:
       type: object
       required:
         - prediction
+        - ok
       properties:
+        ok:
+          type: boolean
         prediction:
           type: boolean
         score:
           type: number
           format: float
+        error:
+          type: string
+    CombinedModelAction:
+      type: object
+      required:
+        - timestamp
+        - predictResponse
+        - predictRequest
+      properties:
+        predictRequest:
+          $ref: "#/components/schemas/PredictRequest"
+        predictResponse:
+          $ref: "#/components/schemas/PredictResponse"
+        timestamp:
+          type: integer
+          format: int64

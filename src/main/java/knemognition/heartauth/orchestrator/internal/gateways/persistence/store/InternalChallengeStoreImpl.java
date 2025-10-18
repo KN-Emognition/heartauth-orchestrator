@@ -1,10 +1,13 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.store;
 
+import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.InternalChallengeStoreMapper;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
@@ -24,7 +27,7 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
             FlowStatus.APPROVED, FlowStatus.DENIED, FlowStatus.EXPIRED
     );
 
-    private final InternalChallengeStoreMapper createChallengeStoreMapper;
+    private final InternalChallengeStoreMapper internalChallengeStoreMapper;
     private final ChallengeStateRepository challengeStateRepository;
 
     /**
@@ -34,14 +37,23 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
     public CreatedFlowResult createChallenge(CreateChallenge state) {
         boolean recreated = denyPreviousActiveChallenge(state.getTenantId(), state.getUserId());
 
-        var ent = createChallengeStoreMapper.fromCreate(state);
+        var ent = internalChallengeStoreMapper.fromCreate(state);
         ent.setReason(recreated
                 ? FlowStatusReason.FLOW_RECREATED
                 : FlowStatusReason.FLOW_CREATED);
 
         challengeStateRepository.save(ent);
-        return createChallengeStoreMapper.toCreatedResult(ent);
+        return internalChallengeStoreMapper.toCreatedResult(ent);
     }
+
+    @Override
+    public ChallengeState getChallengeStateByCorrelationId(UUID correlationId) {
+        return challengeStateRepository
+                .findFirstByCorrelationIdOrderByCreatedAtDesc(correlationId)
+                .map(internalChallengeStoreMapper::toDomain)
+                .orElseThrow(() -> new NoChallengeException("challenge_not_found"));
+    }
+
 
     private boolean denyPreviousActiveChallenge(UUID tenantId, UUID userId) {
         List<ChallengeStateRedis> actives = challengeStateRepository
@@ -67,5 +79,16 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
         Long exp = state.getExp();
         return exp == null || exp > Instant.now()
                 .getEpochSecond();
+    }
+
+    @Override
+    public boolean setStatus(StatusChange statusChange) {
+        return challengeStateRepository.findById(statusChange.getId())
+                .map(ent -> {
+                    internalChallengeStoreMapper.applyStatus(ent, statusChange.getStatus(), statusChange.getReason());
+                    challengeStateRepository.save(ent);
+                    return true;
+                })
+                .orElse(false);
     }
 }

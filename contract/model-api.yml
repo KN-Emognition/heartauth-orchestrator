@@ -52,3 +52,5 @@ components:
         score:
           type: number
           format: float
+        error:
+          type: string

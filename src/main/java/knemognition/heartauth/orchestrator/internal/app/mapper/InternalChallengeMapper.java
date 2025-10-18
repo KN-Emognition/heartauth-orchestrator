@@ -10,6 +10,8 @@ import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.Sta
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.MessageType;
+import knemognition.heartauth.orchestrator.shared.app.domain.PredictResponse;
+import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
 import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -44,5 +46,7 @@ public interface InternalChallengeMapper {
 
 
     StatusResponseDto toStatusResponseDto(ChallengeState state);
+
+    PredictResponse toPredictResponse(PredictResponseDto src);
 }
 

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.external.config.kafka;
+package knemognition.heartauth.orchestrator.shared.config.kafka;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;

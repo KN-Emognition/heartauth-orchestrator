@@ -24,4 +24,5 @@ public class ExternalChallengeStoreImpl implements ExternalChallengeStore {
                 })
                 .orElse(false);
     }
+
 }

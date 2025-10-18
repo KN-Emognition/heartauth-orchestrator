@@ -39,7 +39,6 @@ public class InternalApiKeyAuthenticationProvider implements AuthenticationProvi
         var authorities = List.of(
                 new SimpleGrantedAuthority(Authorities.TENANT)
         );
-        log.info("Internal API key used for tenant {}", tenantId);
         var authed = new InternalApiKeyAuthenticationToken(tenantId, authorities);
         authed.setDetails(authentication.getDetails());
         return authed;

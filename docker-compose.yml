@@ -61,8 +61,8 @@ services:
     image: model-api:latest
     environment:
       KAFKA_BROKERS: kafka:29092
-      CONSUME_TOPIC: ml.predict.v1
-      REPLY_TOPIC: ml.predict.replies.v1
+      CONSUME_TOPIC: model-api-request
+      REPLY_TOPIC: model-api-reply
     ports:
       - "8000:8000"
     depends_on:
@@ -99,8 +99,10 @@ services:
       kafka:
         condition: service_healthy
     environment:
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
-      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+      # Zookeeper not needed for UI; it can read everything from brokers
+      # KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
 
 volumes:
   pgdata:

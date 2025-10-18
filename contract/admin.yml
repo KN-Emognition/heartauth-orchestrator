@@ -25,6 +25,20 @@ paths:
                   value:
                     id: "a9b2f1a6-2a36-4f1f-bc3b-9d63f5a8f5a2"
                     apiKey: "a9b2f1a6-2a36-4f1f-bc3b-9d63f5a8f5a2"
+  /admin/v1/model-action:
+    get:
+      tags:
+        - ModelAction
+      operationId: getModelAction
+      responses:
+        '201':
+          description: ModelAction
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ModelAction'
 components:
   schemas:
     CreateTenantResponse:
@@ -39,3 +53,84 @@ components:
         apiKey:
           type: string
           format: uuid
+    ModelAction:
+      type: object
+      additionalProperties: false
+      description: >
+        Short-lived record representing a request↔response flow.
+        Backed by Redis hash "model_act". Entries auto-expire via `ttlSeconds`.
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: UUID key for the flow (maps to Redis @Id).
+        requestTime:
+          type: integer
+          format: int64
+          description: Expiration time as UNIX epoch seconds.
+          example: 1730563200
+        responseTime:
+          type: integer
+          format: int64
+          description: Expiration time as UNIX epoch seconds.
+          example: 1730563200
+        request:
+          $ref: '#/components/schemas/PredictRequestArchive'
+        response:
+          allOf:
+            - $ref: '#/components/schemas/PredictResponseArchive'
+      required:
+        - id
+        - requestTime
+        - request
+
+
+    PredictRequestArchive:
+      type: object
+      additionalProperties: false
+      description: Flexible input payload accepted by the model (from PredictRequestDto).
+      properties:
+        refEcg:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: float
+          minItems: 1
+          description: Reference ECG signals.
+        testEcg:
+          type: array
+          items:
+            type: number
+            format: float
+          minItems: 1
+          description: Test ECG signal.
+      required:
+        - refEcg
+        - testEcg
+      example:
+        refEcg: [ [ 0.1, 0.2 ], [ 0.05, 0.04 ] ]
+        testEcg: [ 0.12, 0.18 ]
+
+    PredictResponseArchive:
+      type: object
+      additionalProperties: false
+      description: Model response payload (from PredictResponseDto).
+      properties:
+        ok:
+          type: boolean
+          description: Whether the call succeeded at the model boundary.
+        prediction:
+          type: boolean
+          description: The model’s boolean prediction.
+        score:
+          type: number
+          format: float
+          description: Optional confidence/score for the prediction.
+        error:
+          type: string
+          description: Error message when `ok=false`.
+      required:
+        - ok
+        - prediction

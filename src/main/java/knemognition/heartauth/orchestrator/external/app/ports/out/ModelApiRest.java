@@ -1,15 +1,15 @@
 package knemognition.heartauth.orchestrator.external.app.ports.out;
 
 
-import knemognition.heartauth.orchestrator.shared.app.domain.EcgPrediction;
+import knemognition.heartauth.orchestrator.shared.app.domain.EcgPayload;
 
 /**
  * Port for model prediction
  */
 public interface ModelApiRest {
     /**
-     * @param prediction includes reference data and test data
+     * @param payload includes reference data and test data
      * @return true if the model predicts positive
      */
-    boolean predict(EcgPrediction prediction);
+    boolean predict(EcgPayload payload);
 }
