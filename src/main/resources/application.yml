@@ -68,3 +68,10 @@ jwt:
   kid: "id"
   private-key-location: file:${user.dir}/secrets/privKey.pem
   public-key-location: file:${user.dir}/secrets/pubKey.pem
+model:
+  api:
+    kafka:
+      topics:
+        request: model-api-v1-predict
+        reply: model-api-v1-reply
+        combined: model-api-v1-combined

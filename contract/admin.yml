@@ -64,19 +64,9 @@ components:
           type: string
           format: uuid
           description: UUID key for the flow (maps to Redis @Id).
-        requestTime:
-          type: integer
-          format: int64
-          description: Expiration time as UNIX epoch seconds.
-          example: 1730563200
-        responseTime:
-          type: integer
-          format: int64
-          description: Expiration time as UNIX epoch seconds.
-          example: 1730563200
-        request:
+        predictRequest:
           $ref: '#/components/schemas/PredictRequestArchive'
-        response:
+        predictResponse:
           allOf:
             - $ref: '#/components/schemas/PredictResponseArchive'
       required:
