@@ -72,6 +72,6 @@ model:
   api:
     kafka:
       topics:
-        request: model-api-v1-predict
-        reply: model-api-v1-reply
+        request: model-api-v1-request
+        reply: model-api-v1-response
         combined: model-api-v1-combined
