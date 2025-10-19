@@ -2,25 +2,7 @@ openapi: 3.0.3
 info:
   title: Model API
   version: 1.0.0
-paths:
-  /v1/predict:
-    post:
-      operationId: predict
-      tags:
-        - Prediction
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/PredictRequest"
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/PredictResponse"
+paths: { }
 components:
   schemas:
     PredictRequest:
@@ -46,7 +28,10 @@ components:
       type: object
       required:
         - prediction
+        - ok
       properties:
+        ok:
+          type: boolean
         prediction:
           type: boolean
         score:
@@ -54,3 +39,17 @@ components:
           format: float
         error:
           type: string
+    CombinedModelAction:
+      type: object
+      required:
+        - timestamp
+        - predictResponse
+        - predictRequest
+      properties:
+        predictRequest:
+          $ref: "#/components/schemas/PredictRequest"
+        predictResponse:
+          $ref: "#/components/schemas/PredictResponse"
+        timestamp:
+          type: integer
+          format: int64

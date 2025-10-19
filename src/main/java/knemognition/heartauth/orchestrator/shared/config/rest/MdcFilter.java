@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.config.mdc;
+package knemognition.heartauth.orchestrator.shared.config.rest;
 
 
 import jakarta.servlet.FilterChain;
@@ -20,16 +20,16 @@ public class MdcFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-        String routeId = request.getHeader(HeaderNames.HEADER_ROUTE_ID);
+        String routeId = request.getHeader(HeaderNames.HEADER_CORRELATION_ID);
         if (routeId == null || routeId.isBlank()) {
             routeId = UUID.randomUUID()
                     .toString();
         }
-        MDC.put(HeaderNames.MDC_ROUTE_ID, routeId);
+        MDC.put(HeaderNames.MDC_CORRELATION_ID, routeId);
         try {
             filterChain.doFilter(request, response);
         } finally {
-            MDC.remove(HeaderNames.MDC_ROUTE_ID);
+            MDC.remove(HeaderNames.MDC_CORRELATION_ID);
         }
     }
 }

@@ -34,6 +34,8 @@ public class ChallengeStateRedis implements Serializable {
     private String ephemeralPrivateKey;
     private String userPublicKey;
     private String nonceB64;
+    @Indexed
+    private UUID modelApiTryId;
 
     private Long exp;
     private Long createdAt;

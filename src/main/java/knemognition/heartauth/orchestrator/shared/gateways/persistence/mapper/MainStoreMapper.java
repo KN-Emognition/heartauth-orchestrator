@@ -43,4 +43,6 @@ public interface MainStoreMapper {
     @Mapping(target = "updatedAt", ignore = true)
     @Mapping(target = "tenant", ignore = true)
     TenantApiKeyEntity toEntity(TenantApiKey tenant);
+
+    ModelAction toDomain(ModelActionEntity entity);
 }

@@ -9,7 +9,7 @@ import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallen
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApi;
+import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiKafka;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
@@ -38,7 +38,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
     private final EcgTokenMapper ecgTokenMapper;
     private final ExternalChallengeMapper externalChallengeMapper;
     // out
-    private final ModelApi modelApi;
+    private final ModelApiKafka modelApiKafka;
     private final ExternalMainStore externalMainStore;
     private final ExternalChallengeStore challengeStateStatusStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
@@ -83,23 +83,18 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
                 .id(challengeId);
 
-        EcgPrediction request = EcgPrediction.builder()
+        EcgPayload request = EcgPayload.builder()
                 .testEcg(ecgTestTokenClaims.getTestEcg())
                 .refEcg(refData.get()
                         .getRefEcg())
                 .build();
 
-        boolean approved = modelApi.predict(request);
-        log.info("Called model for prediction.");
 
-        if (!approved) {
-            challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
-                    .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
-                    .build());
-            throw new ChallengeFailedException("ECG Validation failed");
-        }
-        challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
-                .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
+        modelApiKafka.predict(state.getModelApiTryId(), request);
+        log.info("Posted Kafka message for ECG prediction for challengeId {}", challengeId);
+        challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)
+                .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)
                 .build());
+        log.info("Challenge {} status set to PENDING", challengeId);
     }
 }
