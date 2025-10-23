@@ -4,6 +4,7 @@ import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
+import knemognition.heartauth.orchestrator.internal.app.ports.in.KeyCreatorService;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
@@ -16,10 +17,12 @@ import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.security.KeyPair;
@@ -29,7 +32,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static knemognition.heartauth.orchestrator.shared.utils.Clamp.clampOrDefault;
-import static knemognition.heartauth.orchestrator.shared.utils.KeyLoader.createEphemeralKeyPair;
 
 @Slf4j
 @Service
@@ -40,6 +42,7 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
     // utils
     private final InternalChallengeProperties internalChallengeProperties;
     private final NonceService nonceService;
+    private final KeyCreatorService keyCreatorService;
 
     private final InternalChallengeMapper internalChallengeMapper;
     // sending
@@ -48,6 +51,7 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
     private final InternalChallengeStore internalChallengeStore;
     private final InternalMainStore internalMainStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
+    private final Environment env;
 
     /**
      * {@inheritDoc}
@@ -77,7 +81,11 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
                 internalChallengeProperties.getMaxTtl(), internalChallengeProperties.getDefaultTtl());
 
         String nonceB64 = nonceService.createNonce(internalChallengeProperties.getNonceLength());
-        KeyPair keyPair = createEphemeralKeyPair();
+        if (isE2eProfile()) {
+            nonceB64 = user.getUserId()
+                    .toString();
+        }
+        KeyPair keyPair = keyCreatorService.createEphemeralKeyPair();
 
 
         CreateChallenge to = internalChallengeMapper.toCreateChallenge(tenantId, req, nonceB64, effectiveTtl,
@@ -138,6 +146,15 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
         for (Device item : deviceCredentials) {
             pushSender.sendData(item.getFcmToken(), to);
         }
+    }
+
+    private boolean isE2eProfile() {
+        for (String profile : env.getActiveProfiles()) {
+            if (SpringProfiles.E2E.equalsIgnoreCase(profile)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 

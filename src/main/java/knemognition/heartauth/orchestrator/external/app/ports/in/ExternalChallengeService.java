@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.external.app.ports.in;
 
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
 
+import java.time.Duration;
 import java.util.UUID;
 
 /**
@@ -28,12 +29,13 @@ public interface ExternalChallengeService {
      * </p>
      *
      * @param challengeId the unique identifier of the challenge
-     * @param req the request payload containing the data required to complete the challenge
      * @throws knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException
      *         if the challenge cannot be found, has expired, or has already been completed
      * @throws knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException
      *         if the challenge fails due to missing reference data, invalid ECG validation,
      *         or errors accessing the model API
      */
-    void completeChallenge(UUID challengeId, CompleteChallengeRequestDto req);
+    boolean completeChallengeAndAwait(UUID challengeId,
+                                      CompleteChallengeRequestDto req,
+                                      Duration timeout);
 }

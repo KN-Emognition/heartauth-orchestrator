@@ -58,11 +58,11 @@ services:
       retries: 20
     restart: unless-stopped
   model-api:
-    image: model-api:latest
+    image: poziomk3/model-api:v2.1.0
     environment:
       KAFKA_BROKERS: kafka:29092
-      CONSUME_TOPIC: model-api-request
-      REPLY_TOPIC: model-api-reply
+      CONSUME_TOPIC: model-api-v1-request
+      REPLY_TOPIC: model-api-v1-response
     ports:
       - "8000:8000"
     depends_on:

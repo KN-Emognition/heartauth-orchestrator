@@ -3,9 +3,6 @@ spring:
     name: external-orchestrator
 model:
   api:
-    kafka:
-      topics:
-        request: ml.predict.v1
     base-url: ${API_BASE_URL:http://${API_HOST:localhost}:${API_PORT:8000}}
     api-key:
 external-pairing:

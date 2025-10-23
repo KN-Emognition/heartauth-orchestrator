@@ -20,9 +20,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
+import java.time.Duration;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 /**
  *  {@inheritDoc}
@@ -43,12 +48,33 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
     private final ExternalChallengeStore challengeStateStatusStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
 
+    private final Duration POLL_INTERVAL = Duration.ofMillis(250);
+
     /**
      *  {@inheritDoc}
      */
-    @SneakyThrows
     @Override
-    public void completeChallenge(UUID challengeId, CompleteChallengeRequestDto req) {
+    public boolean completeChallengeAndAwait(UUID challengeId,
+                                             CompleteChallengeRequestDto req,
+                                             Duration timeout) {
+        try {
+            completeChallengeInternal(challengeId, req);
+
+            FlowStatus finalStatus = awaitApprovalOrTimeout(challengeId, timeout).block();
+            return finalStatus == FlowStatus.APPROVED;
+
+        } catch (NoChallengeException | ChallengeFailedException e) {
+            log.info("Challenge {} failed fast: {}", challengeId, e.getMessage());
+            return false;
+        } catch (Exception e) {
+            log.error("Challenge {} unexpected error", challengeId, e);
+            return false;
+        }
+    }
+
+
+    @SneakyThrows
+    private void completeChallengeInternal(UUID challengeId, CompleteChallengeRequestDto req) {
 
         ChallengeState state = challengeStateGetFlowStore.getFlow(challengeId)
                 .orElseThrow(() -> new NoChallengeException("challenge_not_found_or_expired"));
@@ -96,5 +122,27 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
                 .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)
                 .build());
         log.info("Challenge {} status set to PENDING", challengeId);
+    }
+
+    private Mono<FlowStatus> awaitApprovalOrTimeout(UUID challengeId, Duration timeout) {
+        Mono<FlowStatus> readOnce = Mono.fromCallable(() -> getChallengeStatus(challengeId))
+                .subscribeOn(Schedulers.boundedElastic());
+
+        return Flux.interval(POLL_INTERVAL)
+                .startWith(0L)
+                .flatMap(__ -> readOnce)
+                .takeUntil(s -> s == FlowStatus.APPROVED
+                        || s == FlowStatus.DENIED
+                        || s == FlowStatus.NOT_FOUND)
+                .timeout(timeout)
+                .onErrorResume(TimeoutException.class, __ -> Mono.empty())
+                .last()
+                .switchIfEmpty(readOnce);
+    }
+
+    private FlowStatus getChallengeStatus(UUID id) {
+        return challengeStateGetFlowStore.getFlow(id)
+                .map(ChallengeState::getStatus)
+                .orElse(FlowStatus.NOT_FOUND);
     }
 }
