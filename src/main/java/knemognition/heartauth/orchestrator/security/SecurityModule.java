@@ -1,14 +1,13 @@
-package knemognition.heartauth.orchestrator.external.app.ports.in;
+package knemognition.heartauth.orchestrator.security;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 
+import java.security.KeyPair;
 import java.text.ParseException;
 
 /**
- * Defines cryptographic validation operations for external authentication and pairing flows.
+ * Defines cryptographic validation operations for authentication.
  * <p>
  * This service provides utilities to:
  * <ul>
@@ -18,7 +17,7 @@ import java.text.ParseException;
  * </ul>
  * </p>
  */
-public interface ExternalValidationService {
+public interface SecurityModule {
 
     /**
      * Validates a signed nonce against a public key.
@@ -27,13 +26,12 @@ public interface ExternalValidationService {
      * match the expected public key. Prevents replay or tampering of authentication flows.
      * </p>
      *
-     * @param validateNonce the request object containing the nonce string,
+     * @param cmd the request object containing the nonce string,
      *                      its signature, and the public key to verify against
      *
-     * @throws knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NonceValidationException
      *         if the signature is invalid, incorrectly formatted, or verification fails
      */
-    void validateNonce(ValidateNonce validateNonce);
+    void validateNonce(ValidateNonceCmd cmd);
 
     /**
      * Decrypts a JWE payload and verifies the embedded signed JWT.
@@ -42,14 +40,14 @@ public interface ExternalValidationService {
      * checks the ES256 signature against the sender’s public key.
      * </p>
      *
-     * @param jwt the decryption request containing the JWE string, recipient private key,
+     * @param cmd the decryption request containing the JWE string, recipient private key,
      *            and sender public key
      * @return the decrypted {@link JWTClaimsSet} if decryption and verification succeed
      *
      * @throws JOSEException if the JWE/JWT signature verification fails or unsupported algorithms are encountered
      * @throws ParseException if the JWE or JWT payload cannot be parsed
      */
-    JWTClaimsSet decryptAndVerifyJwe(DecryptJwe jwt) throws JOSEException, ParseException;
+    <T> T decryptJwe(DecryptJweCmd<T> cmd) throws JOSEException, ParseException;
 
     /**
      * Validates that a given PEM-encoded public key is well-formed and usable.
@@ -63,4 +61,18 @@ public interface ExternalValidationService {
      *         if the PEM is invalid or cannot be mapped to a public key
      */
     void validatePublicKeyPem(String pem);
+
+    /**
+     * Generate a cryptographically secure, random nonce of the given length.
+     * <p>
+     * The nonce is returned as a Base64-encoded string.
+     *
+     * @param length number of random bytes to generate before Base64 encoding
+     * @return a Base64 string representation of the generated nonce
+     * @throws IllegalArgumentException if {@code length <= 0}
+     */
+    String createNonce(int length);
+
+
+    KeyPair createEphemeralKeyPair();
 }

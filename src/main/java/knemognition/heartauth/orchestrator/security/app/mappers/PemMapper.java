@@ -1,7 +1,7 @@
-package knemognition.heartauth.orchestrator.shared.app.mapper;
+package knemognition.heartauth.orchestrator.security.app.mappers;
 
-import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.PemParsingException;
-import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
+import knemognition.heartauth.orchestrator.security.PemParsingException;
+import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 

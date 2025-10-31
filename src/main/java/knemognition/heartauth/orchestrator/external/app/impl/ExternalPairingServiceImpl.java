@@ -1,13 +1,10 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
+import com.fasterxml.jackson.core.type.TypeReference;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
 import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.ExternalPairingMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalPairingService;
-import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalPairingStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoPairingException;
@@ -15,9 +12,11 @@ import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairi
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompletePairingRequestDto;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingRequestDto;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingResponseDto;
+import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.SecurityModule;
+import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
@@ -42,8 +41,7 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
     private final ECPrivateKey pairingPrivateKey;
     private final ExternalPairingProperties externalPairingProperties;
     // in
-    private final ExternalValidationService externalValidationService;
-    private final NonceService nonceService;
+    private final SecurityModule securityModule;
     // mapper
     private final ExternalPairingMapper externalPairingMapper;
     private final EcgTokenMapper ecgTokenMapper;
@@ -58,9 +56,9 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
     @Override
     public InitPairingResponseDto initPairing(InitPairingRequestDto req, QrCodeClaims qrCodeClaims) {
 
-        externalValidationService.validatePublicKeyPem(req.getPublicKey());
+        securityModule.validatePublicKeyPem(req.getPublicKey());
 
-        String nonceB64 = nonceService.createNonce(externalPairingProperties.getNonceLength());
+        String nonceB64 = securityModule.createNonce(externalPairingProperties.getNonceLength());
         UUID id = qrCodeClaims.getJti();
 
         PairingState state = pairingStateGetFlowStore.getFlow(id)
@@ -99,8 +97,8 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
                 .orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
 
 
-        ValidateNonce validateNonce = externalPairingMapper.toValidateNonce(req, state);
-        externalValidationService.validateNonce(validateNonce);
+        ValidateNonceCmd validateNonce = externalPairingMapper.toValidateNonce(req, state);
+        securityModule.validateNonce(validateNonce);
         log.info("Nonce has been successfully validated");
 
 
@@ -117,15 +115,15 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
             throw new StatusServiceException("Pairing status is not in pending");
         }
 
-        DecryptJwe toDecryptJwe = DecryptJwe.builder()
+        DecryptJweCmd<EcgRefTokenClaims> toDecryptJwe = DecryptJweCmd.<EcgRefTokenClaims>builder()
                 .jwe(req.getDataToken())
-                .recipientPrivateKey(pairingPrivateKey)
                 .senderPublicKey(validateNonce.getPub())
+                .targetType(new TypeReference<>() {
+                })
                 .build();
-        JWTClaimsSet dataToken = externalValidationService.decryptAndVerifyJwe(toDecryptJwe);
-        log.info("JWT has been successfully verified");
-        EcgRefTokenClaims ecgRefToken = ecgTokenMapper.ecgRefFromClaimsAndState(dataToken);
 
+        EcgRefTokenClaims ecgRefToken = securityModule.decryptJwe(toDecryptJwe);
+        log.info("JWT has been successfully verified");
 
         externalMainStore.savePairingArtifacts(
                 externalPairingMapper.toEcgRefData(ecgRefToken),

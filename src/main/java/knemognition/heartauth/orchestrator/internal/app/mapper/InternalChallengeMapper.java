@@ -12,7 +12,7 @@ import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.MessageType;
 import knemognition.heartauth.orchestrator.shared.app.domain.PredictResponse;
 import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
-import knemognition.heartauth.orchestrator.shared.utils.KeyLoader;
+import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

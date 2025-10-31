@@ -2,7 +2,9 @@ package knemognition.heartauth.orchestrator.shared.constants;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.springframework.modulith.NamedInterface;
 
+@NamedInterface
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SpringProfiles {
     public static final String DEV = "dev";

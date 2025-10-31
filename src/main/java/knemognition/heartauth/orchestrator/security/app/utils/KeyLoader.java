@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.shared.utils;
+package knemognition.heartauth.orchestrator.security.app.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

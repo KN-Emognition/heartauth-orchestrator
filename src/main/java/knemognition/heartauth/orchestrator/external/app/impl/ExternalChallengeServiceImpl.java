@@ -1,18 +1,17 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
-import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
+import com.fasterxml.jackson.core.type.TypeReference;
 import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.ExternalChallengeMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
-import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiKafka;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
+import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.SecurityModule;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
@@ -37,8 +36,7 @@ import java.util.concurrent.TimeoutException;
 @RequiredArgsConstructor
 public class ExternalChallengeServiceImpl implements ExternalChallengeService {
 
-    // in
-    private final ExternalValidationService externalValidationService;
+    private final SecurityModule securityModule;
     // mapper
     private final EcgTokenMapper ecgTokenMapper;
     private final ExternalChallengeMapper externalChallengeMapper;
@@ -60,7 +58,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
         try {
             completeChallengeInternal(challengeId, req);
 
-            FlowStatus finalStatus = awaitApprovalOrTimeout(challengeId, timeout).block();
+            var finalStatus = awaitApprovalOrTimeout(challengeId, timeout).block();
             return finalStatus == FlowStatus.APPROVED;
 
         } catch (NoChallengeException | ChallengeFailedException e) {
@@ -76,23 +74,25 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
     @SneakyThrows
     private void completeChallengeInternal(UUID challengeId, CompleteChallengeRequestDto req) {
 
-        ChallengeState state = challengeStateGetFlowStore.getFlow(challengeId)
+        var state = challengeStateGetFlowStore.getFlow(challengeId)
                 .orElseThrow(() -> new NoChallengeException("challenge_not_found_or_expired"));
 
-        ValidateNonce validateNonce = externalChallengeMapper.toValidateNonce(req, state);
-        externalValidationService.validateNonce(validateNonce);
+        var validateNonce = externalChallengeMapper.toValidateNonceCmd(req, state);
+        securityModule.validateNonce(validateNonce);
         log.info("Nonce has been successfully validated");
 
         if (state.getStatus() == FlowStatus.APPROVED) {
             throw new NoChallengeException("challenge_replayed");
         }
+        DecryptJweCmd<EcgTestTokenClaims> toDecryptJwe = DecryptJweCmd.<EcgTestTokenClaims>builder()
+                .jwe(req.getDataToken())
+                .recipientPrivateKey(state.getEphemeralPrivateKey())
+                .senderPublicKey(validateNonce.getPub())
+                .targetType(new TypeReference<>() {
+                })
+                .build();
 
-        DecryptJwe toDecryptJwe = externalChallengeMapper.toDecryptJwe(req.getDataToken(),
-                state.getEphemeralPrivateKey(), validateNonce.getPub());
-        JWTClaimsSet claims = externalValidationService.decryptAndVerifyJwe(toDecryptJwe);
-        log.info("JWT has been successfully verified");
-
-        EcgTestTokenClaims ecgTestTokenClaims = ecgTokenMapper.ecgTestFromClaims(claims);
+        EcgTestTokenClaims ecgTestTokenClaims = securityModule.decryptJwe(toDecryptJwe);
         Optional<EcgRefData> refData = externalMainStore.findRefData(externalChallengeMapper.toIdentifiableUser(state));
         if (refData.isEmpty()) {
             challengeStateStatusStore.setStatus(StatusChange.builder()
