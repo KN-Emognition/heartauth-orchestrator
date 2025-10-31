@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.external;
+package knemognition.heartauth.orchestrator.interfaces.internal;
 
 import knemognition.heartauth.orchestrator.interfaces.external.config.ExternalConfig;
 import knemognition.heartauth.orchestrator.interfaces.internal.config.InternalConfig;
@@ -10,16 +10,17 @@ import test.config.HeartauthSpringBootTest;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
-@ActiveProfiles("external")
-class ExternalMarkerTest extends HeartauthSpringBootTest {
+
+@ActiveProfiles("internal")
+class InternalMarkerTest extends HeartauthSpringBootTest {
     @Autowired
     ApplicationContext ctx;
 
     @Test
-    void contextLoads_withExternalProfile() {
+    void contextLoads_withInternalProfile() {
         assertThat(ctx).isNotNull();
-        assertThat(ctx.getBean(ExternalConfig.class)).isNotNull();
-        assertThat(ctx.getBeanProvider(InternalConfig.class)
+        assertThat(ctx.getBean(InternalConfig.class)).isNotNull();
+        assertThat(ctx.getBeanProvider(ExternalConfig.class)
                 .getIfAvailable()).isNull();
     }
 }
