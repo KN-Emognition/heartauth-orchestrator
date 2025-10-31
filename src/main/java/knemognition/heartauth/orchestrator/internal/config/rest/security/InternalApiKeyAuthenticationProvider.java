@@ -1,8 +1,9 @@
 package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
-import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.in.ApiKeyHasher;
+import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.shared.constants.Authorities;
+import knemognition.heartauth.orchestrator.tenants.api.TenantRead;
+import knemognition.heartauth.orchestrator.tenants.api.TenantsModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,8 +21,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalApiKeyAuthenticationProvider implements AuthenticationProvider {
 
-    private final ApiKeyHasher apiKeyHasher;
-    private final InternalMainStore internalMainStore;
+    private final SecurityModule apiKeyHasher;
+    private final TenantsModule tenantsModule;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -32,7 +33,8 @@ public class InternalApiKeyAuthenticationProvider implements AuthenticationProvi
 
         String hash = apiKeyHasher.hash(provided);
 
-        UUID tenantId = internalMainStore.getTenantIdForActiveKeyHash(hash)
+        UUID tenantId = tenantsModule.getByApiKey(hash)
+                .map(TenantRead::getTenantId)
                 .orElseThrow(() -> new BadCredentialsException("invalid_api_key"));
 
 

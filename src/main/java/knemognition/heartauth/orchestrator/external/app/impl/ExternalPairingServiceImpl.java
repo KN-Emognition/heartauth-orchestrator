@@ -1,31 +1,36 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
+import knemognition.heartauth.orchestrator.ecg.api.SaveReferenceDataCmd;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
-import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.ExternalPairingMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalPairingService;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalPairingStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoPairingException;
 import knemognition.heartauth.orchestrator.external.config.pairing.ExternalPairingProperties;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompletePairingRequestDto;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingRequestDto;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingResponseDto;
-import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
-import knemognition.heartauth.orchestrator.security.SecurityModule;
-import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.SecurityModule;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
+import knemognition.heartauth.orchestrator.users.api.DeviceCreate;
+import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
+import knemognition.heartauth.orchestrator.users.api.SaveUserDeviceCmd;
+import knemognition.heartauth.orchestrator.users.api.UserModule;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.security.interfaces.ECPrivateKey;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,15 +43,13 @@ import java.util.UUID;
 public class ExternalPairingServiceImpl implements ExternalPairingService {
 
     // config
-    private final ECPrivateKey pairingPrivateKey;
     private final ExternalPairingProperties externalPairingProperties;
-    // in
     private final SecurityModule securityModule;
+    private final EcgModule ecgModule;
+    private final UserModule userModule;
     // mapper
     private final ExternalPairingMapper externalPairingMapper;
-    private final EcgTokenMapper ecgTokenMapper;
     // out
-    private final ExternalMainStore externalMainStore;
     private final GetFlowStore<PairingState> pairingStateGetFlowStore;
     private final ExternalPairingStore externalPairingStore;
 
@@ -125,16 +128,25 @@ public class ExternalPairingServiceImpl implements ExternalPairingService {
         EcgRefTokenClaims ecgRefToken = securityModule.decryptJwe(toDecryptJwe);
         log.info("JWT has been successfully verified");
 
-        externalMainStore.savePairingArtifacts(
-                externalPairingMapper.toEcgRefData(ecgRefToken),
-                externalPairingMapper.toDevice(state),
-                externalPairingMapper.toIdentifiableUser(state)
-        );
+        savePairingArtifacts(externalPairingMapper.toIdentifiableUser(state),
+                ecgRefToken.getRefEcg(), externalPairingMapper.toDevice(state));
         log.info("Saved artifacts to main store");
 
         externalPairingStore.setStatusOrThrow(statusChangeBuilder.status(FlowStatus.APPROVED)
                 .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY)
                 .build());
         log.info("Changed cache pairing status to Approved.");
+    }
+
+    @Transactional
+    protected void savePairingArtifacts(IdentifiableUserCmd user, List<List<Float>> refEcg, DeviceCreate device) {
+        var createdUser = userModule.saveUserDevice(SaveUserDeviceCmd.builder()
+                .user(user)
+                .device(device)
+                .build());
+        ecgModule.saveReferenceData(SaveReferenceDataCmd.builder()
+                .userId(createdUser.getId())
+                .refEcg(refEcg)
+                .build());
     }
 }

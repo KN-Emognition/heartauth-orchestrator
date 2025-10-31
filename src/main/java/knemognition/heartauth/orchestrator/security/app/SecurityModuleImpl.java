@@ -1,13 +1,10 @@
 package knemognition.heartauth.orchestrator.security.app;
 
 import com.nimbusds.jose.JOSEException;
-import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
-import knemognition.heartauth.orchestrator.security.SecurityModule;
-import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
-import knemognition.heartauth.orchestrator.security.app.handlers.CreateNonceHandler;
-import knemognition.heartauth.orchestrator.security.app.handlers.DecryptJweHandler;
-import knemognition.heartauth.orchestrator.security.app.handlers.ValidateNonceHandler;
-import knemognition.heartauth.orchestrator.security.app.handlers.ValidatePublicKeyPemHandler;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.SecurityModule;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.app.handlers.*;
 import knemognition.heartauth.orchestrator.security.app.handlers.createEphemeralKeyPair.CreateEphemeralKeyPairHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,6 +21,7 @@ public class SecurityModuleImpl implements SecurityModule {
     private final DecryptJweHandler decryptJweHandler;
     private final CreateNonceHandler createNonceHandler;
     private final CreateEphemeralKeyPairHandler createEphemeralKeyPairHandler;
+    private final HashHandler hashHandler;
 
     @Override
     public void validateNonce(ValidateNonceCmd cmd) {
@@ -48,5 +46,10 @@ public class SecurityModuleImpl implements SecurityModule {
     @Override
     public KeyPair createEphemeralKeyPair() {
         return createEphemeralKeyPairHandler.handle();
+    }
+
+    @Override
+    public String hash(String payload) {
+        return hashHandler.handle(payload);
     }
 }

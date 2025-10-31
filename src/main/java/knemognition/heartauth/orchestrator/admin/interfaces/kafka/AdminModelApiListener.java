@@ -18,13 +18,13 @@ import java.util.UUID;
 public class AdminModelApiListener {
 
     private final ObjectMapper objectMapper;
-    private final ModelActionService modelActionService;
+//    private final ModelActionService modelActionService;
 
     @KafkaListener(topics = "${model.api.kafka.topics.combined}", groupId = "admin-orchestrator-group")
     public void onPredictResponse(ConsumerRecord<String, String> rec) throws Exception {
         log.info("Received Combined Predict");
         UUID id = CorrelationIdResolver.resolveOrThrow(rec);
         var dto = objectMapper.readValue(rec.value(), CombinedModelActionDto.class);
-        modelActionService.handle(id, dto);
+//        modelActionService.handle(id, dto);
     }
 }

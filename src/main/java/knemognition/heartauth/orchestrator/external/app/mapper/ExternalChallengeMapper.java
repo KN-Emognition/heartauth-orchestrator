@@ -1,9 +1,10 @@
 package knemognition.heartauth.orchestrator.external.app.mapper;
 
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
-import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
+import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -17,4 +18,6 @@ public interface ExternalChallengeMapper {
     ValidateNonceCmd toValidateNonceCmd(CompleteChallengeRequestDto req, ChallengeState state);
 
     IdentifiableUser toIdentifiableUser(ChallengeState state);
+
+    IdentifiableUserCmd toIdentifiableUserCmd(ChallengeState state);
 }

@@ -3,8 +3,10 @@ package knemognition.heartauth.orchestrator.external.app.mapper;
 import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompletePairingRequestDto;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.InitPairingRequestDto;
-import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
-import knemognition.heartauth.orchestrator.shared.app.domain.*;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
+import knemognition.heartauth.orchestrator.users.api.DeviceCreate;
+import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -20,9 +22,7 @@ public interface ExternalPairingMapper {
 
     EnrichDeviceData toEnrichDeviceData(InitPairingRequestDto req, String nonceB64, UUID jti);
 
-    IdentifiableUser toIdentifiableUser(PairingState state);
+    IdentifiableUserCmd toIdentifiableUser(PairingState state);
 
-    EcgRefData toEcgRefData(EcgRefTokenClaims claims);
-
-    Device toDevice(PairingState state);
+    DeviceCreate toDevice(PairingState state);
 }

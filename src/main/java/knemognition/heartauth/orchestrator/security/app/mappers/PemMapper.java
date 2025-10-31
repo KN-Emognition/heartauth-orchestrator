@@ -1,9 +1,8 @@
 package knemognition.heartauth.orchestrator.security.app.mappers;
 
-import knemognition.heartauth.orchestrator.security.PemParsingException;
+import knemognition.heartauth.orchestrator.security.api.PemParsingException;
 import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
 import org.mapstruct.Mapper;
-import org.mapstruct.Named;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +12,6 @@ import java.security.interfaces.ECPublicKey;
 @Mapper(componentModel = "spring")
 public interface PemMapper {
 
-    @Named("pemToEcPublicKey")
     default ECPublicKey publicMapAndValidate(String pem) {
         try (var in = new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8))) {
             ECPublicKey ecPub = KeyLoader.loadEcPublicKey(in);
@@ -35,7 +33,6 @@ public interface PemMapper {
         }
     }
 
-    @Named("pemToEcPrivateKey")
     default ECPrivateKey privateMapAndValidate(String pem) {
         try (var in = new ByteArrayInputStream(pem.getBytes(StandardCharsets.UTF_8))) {
             ECPrivateKey ecPriv = KeyLoader.loadEcPrivateKey(in);

@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.security.app.handlers;
 
-import knemognition.heartauth.orchestrator.security.NonceValidationException;
-import knemognition.heartauth.orchestrator.security.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.api.NonceValidationException;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.security.app.mappers.PemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

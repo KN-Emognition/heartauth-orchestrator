@@ -7,7 +7,7 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.ECDHDecrypter;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jwt.SignedJWT;
-import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
 import knemognition.heartauth.orchestrator.security.app.mappers.PemMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

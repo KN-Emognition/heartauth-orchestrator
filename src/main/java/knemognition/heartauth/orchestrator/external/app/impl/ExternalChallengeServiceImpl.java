@@ -1,20 +1,23 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
+import knemognition.heartauth.orchestrator.ecg.api.EcgEvaluateCmd;
+import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
 import knemognition.heartauth.orchestrator.external.app.mapper.ExternalChallengeMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiKafka;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
-import knemognition.heartauth.orchestrator.security.DecryptJweCmd;
-import knemognition.heartauth.orchestrator.security.SecurityModule;
-import knemognition.heartauth.orchestrator.shared.app.domain.*;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.SecurityModule;
+import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.app.domain.EcgTestTokenClaims;
+import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
+import knemognition.heartauth.orchestrator.users.api.UserModule;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +27,6 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeoutException;
 
@@ -37,12 +39,11 @@ import java.util.concurrent.TimeoutException;
 public class ExternalChallengeServiceImpl implements ExternalChallengeService {
 
     private final SecurityModule securityModule;
+    private final EcgModule ecgModule;
+    private final UserModule userModule;
     // mapper
-    private final EcgTokenMapper ecgTokenMapper;
     private final ExternalChallengeMapper externalChallengeMapper;
     // out
-    private final ModelApiKafka modelApiKafka;
-    private final ExternalMainStore externalMainStore;
     private final ExternalChallengeStore challengeStateStatusStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
 
@@ -52,9 +53,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
      *  {@inheritDoc}
      */
     @Override
-    public boolean completeChallengeAndAwait(UUID challengeId,
-                                             CompleteChallengeRequestDto req,
-                                             Duration timeout) {
+    public boolean completeChallengeAndAwait(UUID challengeId, CompleteChallengeRequestDto req, Duration timeout) {
         try {
             completeChallengeInternal(challengeId, req);
 
@@ -93,30 +92,18 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
                 .build();
 
         EcgTestTokenClaims ecgTestTokenClaims = securityModule.decryptJwe(toDecryptJwe);
-        Optional<EcgRefData> refData = externalMainStore.findRefData(externalChallengeMapper.toIdentifiableUser(state));
-        if (refData.isEmpty()) {
-            challengeStateStatusStore.setStatus(StatusChange.builder()
-                    .id(challengeId)
-                    .status(FlowStatus.DENIED)
-                    .reason(FlowStatusReason.FLOW_DENIED_WITHOUT_AUTHENTICATION)
-                    .build());
-            log.info("Reference ECG data not found for user {}", state.getUserId());
 
-            throw new ChallengeFailedException("No reference ECG data found");
-        }
-
-        log.info("Found reference data for user {}", state.getUserId());
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
                 .id(challengeId);
-
-        EcgPayload request = EcgPayload.builder()
+        var user = userModule.getUser(externalChallengeMapper.toIdentifiableUserCmd(state))
+                .orElseThrow();
+        ecgModule.sendEcgEvaluateRequest(EcgEvaluateCmd.builder()
+                .correlationId(state.getModelApiTryId())
+                .userId(user.getId())
                 .testEcg(ecgTestTokenClaims.getTestEcg())
-                .refEcg(refData.get()
-                        .getRefEcg())
-                .build();
+                .build()
 
-
-        modelApiKafka.predict(state.getModelApiTryId(), request);
+        );
         log.info("Posted Kafka message for ECG prediction for challengeId {}", challengeId);
         challengeStateStatusStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)
                 .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)
@@ -131,9 +118,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
         return Flux.interval(POLL_INTERVAL)
                 .startWith(0L)
                 .flatMap(__ -> readOnce)
-                .takeUntil(s -> s == FlowStatus.APPROVED
-                        || s == FlowStatus.DENIED
-                        || s == FlowStatus.NOT_FOUND)
+                .takeUntil(s -> s == FlowStatus.APPROVED || s == FlowStatus.DENIED || s == FlowStatus.NOT_FOUND)
                 .timeout(timeout)
                 .onErrorResume(TimeoutException.class, __ -> Mono.empty())
                 .last()

@@ -3,17 +3,17 @@ package knemognition.heartauth.orchestrator.internal.app.impl;
 
 import knemognition.heartauth.orchestrator.internal.app.mapper.InternalPairingMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalPairingService;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalPairingStore;
 import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairingProperties;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingResponseDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.QrCodeClaims;
 import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
+import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
+import knemognition.heartauth.orchestrator.users.api.UserModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -37,13 +37,13 @@ import static knemognition.heartauth.orchestrator.shared.utils.Clamp.clampOrDefa
 public class InternalPairingServiceImpl implements InternalPairingService {
 
     // utils
+    private final UserModule userModule;
     private final JwtEncoder jwtEncoder;
     private final InternalPairingProperties internalPairingProperties;
     private final InternalPairingMapper internalPairingMapper;
     private final RecordMapper recordMapper;
     // persistence
     private final InternalPairingStore internalPairingStore;
-    private final InternalMainStore internalMainStore;
     private final GetFlowStore<PairingState> pairingStateGetFlowStore;
 
     /**
@@ -53,7 +53,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
     public CreatePairingResponseDto createPairing(CreatePairingRequestDto req, UUID tenantId) {
 
 
-        boolean exists = internalMainStore.checkIfUserExists(IdentifiableUser.builder()
+        boolean exists = userModule.checkIfUserExists(IdentifiableUserCmd.builder()
                 .userId(req.getUserId())
                 .tenantId(tenantId)
                 .build());
