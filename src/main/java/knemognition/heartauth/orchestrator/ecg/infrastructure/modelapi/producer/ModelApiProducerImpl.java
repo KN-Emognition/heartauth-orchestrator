@@ -1,22 +1,21 @@
 package knemognition.heartauth.orchestrator.ecg.infrastructure.modelapi.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import knemognition.heartauth.orchestrator.ecg.app.ports.AsyncModelApi;
 import knemognition.heartauth.orchestrator.ecg.domain.EcgPayload;
 import knemognition.heartauth.orchestrator.ecg.infrastructure.modelapi.mapper.ModelApiKafkaMapper;
-import knemognition.heartauth.orchestrator.shared.config.kafka.KafkaMessageProducer;
 import knemognition.heartauth.orchestrator.shared.config.kafka.ModelApiTopicsProperties;
 import knemognition.heartauth.orchestrator.shared.constants.HeaderNames;
 import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.header.Headers;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.slf4j.MDC;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
@@ -24,35 +23,28 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ModelApiProducerImpl implements AsyncModelApi {
 
-    private final KafkaMessageProducer producer;
-    private final ObjectMapper objectMapper;
+    private final KafkaTemplate<String, PredictRequestDto> template;
     private final ModelApiKafkaMapper mapper;
     private final ModelApiTopicsProperties properties;
 
-
     @Override
     public void predict(UUID id, EcgPayload payload) {
-        try {
-            PredictRequestDto dto = mapper.toPredictRequestDto(payload);
-            String message = objectMapper.writeValueAsString(dto);
+        PredictRequestDto dto = mapper.toPredictRequestDto(payload);
 
-            String challengeUniqueId = id.toString();
-            String correlationId = MDC.get(HeaderNames.MDC_CORRELATION_ID);
-            Headers headers = new RecordHeaders()
-                    .add(HeaderNames.HEADER_CORRELATION_ID, correlationId.getBytes(StandardCharsets.UTF_8))
-                    .add(HeaderNames.HEADER_MODEL_API_UNIQUE_ID, challengeUniqueId.getBytes(StandardCharsets.UTF_8));
+        String correlationId = Optional.ofNullable(
+                        MDC.get(HeaderNames.MDC_CORRELATION_ID)
+                )
+                .orElse(id.toString());
 
-            ProducerRecord<String, String> record =
-                    new ProducerRecord<>(properties.getRequest(), null, null, correlationId, message, headers);
+        Message<PredictRequestDto> msg = MessageBuilder
+                .withPayload(dto)
+                .setHeader(KafkaHeaders.TOPIC, properties.getRequest())
+                .setHeader(KafkaHeaders.KEY, correlationId)
+                .setHeader(HeaderNames.HEADER_CORRELATION_ID, correlationId)
+                .setHeader(HeaderNames.HEADER_MODEL_API_UNIQUE_ID, id.toString())
+                .build();
 
-            producer.send(record);
-
-            log.info("Queued prediction request | topic={} ",
-                    properties.getRequest());
-
-        } catch (Exception e) {
-            log.error("Failed to build Kafka message: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to prepare prediction request for Kafka", e);
-        }
+        template.send(msg);
+        log.info("Queued prediction request | topic={}", properties.getRequest());
     }
 }

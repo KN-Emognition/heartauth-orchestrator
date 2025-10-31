@@ -1,13 +1,23 @@
 spring:
   kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
     admin:
       fail-fast: true
     consumer:
-      group-id: orchestrator
-      auto-offset-reset: earliest
+      group-id: orchestrator-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.use.type.headers: true
+        spring.json.trusted.packages: knemognition.heartauth.*
+        spring.json.type.mapping: >
+          PredictRequestDto:knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictRequestDto,
+          PredictResponseDto:knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto,
+          CombinedModelActionDto:knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.CombinedModelActionDto
   jackson:
     default-property-inclusion: non_null
   data:

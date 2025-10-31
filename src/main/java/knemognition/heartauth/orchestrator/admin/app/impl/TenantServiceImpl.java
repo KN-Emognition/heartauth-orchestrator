@@ -23,7 +23,6 @@ public class TenantServiceImpl implements TenantService {
     @Override
     public CreateTenantResponseDto register() {
         var tenant = tenantsModule.create();
-        log.info("[TENANT] Stored tenant with apiKey");
         return CreateTenantResponseDto.builder()
                 .id(tenant.getTenantId())
                 .apiKey(tenant.getApiKey())
