@@ -2,8 +2,8 @@ package knemognition.heartauth.orchestrator.external.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
 import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.ExternalChallengeStoreMapper;
-import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
+import knemognition.heartauth.orchestrator.user.domain.StatusChange;
+import knemognition.heartauth.orchestrator.challenges.infrastructure.redis.ChallengeStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

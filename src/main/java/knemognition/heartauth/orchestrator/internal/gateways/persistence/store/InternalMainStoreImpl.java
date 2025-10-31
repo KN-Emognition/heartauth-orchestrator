@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.store;
 
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
-import knemognition.heartauth.orchestrator.shared.app.domain.Device;
-import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.DeviceRepository;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.TenantApiKeyRepository;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.jpa.repository.UserRepository;
+import knemognition.heartauth.orchestrator.user.domain.Device;
+import knemognition.heartauth.orchestrator.user.api.IdentifiableUserCmd;
+import knemognition.heartauth.orchestrator.user.infrastructure.persistence.repository.DeviceRepository;
+import knemognition.heartauth.orchestrator.tenant.infrastructure.persistence.repository.TenantApiKeyRepository;
+import knemognition.heartauth.orchestrator.user.infrastructure.persistence.repository.UserRepository;
 import knemognition.heartauth.orchestrator.shared.gateways.persistence.mapper.MainStoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -29,7 +29,7 @@ public class InternalMainStoreImpl implements InternalMainStore {
      * {@inheritDoc}
      */
     @Override
-    public boolean checkIfUserExists(IdentifiableUser data) {
+    public boolean checkIfUserExists(IdentifiableUserCmd data) {
         return userRepository.existsByTenantIdAndUserId(data.getTenantId(), data.getUserId());
     }
 
@@ -48,7 +48,7 @@ public class InternalMainStoreImpl implements InternalMainStore {
      */
     @Override
     public List<Device> findDevices(
-            IdentifiableUser data) {
+            IdentifiableUserCmd data) {
         return deviceRepository.findAllByTenantIdAndUserId(data.getTenantId(), data.getUserId())
                 .stream()
                 .map(mainStoreMapper::toDomain)

@@ -1,0 +1,194 @@
+package knemognition.heartauth.orchestrator.shared.app.domain;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
+/**
+ * EcgPayload
+ */
+
+@Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-10-25T08:37:27.755305314+02:00[Europe/Warsaw]", comments = "Generator version: 7.15.0")
+public class EcgPayload {
+
+  @Valid
+  private List<Float> testEcg = new ArrayList<>();
+
+  @Valid
+  private List<List<Float>> refEcg = new ArrayList<>();
+
+  public EcgPayload() {
+    super();
+  }
+
+  /**
+   * Constructor with only required parameters
+   */
+  public EcgPayload(List<Float> testEcg, List<List<Float>> refEcg) {
+    this.testEcg = testEcg;
+    this.refEcg = refEcg;
+  }
+
+  public EcgPayload testEcg(List<Float> testEcg) {
+    this.testEcg = testEcg;
+    return this;
+  }
+
+  public EcgPayload addTestEcgItem(Float testEcgItem) {
+    if (this.testEcg == null) {
+      this.testEcg = new ArrayList<>();
+    }
+    this.testEcg.add(testEcgItem);
+    return this;
+  }
+
+  /**
+   * Get testEcg
+   * @return testEcg
+   */
+  @NotNull 
+  @JsonProperty("testEcg")
+  public List<Float> getTestEcg() {
+    return testEcg;
+  }
+
+  public void setTestEcg(List<Float> testEcg) {
+    this.testEcg = testEcg;
+  }
+
+  public EcgPayload refEcg(List<List<Float>> refEcg) {
+    this.refEcg = refEcg;
+    return this;
+  }
+
+  public EcgPayload addRefEcgItem(List<Float> refEcgItem) {
+    if (this.refEcg == null) {
+      this.refEcg = new ArrayList<>();
+    }
+    this.refEcg.add(refEcgItem);
+    return this;
+  }
+
+  /**
+   * Get refEcg
+   * @return refEcg
+   */
+  @NotNull @Valid 
+  @JsonProperty("refEcg")
+  public List<List<Float>> getRefEcg() {
+    return refEcg;
+  }
+
+  public void setRefEcg(List<List<Float>> refEcg) {
+    this.refEcg = refEcg;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    EcgPayload ecgPayload = (EcgPayload) o;
+    return Objects.equals(this.testEcg, ecgPayload.testEcg) &&
+        Objects.equals(this.refEcg, ecgPayload.refEcg);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(testEcg, refEcg);
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("class EcgPayload {\n");
+    sb.append("    testEcg: ").append(toIndentedString(testEcg)).append("\n");
+    sb.append("    refEcg: ").append(toIndentedString(refEcg)).append("\n");
+    sb.append("}");
+    return sb.toString();
+  }
+
+  /**
+   * Convert the given object to string with each line indented by 4 spaces
+   * (except the first line).
+   */
+  private String toIndentedString(Object o) {
+    if (o == null) {
+      return "null";
+    }
+    return o.toString().replace("\n", "\n    ");
+  }
+  
+  public static class Builder {
+
+    private EcgPayload instance;
+
+    public Builder() {
+      this(new EcgPayload());
+    }
+
+    protected Builder(EcgPayload instance) {
+      this.instance = instance;
+    }
+
+    protected Builder copyOf(EcgPayload value) { 
+      this.instance.setTestEcg(value.testEcg);
+      this.instance.setRefEcg(value.refEcg);
+      return this;
+    }
+
+    public Builder testEcg(List<Float> testEcg) {
+      this.instance.testEcg(testEcg);
+      return this;
+    }
+    
+    public Builder refEcg(List<List<Float>> refEcg) {
+      this.instance.refEcg(refEcg);
+      return this;
+    }
+    
+    /**
+    * returns a built EcgPayload instance.
+    *
+    * The builder is not reusable (NullPointerException)
+    */
+    public EcgPayload build() {
+      try {
+        return this.instance;
+      } finally {
+        // ensure that this.instance is not reused
+        this.instance = null;
+      }
+    }
+
+    @Override
+    public String toString() {
+      return getClass() + "=(" + instance + ")";
+    }
+  }
+
+  /**
+  * Create a builder with no initialized field (except for the default values).
+  */
+  public static Builder builder() {
+    return new Builder();
+  }
+
+  /**
+  * Create a builder with a shallow copy of this instance.
+  */
+  public Builder toBuilder() {
+    Builder builder = new Builder();
+    return builder.copyOf(this);
+  }
+
+}
+

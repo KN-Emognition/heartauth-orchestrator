@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.config.errorhandling.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
-import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.FirebaseSendException;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.FirebaseSendException;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import lombok.extern.slf4j.Slf4j;

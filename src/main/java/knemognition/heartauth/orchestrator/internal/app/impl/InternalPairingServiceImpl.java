@@ -9,10 +9,10 @@ import knemognition.heartauth.orchestrator.internal.config.pairing.InternalPairi
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreatePairingResponseDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
+import knemognition.heartauth.orchestrator.user.api.IdentifiableUserCmd;
 import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 import knemognition.heartauth.orchestrator.shared.app.domain.QrCodeClaims;
-import knemognition.heartauth.orchestrator.shared.app.mapper.RecordMapper;
+import knemognition.heartauth.orchestrator.shared.RecordMapper;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +53,7 @@ public class InternalPairingServiceImpl implements InternalPairingService {
     public CreatePairingResponseDto createPairing(CreatePairingRequestDto req, UUID tenantId) {
 
 
-        boolean exists = internalMainStore.checkIfUserExists(IdentifiableUser.builder()
+        boolean exists = internalMainStore.checkIfUserExists(IdentifiableUserCmd.builder()
                 .userId(req.getUserId())
                 .tenantId(tenantId)
                 .build());

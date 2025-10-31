@@ -1,16 +1,16 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.store;
 
-import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
-import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.NoChallengeException;
+import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 import knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper.InternalChallengeStoreMapper;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.ChallengeStateRepository;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.FlowStatus;
+import knemognition.heartauth.orchestrator.user.domain.StatusChange;
+import knemognition.heartauth.orchestrator.shared.FlowStatusReason;
+import knemognition.heartauth.orchestrator.challenges.infrastructure.redis.ChallengeStateRedis;
+import knemognition.heartauth.orchestrator.challenges.infrastructure.redis.ChallengeStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +34,7 @@ public class InternalChallengeStoreImpl implements InternalChallengeStore {
      * {@inheritDoc}
      */
     @Override
-    public CreatedFlowResult createChallenge(CreateChallenge state) {
+    public CreatedFlowResult createChallenge(CreateChallengeCmd state) {
         boolean recreated = denyPreviousActiveChallenge(state.getTenantId(), state.getUserId());
 
         var ent = internalChallengeStoreMapper.fromCreate(state);

@@ -5,8 +5,8 @@ import knemognition.heartauth.orchestrator.external.app.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalPairingStore;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.DeviceEnrichException;
 import knemognition.heartauth.orchestrator.external.gateways.persistence.mapper.ExternalPairingStoreMapper;
-import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.repository.PairingStateRepository;
+import knemognition.heartauth.orchestrator.user.domain.StatusChange;
+import knemognition.heartauth.orchestrator.pairing.redis.repository.PairingStateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

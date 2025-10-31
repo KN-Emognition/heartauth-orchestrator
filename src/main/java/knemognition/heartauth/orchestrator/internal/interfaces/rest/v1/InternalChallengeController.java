@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.internal.interfaces.rest.v1;
 
 import jakarta.servlet.http.HttpServletRequest;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.api.ChallengeController;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.api.ChallengeApi;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import static knemognition.heartauth.orchestrator.shared.constants.HeaderNames.A
 @RequiredArgsConstructor
 @RestController
 @PreAuthorize("hasAuthority(T(knemognition.heartauth.orchestrator.shared.constants.Authorities).TENANT)")
-public class InternalChallengeController implements ChallengeApi {
+public class InternalChallengeController implements ChallengeController {
 
     private final InternalChallengeService internalChallengeService;
     private final HttpServletRequest httpServletRequest;

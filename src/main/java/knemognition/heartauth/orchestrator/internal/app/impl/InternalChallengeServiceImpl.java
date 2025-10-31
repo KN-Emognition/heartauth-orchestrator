@@ -1,31 +1,29 @@
 package knemognition.heartauth.orchestrator.internal.app.impl;
 
-import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.CreateChallengeRequestDto;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.CreateChallengeResponseDto;
+import knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model.StatusResponseDto;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 import knemognition.heartauth.orchestrator.internal.app.ports.in.InternalChallengeService;
-import knemognition.heartauth.orchestrator.internal.app.ports.in.KeyCreatorService;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
-import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
 import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
-import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.domain.*;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.out.NonceService;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
-import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
-import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
+import knemognition.heartauth.orchestrator.security.api.SecurityApi;
+import knemognition.heartauth.orchestrator.shared.FlowStatus;
+import knemognition.heartauth.orchestrator.shared.FlowStatusReason;
+import knemognition.heartauth.orchestrator.shared.SpringProfiles;
+import knemognition.heartauth.orchestrator.shared.app.domain.PredictResponse;
+import knemognition.heartauth.orchestrator.user.api.IdentifiableUserCmd;
+import knemognition.heartauth.orchestrator.user.api.UserApi;
+import knemognition.heartauth.orchestrator.user.domain.Device;
+import knemognition.heartauth.orchestrator.user.domain.StatusChange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.security.KeyPair;
 import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
@@ -39,38 +37,26 @@ import static knemognition.heartauth.orchestrator.shared.utils.Clamp.clampOrDefa
 @EnableConfigurationProperties(InternalChallengeProperties.class)
 public class InternalChallengeServiceImpl implements InternalChallengeService {
 
-    // utils
+    private final UserApi userApi;
+    private final SecurityApi securityApi;
     private final InternalChallengeProperties internalChallengeProperties;
-    private final NonceService nonceService;
-    private final KeyCreatorService keyCreatorService;
-
-    private final InternalChallengeMapper internalChallengeMapper;
-    // sending
-    private final PushSender pushSender;
-    // persistence
-    private final InternalChallengeStore internalChallengeStore;
-    private final InternalMainStore internalMainStore;
-    private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
-    private final Environment env;
 
     /**
      * {@inheritDoc}
      */
     @Override
     public CreateChallengeResponseDto createChallenge(CreateChallengeRequestDto req, UUID tenantId) {
-
-        IdentifiableUser user = IdentifiableUser.builder()
+        IdentifiableUserCmd user = IdentifiableUserCmd.builder()
                 .userId(req.getUserId())
                 .tenantId(tenantId)
                 .build();
 
-
-        boolean exists = internalMainStore.checkIfUserExists(user);
+        boolean exists = userApi.checkIfUserExists(user);
         if (!exists) {
             throw new IllegalStateException("User with ID " + req.getUserId() + " doesnt exist.");
         }
 
-        List<Device> deviceCredentials = internalMainStore.findDevices(user);
+        var deviceCredentials = userApi.getUserDevices(user);
         log.info("Fetched fcmTokens for user {}", req.getUserId());
         if (deviceCredentials.isEmpty()) {
             log.info("No active devices for user {}", req.getUserId());
@@ -80,15 +66,16 @@ public class InternalChallengeServiceImpl implements InternalChallengeService {
         Integer effectiveTtl = clampOrDefault(req.getTtlSeconds(), internalChallengeProperties.getMinTtl(),
                 internalChallengeProperties.getMaxTtl(), internalChallengeProperties.getDefaultTtl());
 
-        String nonceB64 = nonceService.createNonce(internalChallengeProperties.getNonceLength());
-        if (isE2eProfile()) {
-            nonceB64 = user.getUserId()
-                    .toString();
-        }
-        KeyPair keyPair = keyCreatorService.createEphemeralKeyPair();
+
+        CreateChallengeCmd cmd = CreateChallengeCmd.builder()
+                .ttlSeconds(effectiveTtl.longValue())
+                .userId(req.getUserId())
+                .userPublicKey(deviceCredentials.getFirst()
+                        .getPublicKey())
+                .build();
 
 
-        CreateChallenge to = internalChallengeMapper.toCreateChallenge(tenantId, req, nonceB64, effectiveTtl,
+        CreateChallengeCmd to = internalChallengeMapper.toCreateChallenge(tenantId, req, nonceB64, effectiveTtl,
                 keyPair.getPrivate(), deviceCredentials.getFirst()
                         .getPublicKey());
         CreatedFlowResult result = internalChallengeStore.createChallenge(to);

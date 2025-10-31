@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.config.rest.security;
 
 import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalMainStore;
-import knemognition.heartauth.orchestrator.shared.app.ports.in.ApiKeyHasher;
+import knemognition.heartauth.orchestrator.tenant.app.ports.ApiKeyHasher;
 import knemognition.heartauth.orchestrator.shared.constants.Authorities;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

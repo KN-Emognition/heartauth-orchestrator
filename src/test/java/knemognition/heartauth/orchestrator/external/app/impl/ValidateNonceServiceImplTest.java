@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
-import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NonceValidationException;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.app.exception.NonceValidationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import test.config.HeartauthUnitTest;
@@ -31,7 +31,7 @@ class ValidateNonceServiceImplTest extends HeartauthUnitTest {
 
     @Test
     void validate_withCorrectSignature_succeeds() throws Exception {
-        ValidateNonce req = ValidateNonce.builder()
+        ValidateNonceCmd req = ValidateNonceCmd.builder()
                 .nonce(NONCE)
                 .signature(VALID_SIGNATURE)
                 .pub(loadEcPublicKey(new ByteArrayInputStream(PUBLIC_KEY_PEM.getBytes(StandardCharsets.UTF_8))))
@@ -42,7 +42,7 @@ class ValidateNonceServiceImplTest extends HeartauthUnitTest {
 
     @Test
     void validate_withIncorrectSignature_fails() throws Exception {
-        ValidateNonce req = ValidateNonce.builder()
+        ValidateNonceCmd req = ValidateNonceCmd.builder()
                 .nonce(NONCE)
                 .signature(INVALID_SIGNATURE)
                 .pub(loadEcPublicKey(new ByteArrayInputStream(PUBLIC_KEY_PEM.getBytes(StandardCharsets.UTF_8))))

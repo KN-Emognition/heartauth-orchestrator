@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.external.gateways.persistence.mapper;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
+import knemognition.heartauth.orchestrator.shared.FlowStatus;
+import knemognition.heartauth.orchestrator.challenges.infrastructure.redis.ChallengeStateRedis;
 import org.mapstruct.BeanMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

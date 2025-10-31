@@ -1,14 +1,14 @@
 package knemognition.heartauth.orchestrator.internal.app.mapper;
 
 
-import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeRequestDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.CreateChallengeResponseDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.FlowStatusDto;
 import knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model.StatusResponseDto;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.shared.app.domain.MessageType;
 import knemognition.heartauth.orchestrator.shared.app.domain.PredictResponse;
 import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
@@ -29,7 +29,7 @@ public interface InternalChallengeMapper {
 
 
     @Mapping(target = "ephemeralPrivateKey", expression = "java(KeyLoader.toPem(privateKey,\"PRIVATE KEY\"))")
-    CreateChallenge toCreateChallenge(UUID tenantId, CreateChallengeRequestDto req, String nonceB64, Integer ttlSeconds, PrivateKey privateKey, String userPublicKey);
+    CreateChallengeCmd toCreateChallenge(UUID tenantId, CreateChallengeRequestDto req, String nonceB64, Integer ttlSeconds, PrivateKey privateKey, String userPublicKey);
 
 
     default StatusResponseDto notFoundStatus() {

@@ -1,21 +1,25 @@
 package knemognition.heartauth.orchestrator.external.app.impl;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.external.app.mapper.EcgTokenMapper;
 import knemognition.heartauth.orchestrator.external.app.mapper.ExternalChallengeMapper;
 import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalChallengeService;
-import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
+import knemognition.heartauth.orchestrator.security.api.SecurityApi;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalChallengeStore;
 import knemognition.heartauth.orchestrator.external.app.ports.out.ExternalMainStore;
-import knemognition.heartauth.orchestrator.external.app.ports.out.ModelApiKafka;
-import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.ChallengeFailedException;
-import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.NoChallengeException;
+import knemognition.heartauth.orchestrator.challenges.app.ports.ModelApiProducer;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.ChallengeFailedException;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model.CompleteChallengeRequestDto;
+import knemognition.heartauth.orchestrator.shared.FlowStatus;
 import knemognition.heartauth.orchestrator.shared.app.domain.*;
 import knemognition.heartauth.orchestrator.shared.app.ports.out.GetFlowStore;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
+import knemognition.heartauth.orchestrator.shared.FlowStatusReason;
+import knemognition.heartauth.orchestrator.user.domain.EcgRefData;
+import knemognition.heartauth.orchestrator.user.domain.StatusChange;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -38,12 +42,12 @@ import java.util.concurrent.TimeoutException;
 public class ExternalChallengeServiceImpl implements ExternalChallengeService {
 
     // in
-    private final ExternalValidationService externalValidationService;
+    private final SecurityApi externalValidationService;
     // mapper
     private final EcgTokenMapper ecgTokenMapper;
     private final ExternalChallengeMapper externalChallengeMapper;
     // out
-    private final ModelApiKafka modelApiKafka;
+    private final ModelApiProducer modelApiKafka;
     private final ExternalMainStore externalMainStore;
     private final ExternalChallengeStore challengeStateStatusStore;
     private final GetFlowStore<ChallengeState> challengeStateGetFlowStore;
@@ -79,7 +83,7 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
         ChallengeState state = challengeStateGetFlowStore.getFlow(challengeId)
                 .orElseThrow(() -> new NoChallengeException("challenge_not_found_or_expired"));
 
-        ValidateNonce validateNonce = externalChallengeMapper.toValidateNonce(req, state);
+        ValidateNonceCmd validateNonce = externalChallengeMapper.toValidateNonce(req, state);
         externalValidationService.validateNonce(validateNonce);
         log.info("Nonce has been successfully validated");
 
@@ -87,9 +91,9 @@ public class ExternalChallengeServiceImpl implements ExternalChallengeService {
             throw new NoChallengeException("challenge_replayed");
         }
 
-        DecryptJwe toDecryptJwe = externalChallengeMapper.toDecryptJwe(req.getDataToken(),
+        DecryptJweCmd toDecryptJwe = externalChallengeMapper.toDecryptJwe(req.getDataToken(),
                 state.getEphemeralPrivateKey(), validateNonce.getPub());
-        JWTClaimsSet claims = externalValidationService.decryptAndVerifyJwe(toDecryptJwe);
+        JWTClaimsSet claims = externalValidationService.decryptJwe(toDecryptJwe);
         log.info("JWT has been successfully verified");
 
         EcgTestTokenClaims ecgTestTokenClaims = ecgTokenMapper.ecgTestFromClaims(claims);

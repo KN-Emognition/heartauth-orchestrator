@@ -1,10 +1,10 @@
 package knemognition.heartauth.orchestrator.external.app.impl.mocks;
 
 import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.external.app.domain.DecryptJwe;
-import knemognition.heartauth.orchestrator.external.app.domain.ValidateNonce;
-import knemognition.heartauth.orchestrator.external.app.ports.in.ExternalValidationService;
-import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
+import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
+import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
+import knemognition.heartauth.orchestrator.security.api.SecurityApi;
+import knemognition.heartauth.orchestrator.shared.SpringProfiles;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -18,15 +18,15 @@ import java.util.Random;
 @Service
 @Primary
 @Profile(SpringProfiles.DEV)
-public class MockValidationService implements ExternalValidationService {
+public class MockValidationService implements SecurityApi {
 
     @Override
-    public void validateNonce(ValidateNonce request) {
+    public void validateNonce(ValidateNonceCmd cmd) {
         log.warn("⚠️ Skipping nonce validation (AlwaysPassValidateNonceService is active).");
     }
 
     @Override
-    public JWTClaimsSet decryptAndVerifyJwe(DecryptJwe jwt) {
+    public JWTClaimsSet decryptJwe(DecryptJweCmd cmd) {
         log.warn("⚠️ Skipping JWE decryption and verification (MockValidationService is active).");
         return new JWTClaimsSet.Builder()
                 .claim("refEcg", createRandomReference())  // List<List<Float>>

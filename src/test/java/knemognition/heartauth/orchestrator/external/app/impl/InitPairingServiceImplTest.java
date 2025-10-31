@@ -11,7 +11,7 @@
 //import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatusDescription;
 //import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
 //import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
-//import knemognition.heartauth.orchestrator.shared.app.mapper.PemMapper;
+//import knemognition.heartauth.orchestrator.security.app.mappers.PemMapper;
 //import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 //import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 //import org.junit.jupiter.api.BeforeEach;

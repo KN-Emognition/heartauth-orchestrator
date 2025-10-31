@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.internal.app.ports.out;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.Device;
-import knemognition.heartauth.orchestrator.shared.app.domain.IdentifiableUser;
+import knemognition.heartauth.orchestrator.user.domain.Device;
+import knemognition.heartauth.orchestrator.user.api.IdentifiableUserCmd;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +11,7 @@ public interface InternalMainStore {
 
     Optional<UUID> getTenantIdForActiveKeyHash(String keyHash);
 
-    boolean checkIfUserExists(IdentifiableUser data);
+    boolean checkIfUserExists(IdentifiableUserCmd data);
 
-    List<Device> findDevices(IdentifiableUser data);
+    List<Device> findDevices(IdentifiableUserCmd data);
 }

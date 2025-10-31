@@ -1,7 +1,11 @@
 package knemognition.heartauth.orchestrator.external.config.errorhandling.handler;
 
 import jakarta.servlet.http.HttpServletRequest;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.ChallengeFailedException;
+import knemognition.heartauth.orchestrator.challenges.app.exceptions.NoChallengeException;
 import knemognition.heartauth.orchestrator.external.config.errorhandling.exception.*;
+import knemognition.heartauth.orchestrator.security.app.exception.NonceValidationException;
+import knemognition.heartauth.orchestrator.security.app.exception.PemParsingException;
 import knemognition.heartauth.orchestrator.shared.config.errorhandling.StatusServiceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

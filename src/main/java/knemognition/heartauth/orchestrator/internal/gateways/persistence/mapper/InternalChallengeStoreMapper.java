@@ -1,10 +1,10 @@
 package knemognition.heartauth.orchestrator.internal.gateways.persistence.mapper;
 
-import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.gateways.persistence.redis.model.ChallengeStateRedis;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.shared.FlowStatus;
+import knemognition.heartauth.orchestrator.challenges.infrastructure.redis.ChallengeStateRedis;
 import org.mapstruct.*;
 
 import java.time.Instant;
@@ -22,12 +22,12 @@ public interface InternalChallengeStoreMapper {
     @Mapping(target = "status", ignore = true)
     @Mapping(target = "reason", ignore = true)
     @Mapping(target = "modelApiTryId", ignore = true)
-    ChallengeStateRedis fromCreate(CreateChallenge src);
+    ChallengeStateRedis fromCreate(CreateChallengeCmd src);
 
     @AfterMapping
     @Named("createChallenge")
     default void fillRest(@MappingTarget ChallengeStateRedis ent,
-                          CreateChallenge src
+                          CreateChallengeCmd src
     ) {
         ent.setId(UUID.randomUUID());
         ent.setModelApiTryId(UUID.randomUUID());

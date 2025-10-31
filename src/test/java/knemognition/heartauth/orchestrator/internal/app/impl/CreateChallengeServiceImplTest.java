@@ -1,12 +1,12 @@
 //package knemognition.heartauth.orchestrator.internal.app.impl;
 //
-//import knemognition.heartauth.orchestrator.internal.app.domain.CreateChallenge;
+//import knemognition.heartauth.orchestrator.challenges.api.commands.CreateChallenge;
 //import knemognition.heartauth.orchestrator.internal.app.domain.CreatedFlowResult;
 //import knemognition.heartauth.orchestrator.internal.app.domain.MessageData;
 //import knemognition.heartauth.orchestrator.internal.app.mapper.InternalChallengeMapper;
 //import knemognition.heartauth.orchestrator.internal.app.ports.out.InternalChallengeStore;
 //import knemognition.heartauth.orchestrator.shared.app.ports.out.DeviceCredentialStore;
-//import knemognition.heartauth.orchestrator.internal.app.ports.out.PushSender;
+//import knemognition.heartauth.orchestrator.challenges.app.ports.PushSender;
 //import knemognition.heartauth.orchestrator.internal.config.challenge.InternalChallengeProperties;
 //import knemognition.heartauth.orchestrator.internal.config.errorhandling.exception.NoActiveDeviceException;
 //import knemognition.heartauth.orchestrator.internal.model.ChallengeCreateRequest;
