@@ -1,12 +1,4 @@
 spring:
   application:
     name: external-orchestrator
-model:
-  api:
-    base-url: ${API_BASE_URL:http://${API_HOST:localhost}:${API_PORT:8000}}
-    api-key:
-external-pairing:
-  nonce-length: 32
-  issuer: "hauth:orchestrator"
-  audience:
-    - "hauth:pairing"
+

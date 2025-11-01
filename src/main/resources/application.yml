@@ -1,13 +1,23 @@
 spring:
   kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
     admin:
       fail-fast: true
     consumer:
-      group-id: orchestrator
-      auto-offset-reset: earliest
+      group-id: orchestrator-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
+        spring.json.use.type.headers: true
+        spring.json.trusted.packages: knemognition.heartauth.*
+        spring.json.type.mapping: >
+          PredictRequestDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictRequestDto,
+          PredictResponseDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto,
+          CombinedModelActionDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.CombinedModelActionDto
   jackson:
     default-property-inclusion: non_null
   data:
@@ -70,8 +80,20 @@ jwt:
   public-key-location: file:${user.dir}/secrets/pubKey.pem
 model:
   api:
-    kafka:
-      topics:
+    topics:
         request: model-api-v1-request
         reply: model-api-v1-response
         combined: model-api-v1-combined
+pairing:
+  audience:
+    - "hauth:pairing"
+  issuer: "hauth:orchestrator"
+  nonce-length: 32
+  min-ttl: 20
+  max-ttl: 120
+  default-ttl: 60
+challenge:
+  nonce-length: 32
+  min-ttl: 20
+  max-ttl: 120
+  default-ttl: 60

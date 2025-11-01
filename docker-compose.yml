@@ -58,7 +58,7 @@ services:
       retries: 20
     restart: unless-stopped
   model-api:
-    image: poziomk3/model-api:v2.1.0
+    image: poziomk3/model-api:v2.1.1
     environment:
       KAFKA_BROKERS: kafka:29092
       CONSUME_TOPIC: model-api-v1-request

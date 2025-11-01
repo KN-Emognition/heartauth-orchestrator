@@ -23,8 +23,35 @@
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
         <firebase-admin.version>9.5.0</firebase-admin.version>
         <bouncycastle.version>1.82</bouncycastle.version>
+        <spring-modulith-bom.version>1.2.2</spring-modulith-bom.version>
     </properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.modulith</groupId>
+                <artifactId>spring-modulith-bom</artifactId>
+                <version>${spring-modulith-bom.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.modulith</groupId>
+            <artifactId>spring-modulith-docs</artifactId>
+            <version>1.2.3</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -174,8 +201,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/internal.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.internal.interfaces.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.internal.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.internal.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
@@ -200,8 +227,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/external.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.external.interfaces.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.external.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.external.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
@@ -226,8 +253,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/admin.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.admin.interfaces.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.admin.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.admin.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
@@ -245,31 +272,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>generate-models</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/contract/domain.yml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <apiPackage>ignore.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.shared.app.domain</modelPackage>
-                            <invokerPackage>ignore.invoker</invokerPackage>
-                            <generateApis>false</generateApis>
-                            <generateModels>true</generateModels>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <configOptions>
-                                <generateSupportingFiles>false</generateSupportingFiles>
-                                <skipDefaultInterface>true</skipDefaultInterface>
-                                <documentationProvider>none</documentationProvider>
-                                <generateBuilders>true</generateBuilders>
-                                <useJakartaEe>true</useJakartaEe>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <dateLibrary>java8</dateLibrary>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>generate-model-api-kafka</id>
                         <goals>
                             <goal>generate</goal>
@@ -278,7 +280,7 @@
                             <inputSpec>${project.basedir}/contract/model-api-kafka.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>ignore.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model
+                            <modelPackage>knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model
                             </modelPackage>
                             <invokerPackage>ignore.invoker</invokerPackage>
                             <generateApis>false</generateApis>
@@ -293,33 +295,6 @@
                                 <useJakartaEe>true</useJakartaEe>
                                 <useSpringBoot3>true</useSpringBoot3>
                                 <dateLibrary>java8</dateLibrary>
-                            </configOptions>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>generate-model-api-client</id>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <inputSpec>${project.basedir}/contract/model-api.yml</inputSpec>
-                            <generatorName>java</generatorName>
-                            <library>restclient</library>
-                            <modelPackage>knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.model
-                            </modelPackage>
-                            <apiPackage>knemognition.heartauth.orchestrator.shared.gateways.rest.modelapi.api
-                            </apiPackage>
-                            <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
-                            <generateApiTests>false</generateApiTests>
-                            <generateModelTests>false</generateModelTests>
-                            <modelNameSuffix>Dto</modelNameSuffix>
-                            <configOptions>
-                                <documentationProvider>none</documentationProvider>
-                                <generateSupportingFiles>false</generateSupportingFiles>
-                                <dateLibrary>java8</dateLibrary>
-                                <useSpringBoot3>true</useSpringBoot3>
-                                <useJakartaEe>true</useJakartaEe>
-                                <generateBuilders>true</generateBuilders>
                             </configOptions>
                         </configuration>
                     </execution>
