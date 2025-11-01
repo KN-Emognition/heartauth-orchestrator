@@ -5,6 +5,7 @@ import knemognition.heartauth.orchestrator.pairings.api.InitPairingRead;
 import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;
 import knemognition.heartauth.orchestrator.pairings.app.mappers.PairingsMapper;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
+import knemognition.heartauth.orchestrator.pairings.app.utils.QrClaimsProvider;
 import knemognition.heartauth.orchestrator.pairings.config.PairingProperties;
 import knemognition.heartauth.orchestrator.pairings.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.pairings.domain.PairingState;
@@ -23,12 +24,13 @@ import java.util.UUID;
 @Slf4j
 public class InitPairingHandler {
     private final SecurityModule securityModule;
+    private final QrClaimsProvider getQrClaims;
     private final PairingProperties pairingProperties;
     private final PairingStore pairingStore;
     private final PairingsMapper pairingsMapper;
 
     public InitPairingRead handle(InitPairingCmd cmd) {
-        var qrCodeClaims = securityModule.getQrClaims();
+        var qrCodeClaims = getQrClaims.handle();
         securityModule.validatePublicKeyPem(cmd.getPublicKey());
 
         String nonceB64 = securityModule.createNonce(pairingProperties.getNonceLength());

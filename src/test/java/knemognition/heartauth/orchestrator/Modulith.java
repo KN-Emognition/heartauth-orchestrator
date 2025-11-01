@@ -1,10 +1,10 @@
 package knemognition.heartauth.orchestrator;
 
 
-
 import org.junit.jupiter.api.Test;
 import org.springframework.modulith.core.ApplicationModules;
 import org.springframework.modulith.docs.Documenter;
+
 class DocumentationTests {
 
     ApplicationModules modules = ApplicationModules.of(OrchestratorApplication.class);
@@ -14,6 +14,9 @@ class DocumentationTests {
 
         new Documenter(modules)
                 .writeModulesAsPlantUml()
-                .writeIndividualModulesAsPlantUml();
+                .writeIndividualModulesAsPlantUml()
+                .writeDocumentation();
+
     }
+
 }

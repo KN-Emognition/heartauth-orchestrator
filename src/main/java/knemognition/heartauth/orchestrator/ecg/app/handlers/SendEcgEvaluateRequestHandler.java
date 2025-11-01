@@ -1,10 +1,10 @@
 package knemognition.heartauth.orchestrator.ecg.app.handlers;
 
 import knemognition.heartauth.orchestrator.ecg.api.EcgEvaluateCmd;
-import knemognition.heartauth.orchestrator.ecg.app.ports.AsyncModelApi;
 import knemognition.heartauth.orchestrator.ecg.app.ports.EcgStore;
-import knemognition.heartauth.orchestrator.ecg.domain.EcgPayload;
 import knemognition.heartauth.orchestrator.ecg.domain.RefEcg;
+import knemognition.heartauth.orchestrator.modelapi.api.AsyncModelApi;
+import knemognition.heartauth.orchestrator.modelapi.api.EcgSendPredictCmd;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,8 @@ public class SendEcgEvaluateRequestHandler {
         var refEcg = ecgStore.getReferenceEcg(cmd.getUserId())
                 .map(RefEcg::getRefEcg)
                 .orElseThrow();
-        asyncModelApi.predict(cmd.getCorrelationId(), EcgPayload.builder()
+        asyncModelApi.predict(EcgSendPredictCmd.builder()
+                .correlationId(cmd.getCorrelationId())
                 .testEcg(cmd.getTestEcg())
                 .refEcg(refEcg)
                 .build());

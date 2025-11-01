@@ -2,8 +2,6 @@ package knemognition.heartauth.orchestrator.security.api;
 
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jwt.JWTClaimsSet;
-import knemognition.heartauth.orchestrator.pairings.api.QrCodeClaims;
-import org.springframework.modulith.NamedInterface;
 
 import java.security.KeyPair;
 import java.text.ParseException;
@@ -19,7 +17,6 @@ import java.text.ParseException;
  * </ul>
  * </p>
  */
-@NamedInterface
 public interface SecurityModule {
 
     /**
@@ -80,6 +77,4 @@ public interface SecurityModule {
     KeyPair createEphemeralKeyPair();
 
     String hash(String payload);
-
-    QrCodeClaims getQrClaims();
 }

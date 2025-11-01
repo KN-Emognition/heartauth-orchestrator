@@ -7,8 +7,8 @@ import knemognition.heartauth.orchestrator.api.rest.v1.external.model.InitPairin
 import knemognition.heartauth.orchestrator.api.rest.v1.external.model.InitPairingResponseDto;
 import knemognition.heartauth.orchestrator.api.rest.v1.internal.model.*;
 import knemognition.heartauth.orchestrator.challenges.api.*;
+import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto;
 import knemognition.heartauth.orchestrator.pairings.api.*;
-import knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model.PredictResponseDto;
 import knemognition.heartauth.orchestrator.tenants.api.CreatedTenant;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -32,7 +32,7 @@ public interface DtoMapper {
 
     CreateChallengeResponseDto toDto(CreatedChallengeRead src);
 
-    CompleteChallengeWithPredictionResultCmd toCmd(PredictResponseDto src, UUID correlationId);
+
 
     CompleteChallengeWithPredictionPayloadCmd toCmd(CompleteChallengeRequestDto src, UUID challengeId);
 

@@ -305,7 +305,7 @@
                             <inputSpec>${project.basedir}/contract/model-api-kafka.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <apiPackage>ignore.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.shared.gateways.kafka.modelapi.model
+                            <modelPackage>knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model
                             </modelPackage>
                             <invokerPackage>ignore.invoker</invokerPackage>
                             <generateApis>false</generateApis>

@@ -40,4 +40,5 @@ public class PairingsModuleImpl implements PairingsModule {
     public void complete(CompletePairingCmd cmd) {
         completePairingHandler.handle(cmd);
     }
+
 }

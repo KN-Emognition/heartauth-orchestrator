@@ -7,6 +7,7 @@ import knemognition.heartauth.orchestrator.pairings.api.CompletePairingCmd;
 import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;
 import knemognition.heartauth.orchestrator.pairings.app.mappers.PairingsMapper;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
+import knemognition.heartauth.orchestrator.pairings.app.utils.QrClaimsProvider;
 import knemognition.heartauth.orchestrator.pairings.domain.StatusChange;
 import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
@@ -33,6 +34,7 @@ import java.util.UUID;
 public class CompletePairingHandler {
     private final SecurityModule securityModule;
     private final UserModule userModule;
+    private final QrClaimsProvider getQrClaims;
     private final EcgModule ecgModule;
     private final PairingStore pairingStore;
     private final PairingsMapper pairingsMapper;
@@ -41,7 +43,7 @@ public class CompletePairingHandler {
     @SneakyThrows
     @Transactional
     public void handle(CompletePairingCmd cmd) {
-        var qrCodeClaims = securityModule.getQrClaims();
+        var qrCodeClaims = getQrClaims.handle();
         UUID jti = qrCodeClaims.getJti();
 
         var state = pairingStore.getFlow(jti)

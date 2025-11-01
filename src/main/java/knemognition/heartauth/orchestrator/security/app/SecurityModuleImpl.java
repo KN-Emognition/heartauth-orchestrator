@@ -1,7 +1,6 @@
 package knemognition.heartauth.orchestrator.security.app;
 
 import com.nimbusds.jose.JOSEException;
-import knemognition.heartauth.orchestrator.pairings.api.QrCodeClaims;
 import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
@@ -23,7 +22,6 @@ public class SecurityModuleImpl implements SecurityModule {
     private final CreateNonceHandler createNonceHandler;
     private final CreateEphemeralKeyPairHandler createEphemeralKeyPairHandler;
     private final HashHandler hashHandler;
-    private final QrClaimsHandler qrClaimsProvider;
 
     @Override
     public void validateNonce(ValidateNonceCmd cmd) {
@@ -55,8 +53,5 @@ public class SecurityModuleImpl implements SecurityModule {
         return hashHandler.handle(payload);
     }
 
-    @Override
-    public QrCodeClaims getQrClaims() {
-        return qrClaimsProvider.handle();
-    }
+
 }

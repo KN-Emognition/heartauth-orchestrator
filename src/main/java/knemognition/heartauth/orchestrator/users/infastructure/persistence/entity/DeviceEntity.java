@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.users.infastructure.persistence.entity;
 
 import jakarta.persistence.*;
-import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
+import knemognition.heartauth.orchestrator.users.api.Platform;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;

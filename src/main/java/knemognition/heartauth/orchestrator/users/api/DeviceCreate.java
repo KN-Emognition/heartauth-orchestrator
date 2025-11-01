@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.users.api;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.Platform;
 import lombok.Builder;
 import lombok.Value;
 
