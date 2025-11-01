@@ -20,7 +20,7 @@ public class CreateEphemeralKeyPairHandlerMock implements CreateEphemeralKeyPair
     private final KeyPair pairingEcKeyPair;
 
     public KeyPair handle() {
-        log.warn("Mock ephemeral key pair creation called");
+        log.warn("[SECURITY] Mock ephemeral key pair creation called");
         return pairingEcKeyPair;
     }
 }

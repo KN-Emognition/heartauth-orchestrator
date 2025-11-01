@@ -20,6 +20,7 @@ public class SaveUserDeviceHandler {
     private final UserMapper userMapper;
 
     public UserRead handle(SaveUserDeviceCmd payload) {
+        log.info("[USERS] Saving user and device");
         var tenant = tenantApi.get(payload.getUser()
                         .getTenantId())
                 .orElseThrow();

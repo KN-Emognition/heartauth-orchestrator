@@ -52,7 +52,7 @@ public class CompletePairingHandler {
 
         ValidateNonceCmd validateNonce = pairingsMapper.toCmd(cmd, state);
         securityModule.validateNonce(validateNonce);
-        log.info("Nonce has been successfully validated");
+        log.info("[PAIRING] Nonce has been successfully validated");
 
 
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
@@ -76,16 +76,16 @@ public class CompletePairingHandler {
                 .build();
 
         EcgRefTokenClaims ecgRefToken = securityModule.decryptJwe(toDecryptJwe);
-        log.info("JWT has been successfully verified");
+        log.info("[PAIRING] JWT has been successfully verified");
 
         savePairingArtifacts(pairingsMapper.toCmd(state),
                 ecgRefToken.getRefEcg(), pairingsMapper.toDevice(state));
-        log.info("Saved artifacts to main store");
+        log.info("[PAIRING] Saved artifacts to main store");
 
         pairingStore.setStatusOrThrow(statusChangeBuilder.status(FlowStatus.APPROVED)
                 .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY)
                 .build());
-        log.info("Changed cache pairing status to Approved.");
+        log.info("[PAIRING] Changed cache pairing status to Approved.");
     }
 
     private void savePairingArtifacts(IdentifiableUserCmd user, List<List<Float>> refEcg, DeviceCreate device) {

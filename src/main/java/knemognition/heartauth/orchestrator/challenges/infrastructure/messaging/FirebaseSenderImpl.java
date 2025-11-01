@@ -47,7 +47,7 @@ public class FirebaseSenderImpl implements PushSender {
         Message message = createMessage(token, data, android);
         try {
             firebaseMessaging.send(message);
-            log.info("Message sent successfully");
+            log.info("[CHALLENGE]Message sent successfully");
         } catch (FirebaseMessagingException e) {
             throw new FirebaseSendException("Message send failed.");
         }

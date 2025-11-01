@@ -32,7 +32,7 @@ public class ModelApiListener {
             @Header(HeaderNames.HEADER_MODEL_API_UNIQUE_ID) String uniqueModelId,
             @Header(name = KafkaHeaders.KEY, required = false) String correlationId
     ) {
-        log.info("[INTERNAL-KAFKA] Received model API prediction response | key={}", correlationId);
+        log.info("[MODELAPI] Received model API prediction response | key={}", correlationId);
         var cmd = dtoMapper.toCmd(payload, UUID.fromString(uniqueModelId));
         modelApiCallbackApi.handle(cmd);
     }
@@ -41,6 +41,6 @@ public class ModelApiListener {
     public void onPredictResponse(@Payload CombinedModelActionDto payload,
                                   @Header(HeaderNames.HEADER_CORRELATION_ID) String correlationId,
                                   @Header(name = KafkaHeaders.KEY, required = false) String key) {
-        log.info("[ADMIN-KAFKA] Received Combined Predict");
+        log.info("[MODELAPI] Received Combined Predict");
     }
 }

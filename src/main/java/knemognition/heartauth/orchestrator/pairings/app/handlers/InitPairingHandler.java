@@ -38,7 +38,7 @@ public class InitPairingHandler {
 
         PairingState state = pairingStore.getFlow(id)
                 .orElseThrow(() -> new NoPairingException("pairing_not_found_or_expired"));
-        log.info("Fetched pairing state");
+        log.info("[PAIRING] Fetched pairing state");
         if (state.getStatus() != FlowStatus.CREATED) {
             throw new NoPairingException("Pairing already initialized");
         }
@@ -48,7 +48,7 @@ public class InitPairingHandler {
         }
         EnrichDeviceData to = pairingsMapper.toEnrichDeviceData(cmd, nonceB64, id);
         pairingStore.enrichWithDeviceData(to);
-        log.info("Device data stored");
+        log.info("[PAIRING] Device data stored");
         pairingStore.setStatusOrThrow(StatusChange.builder()
                 .id(id)
                 .status(FlowStatus.PENDING)

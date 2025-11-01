@@ -69,11 +69,11 @@ public class JwtConfig {
                 ECPublicKey pub = KeyLoader.loadEcPublicKey(inPub);
                 return new KeyPair(pub, priv);
             } catch (IOException ioe) {
-                log.warn("RUNNING WITH GENERATED KEYS - NOT FOR PRODUCTION USE");
+                log.warn("[SECURITY] RUNNING WITH GENERATED KEYS - NOT FOR PRODUCTION USE");
                 return generateEcP256();
             }
         }
-        log.warn("RUNNING WITH GENERATED KEYS - NOT FOR PRODUCTION USE");
+        log.warn("[SECURITY] RUNNING WITH GENERATED KEYS - NOT FOR PRODUCTION USE");
         return generateEcP256();
     }
 

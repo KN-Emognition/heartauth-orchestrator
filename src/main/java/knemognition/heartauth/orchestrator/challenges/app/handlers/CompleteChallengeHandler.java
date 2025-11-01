@@ -54,10 +54,10 @@ public class CompleteChallengeHandler {
             return finalStatus == FlowStatus.APPROVED;
 
         } catch (NoChallengeException | ChallengeFailedException e) {
-            log.info("Challenge {} failed fast: {}", cmd.getChallengeId(), e.getMessage());
+            log.info("[CHALLENGE] Challenge {} failed fast: {}", cmd.getChallengeId(), e.getMessage());
             return false;
         } catch (Exception e) {
-            log.error("Challenge {} unexpected error", cmd.getChallengeId(), e);
+            log.error("[CHALLENGE] Challenge {} unexpected error", cmd.getChallengeId(), e);
             return false;
         }
     }
@@ -71,7 +71,7 @@ public class CompleteChallengeHandler {
 
         var validateNonce = challengesMapper.toCmd(cmd, state);
         securityModule.validateNonce(validateNonce);
-        log.info("Nonce has been successfully validated");
+        log.info("[CHALLENGE] Nonce has been successfully validated");
 
         if (state.getStatus() == FlowStatus.APPROVED) {
             throw new NoChallengeException("challenge_replayed");
@@ -98,11 +98,11 @@ public class CompleteChallengeHandler {
                 .testEcg(ecgTestTokenClaims.getTestEcg())
                 .refEcg(refData.getRefEcg())
                 .build());
-        log.info("Posted Kafka message for ECG prediction for challengeId {}", cmd.getChallengeId());
+        log.info("[CHALLENGE] Posted Kafka message for ECG prediction for challengeId {}", cmd.getChallengeId());
         internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)
                 .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)
                 .build());
-        log.info("Challenge {} status set to PENDING", cmd.getChallengeId());
+        log.info("[CHALLENGE] Challenge {} status set to PENDING", cmd.getChallengeId());
     }
 
 

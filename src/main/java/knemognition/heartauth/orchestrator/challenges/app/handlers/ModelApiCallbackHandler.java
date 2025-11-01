@@ -22,18 +22,18 @@ public class ModelApiCallbackHandler implements ModelApiCallbackApi {
     public void handle(CompleteChallengeWithPredictionResultCmd cmd) {
         ChallengeState state = internalChallengeStore.getChallengeStateByCorrelationId(cmd.getCorrelationId());
         if (!(state.getStatus() == FlowStatus.PENDING)) {
-            log.info("Prediction received for non-pending challenge {}, ignoring", state.getId());
+            log.info("[CHALLENGE] Prediction received for non-pending challenge {}, ignoring", state.getId());
             return;
         }
         StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
                 .id(state.getId());
         if (cmd.getPrediction() == true) {
-            log.info("Prediction approved for challenge {}", state.getId());
+            log.info("[CHALLENGE] Prediction approved for challenge {}", state.getId());
             internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
                     .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
                     .build());
         } else {
-            log.info("Prediction rejected for challenge {}", state.getId());
+            log.info("[CHALLENGE] Prediction rejected for challenge {}", state.getId());
             internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
                     .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
                     .build());

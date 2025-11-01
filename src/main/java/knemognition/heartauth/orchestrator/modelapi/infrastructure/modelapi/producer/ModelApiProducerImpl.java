@@ -47,6 +47,6 @@ public class ModelApiProducerImpl implements ModelApiSendApi {
                 .build();
 
         template.send(msg);
-        log.info("Queued prediction request | topic={}", topic);
+        log.info("[MODELAPI] Queued prediction request | topic={}", topic);
     }
 }
