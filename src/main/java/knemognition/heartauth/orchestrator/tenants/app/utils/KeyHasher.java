@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.security.app.handlers;
+package knemognition.heartauth.orchestrator.tenants.app.utils;
 
 
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Component
-public class HashHandler {
+public class KeyHasher {
     public String handle(String plaintext) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

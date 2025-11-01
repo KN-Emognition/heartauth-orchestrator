@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.api.interceptors.internal;
 
-import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.shared.constants.Authorities;
 import knemognition.heartauth.orchestrator.tenants.api.TenantRead;
 import knemognition.heartauth.orchestrator.tenants.api.TenantsModule;
@@ -21,7 +20,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class InternalApiKeyAuthenticationProvider implements AuthenticationProvider {
 
-    private final SecurityModule apiKeyHasher;
     private final TenantsModule tenantsModule;
 
     @Override
@@ -31,9 +29,7 @@ public class InternalApiKeyAuthenticationProvider implements AuthenticationProvi
             throw new BadCredentialsException("invalid_api_key");
         }
 
-        String hash = apiKeyHasher.hash(provided);
-
-        UUID tenantId = tenantsModule.getByApiKey(hash)
+        UUID tenantId = tenantsModule.getByApiKey(provided)
                 .map(TenantRead::getTenantId)
                 .orElseThrow(() -> new BadCredentialsException("invalid_api_key"));
 

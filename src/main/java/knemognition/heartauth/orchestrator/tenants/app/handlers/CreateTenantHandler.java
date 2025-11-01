@@ -1,8 +1,8 @@
 package knemognition.heartauth.orchestrator.tenants.app.handlers;
 
-import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.tenants.api.CreatedTenant;
 import knemognition.heartauth.orchestrator.tenants.app.ports.TenantStore;
+import knemognition.heartauth.orchestrator.tenants.app.utils.KeyHasher;
 import knemognition.heartauth.orchestrator.tenants.domain.Tenant;
 import knemognition.heartauth.orchestrator.tenants.domain.TenantApiKey;
 import lombok.RequiredArgsConstructor;
@@ -15,8 +15,8 @@ import java.util.UUID;
 @Slf4j
 @RequiredArgsConstructor
 public class CreateTenantHandler {
-    private final SecurityModule securityModule;
     private final TenantStore tenantStore;
+    private final KeyHasher keyHasher;
 
     public CreatedTenant handle() {
         log.info("[TENANT] Creating new tenant");
@@ -26,7 +26,7 @@ public class CreateTenantHandler {
                 .build();
 
         UUID apiKey = UUID.randomUUID();
-        String apiKeyHash = securityModule.hash(apiKey
+        String apiKeyHash = keyHasher.handle(apiKey
                 .toString());
 
         TenantApiKey tenantApiKey = TenantApiKey.builder()

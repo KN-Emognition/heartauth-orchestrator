@@ -75,6 +75,4 @@ public interface SecurityModule {
 
 
     KeyPair createEphemeralKeyPair();
-
-    String hash(String payload);
 }
