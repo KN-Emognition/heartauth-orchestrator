@@ -73,7 +73,10 @@ management:
       application: ${spring.application.name}
 logging:
   level:
-    root: INFO
+    org:
+      springframework:
+        core:
+          env: INFO
 jwt:
   kid: "id"
   private-key-location: file:${user.dir}/secrets/privKey.pem
@@ -85,3 +88,16 @@ model:
         request: model-api-v1-request
         reply: model-api-v1-response
         combined: model-api-v1-combined
+pairing:
+  audience:
+    - "hauth:pairing"
+  issuer: "hauth:orchestrator"
+  nonce-length: 32
+  min-ttl: 20
+  max-ttl: 120
+  default-ttl: 60
+challenge:
+  nonce-length: 32
+  min-ttl: 20
+  max-ttl: 120
+  default-ttl: 60

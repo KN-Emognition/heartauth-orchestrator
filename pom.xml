@@ -201,8 +201,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/internal.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.interfaces.internal.api.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.internal.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.internal.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
@@ -227,8 +227,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/external.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.interfaces.external.api.rest.v1.api</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.interfaces.external.api.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.external.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.external.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>
@@ -253,8 +253,8 @@
                         <configuration>
                             <inputSpec>${project.basedir}/contract/admin.yml</inputSpec>
                             <generatorName>spring</generatorName>
-                            <apiPackage>knemognition.heartauth.orchestrator.interfaces.admin.api.rest.v1</apiPackage>
-                            <modelPackage>knemognition.heartauth.orchestrator.interfaces.admin.api.rest.v1.model
+                            <apiPackage>knemognition.heartauth.orchestrator.api.rest.v1.admin.api</apiPackage>
+                            <modelPackage>knemognition.heartauth.orchestrator.api.rest.v1.admin.model
                             </modelPackage>
                             <invokerPackage>knemognition.heartauth.orchestrator</invokerPackage>
                             <modelNameSuffix>Dto</modelNameSuffix>

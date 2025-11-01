@@ -3,7 +3,7 @@
 //import knemognition.heartauth.orchestrator.internal.app.mapper.ResponseStatusMapper;
 //import knemognition.heartauth.orchestrator.internal.model.FlowStatus;
 //import knemognition.heartauth.orchestrator.internal.model.StatusResponse;
-//import knemognition.heartauth.orchestrator.shared.app.domain.PairingState;
+//import knemognition.heartauth.orchestrator.pairings.domain.PairingState;
 //import knemognition.heartauth.orchestrator.shared.app.domain.StatusChange;
 //import knemognition.heartauth.orchestrator.shared.app.ports.out.StatusStore;
 //import org.junit.jupiter.api.Test;
