@@ -1,17 +1,18 @@
 package knemognition.heartauth.orchestrator.ecg.app;
 
-import knemognition.heartauth.orchestrator.ecg.api.EcgEvaluateCmd;
 import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
+import knemognition.heartauth.orchestrator.ecg.api.GetRefDataCmd;
+import knemognition.heartauth.orchestrator.ecg.api.RefEcgRead;
 import knemognition.heartauth.orchestrator.ecg.api.SaveReferenceDataCmd;
+import knemognition.heartauth.orchestrator.ecg.app.handlers.GetEcgDataHandler;
 import knemognition.heartauth.orchestrator.ecg.app.handlers.SaveReferenceDataHandler;
-import knemognition.heartauth.orchestrator.ecg.app.handlers.SendEcgEvaluateRequestHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class EcgModuleImpl implements EcgModule {
-    private final SendEcgEvaluateRequestHandler sendEcgEvaluateRequestHandler;
+    private final GetEcgDataHandler getEcgDataHandler;
     private final SaveReferenceDataHandler saveReferenceDataHandler;
 
     @Override
@@ -20,7 +21,7 @@ public class EcgModuleImpl implements EcgModule {
     }
 
     @Override
-    public void sendEcgEvaluateRequest(EcgEvaluateCmd cmd) {
-        sendEcgEvaluateRequestHandler.handle(cmd);
+    public RefEcgRead getUserReferenceData(GetRefDataCmd cmd) {
+        return getEcgDataHandler.handle(cmd);
     }
 }

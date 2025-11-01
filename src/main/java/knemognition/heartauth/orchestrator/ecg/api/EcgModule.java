@@ -7,5 +7,5 @@ public interface EcgModule {
 
     void saveReferenceData(SaveReferenceDataCmd cmd);
 
-    void sendEcgEvaluateRequest(EcgEvaluateCmd cmd);
+    RefEcgRead getUserReferenceData(GetRefDataCmd cmd);
 }

@@ -11,8 +11,10 @@ import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.challenges.domain.EcgTestTokenClaims;
 import knemognition.heartauth.orchestrator.challenges.domain.FlowStatusReason;
 import knemognition.heartauth.orchestrator.challenges.domain.StatusChange;
-import knemognition.heartauth.orchestrator.ecg.api.EcgEvaluateCmd;
 import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
+import knemognition.heartauth.orchestrator.ecg.api.GetRefDataCmd;
+import knemognition.heartauth.orchestrator.modelapi.api.EcgSendPredictCmd;
+import knemognition.heartauth.orchestrator.modelapi.api.ModelApiSendApi;
 import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.users.api.UserModule;
@@ -36,6 +38,7 @@ public class CompleteChallengeHandler {
     private final EcgModule ecgModule;
     private final UserModule userModule;
     private final SecurityModule securityModule;
+    private final ModelApiSendApi modelApiSendApi;
 
     private final ChallengesMapper challengesMapper;
     private final ChallengeStore internalChallengeStore;
@@ -87,13 +90,14 @@ public class CompleteChallengeHandler {
                 .id(cmd.getChallengeId());
         var user = userModule.getUser(challengesMapper.toCmd(state))
                 .orElseThrow();
-        ecgModule.sendEcgEvaluateRequest(EcgEvaluateCmd.builder()
-                .correlationId(state.getModelApiTryId())
+        var refData = ecgModule.getUserReferenceData(GetRefDataCmd.builder()
                 .userId(user.getId())
+                .build());
+        modelApiSendApi.handle(EcgSendPredictCmd.builder()
+                .correlationId(state.getModelApiTryId())
                 .testEcg(ecgTestTokenClaims.getTestEcg())
-                .build()
-
-        );
+                .refEcg(refData.getRefEcg())
+                .build());
         log.info("Posted Kafka message for ECG prediction for challengeId {}", cmd.getChallengeId());
         internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)
                 .reason(FlowStatusReason.FLOW_WAITING_FOR_MODEL)
