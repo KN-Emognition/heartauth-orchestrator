@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.listener;
 
-import knemognition.heartauth.orchestrator.challenges.api.ChallengesModule;
+import knemognition.heartauth.orchestrator.modelapi.api.ModelApiCallbackApi;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.CombinedModelActionDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.mapper.ModelApiKafkaMapper;
@@ -24,7 +24,7 @@ import java.util.UUID;
 public class ModelApiListener {
 
     private final ModelApiKafkaMapper dtoMapper;
-    private final ChallengesModule challengesModule;
+    private final ModelApiCallbackApi modelApiCallbackApi;
 
     @KafkaListener(topics = "${model.api.topics.reply}")
     public void handlePredict(
@@ -34,7 +34,7 @@ public class ModelApiListener {
     ) {
         log.info("[INTERNAL-KAFKA] Received model API prediction response | key={}", correlationId);
         var cmd = dtoMapper.toCmd(payload, UUID.fromString(uniqueModelId));
-        challengesModule.complete(cmd);
+        modelApiCallbackApi.handle(cmd);
     }
 
     @KafkaListener(topics = "${model.api.topics.combined}", groupId = "admin-orchestrator-group")

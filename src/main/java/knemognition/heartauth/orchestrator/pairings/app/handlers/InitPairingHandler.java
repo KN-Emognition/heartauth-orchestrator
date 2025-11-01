@@ -1,5 +1,6 @@
 package knemognition.heartauth.orchestrator.pairings.app.handlers;
 
+import knemognition.heartauth.orchestrator.pairings.api.FlowStatus;
 import knemognition.heartauth.orchestrator.pairings.api.InitPairingCmd;
 import knemognition.heartauth.orchestrator.pairings.api.InitPairingRead;
 import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;
@@ -8,11 +9,10 @@ import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
 import knemognition.heartauth.orchestrator.pairings.app.utils.QrClaimsProvider;
 import knemognition.heartauth.orchestrator.pairings.config.PairingProperties;
 import knemognition.heartauth.orchestrator.pairings.domain.EnrichDeviceData;
+import knemognition.heartauth.orchestrator.pairings.domain.FlowStatusReason;
 import knemognition.heartauth.orchestrator.pairings.domain.PairingState;
 import knemognition.heartauth.orchestrator.pairings.domain.StatusChange;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

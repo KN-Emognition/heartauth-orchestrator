@@ -2,13 +2,12 @@ package knemognition.heartauth.orchestrator.pairings.infrastructure;
 
 import jakarta.transaction.Transactional;
 import knemognition.heartauth.orchestrator.pairings.api.DeviceEnrichException;
+import knemognition.heartauth.orchestrator.pairings.api.FlowStatus;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
 import knemognition.heartauth.orchestrator.pairings.domain.*;
 import knemognition.heartauth.orchestrator.pairings.infrastructure.persistence.entity.PairingStateRedis;
 import knemognition.heartauth.orchestrator.pairings.infrastructure.persistence.mappers.PairingStoreMapper;
 import knemognition.heartauth.orchestrator.pairings.infrastructure.persistence.repository.PairingStateRepository;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.pairings.infrastructure.persistence.mappers;
 
+import knemognition.heartauth.orchestrator.pairings.api.FlowStatus;
 import knemognition.heartauth.orchestrator.pairings.domain.CreatePairing;
 import knemognition.heartauth.orchestrator.pairings.domain.CreatedPairingResult;
 import knemognition.heartauth.orchestrator.pairings.domain.EnrichDeviceData;
 import knemognition.heartauth.orchestrator.pairings.domain.PairingState;
 import knemognition.heartauth.orchestrator.pairings.infrastructure.persistence.entity.PairingStateRedis;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import org.mapstruct.*;
 
 import java.time.Instant;

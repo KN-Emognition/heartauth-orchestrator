@@ -9,6 +9,4 @@ public interface ChallengesModule {
     CreatedChallengeRead create(CreateChallengeCmd cmd);
 
     boolean complete(CompleteChallengeWithPredictionPayloadCmd cmd);
-
-    void complete(CompleteChallengeWithPredictionResultCmd cmd);
 }

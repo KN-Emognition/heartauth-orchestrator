@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.challenges.domain;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import lombok.Builder;
 import lombok.Value;
 

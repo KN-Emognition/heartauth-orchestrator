@@ -25,10 +25,6 @@ public class ChallengesModuleImpl implements ChallengesModule {
         return createChallengeHandler.handle(cmd);
     }
 
-    @Override
-    public void complete(CompleteChallengeWithPredictionResultCmd cmd) {
-        completeChallengeHandler.handle(cmd);
-    }
 
     @Override
     public boolean complete(CompleteChallengeWithPredictionPayloadCmd cmd) {

@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.producer;
 
-import knemognition.heartauth.orchestrator.modelapi.api.AsyncModelApi;
+import knemognition.heartauth.orchestrator.modelapi.api.ModelApiSendApi;
 import knemognition.heartauth.orchestrator.modelapi.api.EcgSendPredictCmd;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictRequestDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.mapper.ModelApiKafkaMapper;
@@ -18,7 +18,7 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class ModelApiProducerImpl implements AsyncModelApi {
+public class ModelApiProducerImpl implements ModelApiSendApi {
 
     private final KafkaTemplate<String, PredictRequestDto> template;
     private final ModelApiKafkaMapper mapper;
@@ -31,7 +31,7 @@ public class ModelApiProducerImpl implements AsyncModelApi {
     }
 
     @Override
-    public void predict(EcgSendPredictCmd payload) {
+    public void handle(EcgSendPredictCmd payload) {
         PredictRequestDto dto = mapper.toPredictRequestDto(payload);
 
         String correlationId = Optional.ofNullable(MDC.get(HeaderNames.MDC_CORRELATION_ID))

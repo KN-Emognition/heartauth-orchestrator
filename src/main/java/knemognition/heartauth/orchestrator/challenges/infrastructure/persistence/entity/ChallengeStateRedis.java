@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.challenges.infrastructure.persistence.entity;
 
 
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

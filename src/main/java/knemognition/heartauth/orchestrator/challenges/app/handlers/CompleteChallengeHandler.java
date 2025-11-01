@@ -3,19 +3,18 @@ package knemognition.heartauth.orchestrator.challenges.app.handlers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengeFailedException;
 import knemognition.heartauth.orchestrator.challenges.api.CompleteChallengeWithPredictionPayloadCmd;
-import knemognition.heartauth.orchestrator.challenges.api.CompleteChallengeWithPredictionResultCmd;
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import knemognition.heartauth.orchestrator.challenges.api.NoChallengeException;
 import knemognition.heartauth.orchestrator.challenges.app.mappers.ChallengesMapper;
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
 import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
+import knemognition.heartauth.orchestrator.challenges.domain.EcgTestTokenClaims;
+import knemognition.heartauth.orchestrator.challenges.domain.FlowStatusReason;
 import knemognition.heartauth.orchestrator.challenges.domain.StatusChange;
 import knemognition.heartauth.orchestrator.ecg.api.EcgEvaluateCmd;
 import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
 import knemognition.heartauth.orchestrator.security.api.DecryptJweCmd;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
-import knemognition.heartauth.orchestrator.shared.app.domain.EcgTestTokenClaims;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import knemognition.heartauth.orchestrator.users.api.UserModule;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -43,26 +42,6 @@ public class CompleteChallengeHandler {
     private final Duration POLL_INTERVAL = Duration.ofMillis(250);
     private final Duration TIMEOUT = Duration.ofSeconds(20);
 
-    public void handle(CompleteChallengeWithPredictionResultCmd cmd) {
-        ChallengeState state = internalChallengeStore.getChallengeStateByCorrelationId(cmd.getCorrelationId());
-        if (!(state.getStatus() == FlowStatus.PENDING)) {
-            log.info("Prediction received for non-pending challenge {}, ignoring", state.getId());
-            return;
-        }
-        StatusChange.StatusChangeBuilder statusChangeBuilder = StatusChange.builder()
-                .id(state.getId());
-        if (cmd.getPrediction() == true) {
-            log.info("Prediction approved for challenge {}", state.getId());
-            internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.APPROVED)
-                    .reason(FlowStatusReason.FLOW_COMPLETED_SUCCESSFULLY_WITH_AUTHENTICATION)
-                    .build());
-        } else {
-            log.info("Prediction rejected for challenge {}", state.getId());
-            internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.DENIED)
-                    .reason(FlowStatusReason.FLOW_DENIED_WITH_AUTHENTICATION_FAILURE)
-                    .build());
-        }
-    }
 
     public boolean handle(CompleteChallengeWithPredictionPayloadCmd cmd) {
         try {

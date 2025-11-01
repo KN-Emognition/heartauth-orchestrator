@@ -4,7 +4,7 @@ import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
 import knemognition.heartauth.orchestrator.challenges.infrastructure.persistence.entity.ChallengeStateRedis;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import org.mapstruct.*;
 
 import java.time.Instant;

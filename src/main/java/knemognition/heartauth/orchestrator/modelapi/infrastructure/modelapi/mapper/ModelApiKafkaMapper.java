@@ -1,6 +1,6 @@
 package knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.mapper;
 
-import knemognition.heartauth.orchestrator.challenges.api.CompleteChallengeWithPredictionResultCmd;
+import knemognition.heartauth.orchestrator.modelapi.api.CompleteChallengeWithPredictionResultCmd;
 import knemognition.heartauth.orchestrator.modelapi.api.EcgSendPredictCmd;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictRequestDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto;

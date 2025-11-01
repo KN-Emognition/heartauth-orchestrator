@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.challenges.app.handlers;
 
 import knemognition.heartauth.orchestrator.challenges.api.ChallengeStatusRead;
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import knemognition.heartauth.orchestrator.challenges.api.GetChallengeStatusCmd;
 import knemognition.heartauth.orchestrator.challenges.app.mappers.ChallengesMapper;
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
 import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

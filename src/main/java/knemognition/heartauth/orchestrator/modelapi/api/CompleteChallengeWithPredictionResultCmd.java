@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.challenges.api;
+package knemognition.heartauth.orchestrator.modelapi.api;
 
 import lombok.Builder;
 import lombok.Value;

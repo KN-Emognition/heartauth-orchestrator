@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.pairings.app.handlers;
 
+import knemognition.heartauth.orchestrator.pairings.api.FlowStatus;
 import knemognition.heartauth.orchestrator.pairings.api.GetPairingStatusCmd;
 import knemognition.heartauth.orchestrator.pairings.api.PairingStatusRead;
 import knemognition.heartauth.orchestrator.pairings.app.mappers.PairingsMapper;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
 import knemognition.heartauth.orchestrator.pairings.domain.PairingState;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

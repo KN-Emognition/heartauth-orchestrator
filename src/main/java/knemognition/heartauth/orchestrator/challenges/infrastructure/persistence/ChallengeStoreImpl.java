@@ -1,16 +1,12 @@
 package knemognition.heartauth.orchestrator.challenges.infrastructure.persistence;
 
+import knemognition.heartauth.orchestrator.challenges.api.FlowStatus;
 import knemognition.heartauth.orchestrator.challenges.api.NoChallengeException;
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
-import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
-import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
-import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
-import knemognition.heartauth.orchestrator.challenges.domain.StatusChange;
+import knemognition.heartauth.orchestrator.challenges.domain.*;
 import knemognition.heartauth.orchestrator.challenges.infrastructure.persistence.entity.ChallengeStateRedis;
 import knemognition.heartauth.orchestrator.challenges.infrastructure.persistence.mappers.ChallengeStoreMapper;
 import knemognition.heartauth.orchestrator.challenges.infrastructure.persistence.repository.ChallengeStateRepository;
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
-import knemognition.heartauth.orchestrator.shared.constants.FlowStatusReason;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,5 @@
 package knemognition.heartauth.orchestrator.pairings.api;
 
-import knemognition.heartauth.orchestrator.shared.app.domain.FlowStatus;
 import lombok.Builder;
 import lombok.Value;
 

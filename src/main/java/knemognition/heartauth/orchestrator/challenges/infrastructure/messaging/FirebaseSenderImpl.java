@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
 import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
 import knemognition.heartauth.orchestrator.challenges.app.ports.PushSender;
-import knemognition.heartauth.orchestrator.shared.app.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
