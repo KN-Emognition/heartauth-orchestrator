@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@ConfigurationProperties(prefix = "admin")
+@ConfigurationProperties(prefix = "admin.api")
 public class AdminProperties {
-    private String apiKey;
+    private String key;
 }

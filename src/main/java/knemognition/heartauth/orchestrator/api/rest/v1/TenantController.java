@@ -2,9 +2,9 @@ package knemognition.heartauth.orchestrator.api.rest.v1;
 
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.api.DtoMapper;
-import knemognition.heartauth.orchestrator.api.rest.v1.internal.api.ChallengeApi;
-import knemognition.heartauth.orchestrator.api.rest.v1.internal.api.PairingApi;
-import knemognition.heartauth.orchestrator.api.rest.v1.internal.model.*;
+import knemognition.heartauth.orchestrator.api.rest.v1.tenants.api.ChallengeApi;
+import knemognition.heartauth.orchestrator.api.rest.v1.tenants.api.PairingApi;
+import knemognition.heartauth.orchestrator.api.rest.v1.tenants.model.*;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengesModule;
 import knemognition.heartauth.orchestrator.challenges.api.GetChallengeStatusCmd;
 import knemognition.heartauth.orchestrator.pairings.api.GetPairingStatusCmd;

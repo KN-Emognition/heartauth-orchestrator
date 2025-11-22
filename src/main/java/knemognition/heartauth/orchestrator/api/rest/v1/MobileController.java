@@ -2,10 +2,10 @@ package knemognition.heartauth.orchestrator.api.rest.v1;
 
 import com.nimbusds.jose.jwk.ECKey;
 import knemognition.heartauth.orchestrator.api.DtoMapper;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.api.ChallengeApi;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.api.PairingApi;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.api.WellKnownApi;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.model.*;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.api.ChallengeApi;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.api.PairingApi;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.api.WellKnownApi;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.*;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengesModule;
 import knemognition.heartauth.orchestrator.pairings.api.PairingsModule;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;

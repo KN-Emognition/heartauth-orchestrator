@@ -1,31 +1,39 @@
 # helm template ./helm -f helm/values.yaml > helm/rendered/core.yaml
 namespaceOverride:
-fullnameOverride: orchestrator
-
+fullnameOverride: heartauth-orchestrator
 replicas: 2
 
 
 image:
   repository: poziomk3/orchestrator
-  tag: v2.2.0
+  tag: v2.5.0
   pullPolicy: IfNotPresent
-
 service:
   type: ClusterIP
   port: 80
   targetPort: 8080
-
-
 env:
+  MODEL_API_TOPICS_REQUEST: heartauth.model-api.ecg-auth-request
+  MODEL_API_TOPICS_RESPONSE: heartauth.model-api.ecg-auth-response
   JWT_KID: orchestrator-key
   JWT_PRIVATE_KEY_LOCATION: file:/orchestrator-data/privateKey.pem
   JWT_PUBLIC_KEY_LOCATION: file:/orchestrator-data/publicKey.pem
+  FIREBASE_CREDENTIALS_LOCATION: file:/orchestrator-data/firebaseServiceAccount.json
+  PAIRING_DEFAULT_TTL: 180
+  PAIRING_MAX_TTL: 600
+  PAIRING_MIN_TTL: 60
+  CHALLENGE_DEFAULT_TTL: 180
+  CHALLENGE_MAX_TTL: 600
+  CHALLENGE_MIN_TTL: 60
+  CHALLENGE_NONCE_LENGTH: 32
+  PAIRING_ISSUER: heartauth.orchestrator
+  PAIRING_AUDIENCE: hauth.tenant
 secretEnv:
   DB_USER: DB_USER
   DB_PASSWORD: DB_PASSWORD
+  ADMIN_API_KEY: ADMIN_API_KEY
 secret:
   name:
-
 secretFiles:
   enabled: true
   name: core-secrets
@@ -36,6 +44,8 @@ secretFiles:
       path: privateKey.pem
     - key: publicKey.pem
       path: publicKey.pem
+    - key: firebaseServiceAccount.json
+      path: firebaseServiceAccount.json
 
 
 

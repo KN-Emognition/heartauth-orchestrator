@@ -1,11 +1,11 @@
 package knemognition.heartauth.orchestrator.api;
 
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.CreateTenantResponseDto;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.model.CompleteChallengeRequestDto;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.model.CompletePairingRequestDto;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.model.InitPairingRequestDto;
-import knemognition.heartauth.orchestrator.api.rest.v1.external.model.InitPairingResponseDto;
-import knemognition.heartauth.orchestrator.api.rest.v1.internal.model.*;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.CompleteChallengeRequestDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.CompletePairingRequestDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.InitPairingRequestDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.InitPairingResponseDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.tenants.model.*;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengeStatusRead;
 import knemognition.heartauth.orchestrator.challenges.api.CompleteChallengeWithPredictionPayloadCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
