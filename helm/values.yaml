@@ -15,6 +15,7 @@ service:
 env:
   MODEL_API_TOPICS_REQUEST: heartauth.model-api.ecg-auth-request
   MODEL_API_TOPICS_RESPONSE: heartauth.model-api.ecg-auth-response
+  MODEL_API_TOPICS_COMBINED: heartauth.model-api.ecg-auth-combined
   JWT_KID: orchestrator-key
   JWT_PRIVATE_KEY_LOCATION: file:/orchestrator-data/privateKey.pem
   JWT_PUBLIC_KEY_LOCATION: file:/orchestrator-data/publicKey.pem
