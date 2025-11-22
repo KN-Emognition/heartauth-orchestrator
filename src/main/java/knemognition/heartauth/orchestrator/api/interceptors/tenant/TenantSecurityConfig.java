@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.api.interceptors.internal;
+package knemognition.heartauth.orchestrator.api.interceptors.tenant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +21,7 @@ import org.springframework.security.web.authentication.AuthenticationFilter;
 import static knemognition.heartauth.orchestrator.shared.constants.HeaderNames.ATTR_TENANT_ID;
 
 @Configuration
-class InternalSecurityConfig {
+class TenantSecurityConfig {
 
     private static void writeProblem(HttpServletResponse res,
                                      org.springframework.http.ProblemDetail pd,
@@ -33,17 +33,17 @@ class InternalSecurityConfig {
     }
 
     @Bean()
-    @Profile(SpringProfiles.INTERNAL)
+    @Profile(SpringProfiles.TENANT)
     SecurityFilterChain internal(HttpSecurity http,
-                                 InternalApiKeyAuthenticationProvider provider,
+                                 TenantApiKeyAuthenticationProvider provider,
                                  ObjectMapper objectMapper) throws Exception {
 
         var manager = new ProviderManager(provider);
-        var converter = new InternalApiKeyAuthenticationConverter();
+        var converter = new TenantApiKeyAuthenticationConverter();
         var filter = new AuthenticationFilter(manager, converter);
 
         filter.setSuccessHandler((req, res, auth) -> {
-            if (auth instanceof InternalApiKeyAuthenticationToken tok && tok.isAuthenticated()) {
+            if (auth instanceof TenantApiKeyAuthenticationToken tok && tok.isAuthenticated()) {
                 req.setAttribute(ATTR_TENANT_ID, tok.getPrincipal());
             }
         });

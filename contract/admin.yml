@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: HeartAuth Orchestrator – Tenant Registration API
+  title: HeartAuth Core - Administrator
   version: 1.0.0
 tags:
   - name: Tenants
@@ -10,7 +10,7 @@ paths:
     post:
       tags:
         - Tenants
-      summary: Register a new tenant (strict)
+      summary: Register a new tenant
       description: Creates a new tenant.
       operationId: registerTenant
       responses:
@@ -30,15 +30,15 @@ paths:
       tags:
         - ModelAction
       operationId: getModelAction
+      summary: Retrieve Model API action summary
       responses:
-        '201':
-          description: ModelAction
+        '200':
+          description: Generic result map
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ModelAction'
+                type: object
+                additionalProperties: true
 components:
   schemas:
     CreateTenantResponse:
@@ -53,74 +53,7 @@ components:
         apiKey:
           type: string
           format: uuid
-    ModelAction:
-      type: object
-      additionalProperties: false
-      description: >
-        Short-lived record representing a request↔response flow.
-        Backed by Redis hash "model_act". Entries auto-expire via `ttlSeconds`.
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: UUID key for the flow (maps to Redis @Id).
-        predictRequest:
-          $ref: '#/components/schemas/PredictRequestArchive'
-        predictResponse:
-          allOf:
-            - $ref: '#/components/schemas/PredictResponseArchive'
-      required:
-        - id
-        - requestTime
-        - request
 
 
-    PredictRequestArchive:
-      type: object
-      additionalProperties: false
-      description: Flexible input payload accepted by the model (from PredictRequestDto).
-      properties:
-        refEcg:
-          type: array
-          items:
-            type: array
-            items:
-              type: number
-              format: float
-          minItems: 1
-          description: Reference ECG signals.
-        testEcg:
-          type: array
-          items:
-            type: number
-            format: float
-          minItems: 1
-          description: Test ECG signal.
-      required:
-        - refEcg
-        - testEcg
-      example:
-        refEcg: [ [ 0.1, 0.2 ], [ 0.05, 0.04 ] ]
-        testEcg: [ 0.12, 0.18 ]
 
-    PredictResponseArchive:
-      type: object
-      additionalProperties: false
-      description: Model response payload (from PredictResponseDto).
-      properties:
-        ok:
-          type: boolean
-          description: Whether the call succeeded at the model boundary.
-        prediction:
-          type: boolean
-          description: The model’s boolean prediction.
-        score:
-          type: number
-          format: float
-          description: Optional confidence/score for the prediction.
-        error:
-          type: string
-          description: Error message when `ok=false`.
-      required:
-        - ok
-        - prediction
+

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.api.interceptors.internal;
+package knemognition.heartauth.orchestrator.api.interceptors.tenant;
 
 import knemognition.heartauth.orchestrator.shared.constants.Authorities;
 import knemognition.heartauth.orchestrator.tenants.api.TenantRead;
@@ -18,7 +18,7 @@ import java.util.UUID;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class InternalApiKeyAuthenticationProvider implements AuthenticationProvider {
+public class TenantApiKeyAuthenticationProvider implements AuthenticationProvider {
 
     private final TenantsModule tenantsModule;
 
@@ -37,13 +37,13 @@ public class InternalApiKeyAuthenticationProvider implements AuthenticationProvi
         var authorities = List.of(
                 new SimpleGrantedAuthority(Authorities.TENANT)
         );
-        var authed = new InternalApiKeyAuthenticationToken(tenantId, authorities);
+        var authed = new TenantApiKeyAuthenticationToken(tenantId, authorities);
         authed.setDetails(authentication.getDetails());
         return authed;
     }
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return InternalApiKeyAuthenticationToken.class.isAssignableFrom(authentication);
+        return TenantApiKeyAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

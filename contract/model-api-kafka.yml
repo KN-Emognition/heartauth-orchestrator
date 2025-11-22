@@ -2,12 +2,19 @@ openapi: 3.0.3
 info:
   title: Model API
   version: 1.0.0
-paths: { }
+paths:
+  /model-api:
+    post:
+      tags:
+        - Prediction
+      operationId: registerTenant
+      responses:
+        '201':
+          description: Model Api Kafka Interface
 components:
   schemas:
     PredictRequest:
       type: object
-      description: Flexible input payload accepted by the model.
       required:
         - refEcg
         - testEcg
@@ -27,7 +34,6 @@ components:
     PredictResponse:
       type: object
       required:
-        - prediction
         - ok
       properties:
         ok:

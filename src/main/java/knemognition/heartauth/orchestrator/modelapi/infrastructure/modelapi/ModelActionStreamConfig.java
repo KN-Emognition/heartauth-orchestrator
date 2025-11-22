@@ -7,8 +7,10 @@ import knemognition.heartauth.orchestrator.shared.constants.HeaderNames;
 import knemognition.heartauth.orchestrator.shared.utils.SetKeyFromHeaderProcessor;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.*;
+import org.apache.kafka.streams.state.KeyValueStore;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +26,7 @@ public class ModelActionStreamConfig {
     private final String requestTopic;
     private final String replyTopic;
     private final String combinedModelTopic;
+    public static final String COMBINED_STORE_NAME = "combined-store";
 
     public ModelActionStreamConfig(@Value("${model.api.topics.request}") String requestTopic, @Value("${model.api.topics.reply}") String replyTopic, @Value("${model.api.topics.combined}") String combinedModelTopic) {
         this.requestTopic = requestTopic;
@@ -60,7 +63,7 @@ public class ModelActionStreamConfig {
         KStream<String, PredictResponseDto> responsesByCorr = responsesRaw.process(
                 () -> new SetKeyFromHeaderProcessor<>(HeaderNames.HEADER_CORRELATION_ID));
 
-        JoinWindows windows = JoinWindows.ofTimeDifferenceAndGrace(Duration.ofMinutes(10), Duration.ofMinutes(2));
+        JoinWindows windows = JoinWindows.ofTimeDifferenceAndGrace(Duration.ofSeconds(30), Duration.ofSeconds(15));
 
         KStream<String, CombinedModelActionDto> combined = requestsByCorr.outerJoin(responsesByCorr,
                 (req, resp) -> CombinedModelActionDto.builder()
@@ -68,8 +71,13 @@ public class ModelActionStreamConfig {
                         .predictResponse(resp)
                         .timestamp(System.currentTimeMillis())
                         .build(), windows, StreamJoined.with(stringSerde, requestSerde, responseSerde));
-
         combined.to(combinedModelTopic, Produced.with(stringSerde, combinedSerde));
+        combined.toTable(
+                Materialized.<String, CombinedModelActionDto, KeyValueStore<Bytes, byte[]>>as(
+                                COMBINED_STORE_NAME)
+                        .withKeySerde(Serdes.String())
+                        .withValueSerde(combinedSerde)
+        );
         return combined;
     }
 }

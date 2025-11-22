@@ -23,8 +23,8 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@Profile(SpringProfiles.EXTERNAL)
-public class ExternalController implements ChallengeApi, PairingApi, WellKnownApi {
+@Profile(SpringProfiles.MOBILE)
+public class MobileController implements ChallengeApi, PairingApi, WellKnownApi {
 
     private final ChallengesModule challengesModule;
     private final PairingsModule pairingsModule;
@@ -33,7 +33,7 @@ public class ExternalController implements ChallengeApi, PairingApi, WellKnownAp
 
     @Override
     public ResponseEntity<Void> completeChallenge(UUID id, CompleteChallengeRequestDto request) {
-        log.info("[EXTERNAL-CONTROLLER] Received challenge completion request for id {}", id);
+        log.info("[MOBILE-CONTROLLER] Received challenge completion request for id {}", id);
         boolean ok = challengesModule.complete(dtoMapper.toCmd(request, id));
         return ok ? ResponseEntity.noContent()
                 .build() : ResponseEntity.badRequest()
@@ -42,7 +42,7 @@ public class ExternalController implements ChallengeApi, PairingApi, WellKnownAp
 
     @Override
     public ResponseEntity<Void> completePairing(CompletePairingRequestDto pairingConfirmRequest) {
-        log.info("[EXTERNAL-CONTROLLER] Received pairing confirmation request");
+        log.info("[MOBILE-CONTROLLER] Received pairing confirmation request");
         var cmd = dtoMapper.toCmd(pairingConfirmRequest);
         pairingsModule.complete(cmd);
         return ResponseEntity.noContent()
@@ -51,7 +51,7 @@ public class ExternalController implements ChallengeApi, PairingApi, WellKnownAp
 
     @Override
     public ResponseEntity<InitPairingResponseDto> initPairing(InitPairingRequestDto pairingInitRequest) {
-        log.info("[EXTERNAL-CONTROLLER] Received pairing initialization request for device {}",
+        log.info("[MOBILE-CONTROLLER] Received pairing initialization request for device {}",
                 pairingInitRequest.getDeviceId());
         var cmd = dtoMapper.toCmd(pairingInitRequest);
         return ResponseEntity.ok(dtoMapper.toDto(pairingsModule.init(cmd)));

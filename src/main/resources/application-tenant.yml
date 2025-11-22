@@ -1,6 +1,6 @@
 spring:
   application:
-    name: internal-orchestrator
+    name: tenant-orchestrator
 firebase:
   credentials-location: file:${user.dir}/secrets/service-account.json
   dry-run: false

@@ -13,56 +13,55 @@ import knemognition.heartauth.orchestrator.users.api.NoActiveDeviceException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem;
 
 @Slf4j
-@RestControllerAdvice(basePackages = "knemognition.heartauth.orchestrator.external.interfaces.rest")
-public class ExternalExceptionHandler {
-    @ExceptionHandler(NoChallengeException.class)
+@RestControllerAdvice()
+public class ExceptionHandler {
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoChallengeException.class)
     public ProblemDetail handleNoChallenge(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No challenge found.", req, ex);
     }
 
-    @ExceptionHandler(NoPairingException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoPairingException.class)
     public ProblemDetail handleNoPairing(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No pairing found.", req, ex);
     }
 
-    @ExceptionHandler(ChallengeFailedException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(ChallengeFailedException.class)
     public ProblemDetail handleChallengeFailed(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No challenge found.", req, ex);
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(InvalidTokenException.class)
     public ProblemDetail handleInvalidToken(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.FORBIDDEN, "Invalid token.", req, ex);
     }
 
-    @ExceptionHandler(DeviceEnrichException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(DeviceEnrichException.class)
     public ProblemDetail handleDeviceEnrich(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "Device data enrich failed.", req, ex);
     }
 
 
-    @ExceptionHandler(NonceValidationException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(NonceValidationException.class)
     public ProblemDetail handleNonceValidation(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "Nonce validation failed.", req, ex);
     }
 
-    @ExceptionHandler(PemParsingException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(PemParsingException.class)
     public ProblemDetail handlePemParsing(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "Pem format invalid.", req, ex);
     }
 
-    @ExceptionHandler(NoActiveDeviceException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(NoActiveDeviceException.class)
     public ProblemDetail handleNoActiveDevice(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_REQUEST, "No active device for given user.", req, ex);
     }
 
-    @ExceptionHandler(FirebaseSendException.class)
+    @org.springframework.web.bind.annotation.ExceptionHandler(FirebaseSendException.class)
     public ProblemDetail handleFcmSend(Exception ex, HttpServletRequest req) {
         return problem(HttpStatus.BAD_GATEWAY, "Failed to send notification via FCM.", req, ex);
     }

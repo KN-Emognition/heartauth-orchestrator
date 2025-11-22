@@ -52,17 +52,18 @@ services:
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     healthcheck:
-      test: ["CMD-SHELL","kafka-broker-api-versions --bootstrap-server localhost:9092 >/dev/null 2>&1"]
+      test: [ "CMD-SHELL","kafka-broker-api-versions --bootstrap-server localhost:9092 >/dev/null 2>&1" ]
       interval: 5s
       timeout: 5s
       retries: 20
     restart: unless-stopped
   model-api:
-    image: poziomk3/model-api:v2.1.1
+    image: poziomk3/model-api:v2.4.0
     environment:
       KAFKA_BROKERS: kafka:29092
       CONSUME_TOPIC: model-api-v1-request
       REPLY_TOPIC: model-api-v1-response
+      AUTH_THRESHOLD: 0.96
     ports:
       - "8000:8000"
     depends_on:
@@ -72,24 +73,24 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-#  orchestrator:
-#    image: orchestrator:latest # local
-#    container_name: orchestrator-app
-#    restart: unless-stopped
-#    depends_on:
-#      - kafka
-#    environment:
-#      SPRING_PROFILES_ACTIVE: internal,external,admin,dev
-#      DB_URL: jdbc:postgresql://postgres:5432/orchestrator
-#      REDIS_URL: redis://redis:6379
-#      MODEL_API_BASE_URL: http://model-api:8000
-#      JWT_PRIVATE_KEY_LOCATION: file:/secrets/privKey.pem
-#      JWT_PUBLIC_KEY_LOCATION: file:/secrets/pubKey.pem
-#      FIREBASE_CREDENTIALS_LOCATION: file:/secrets/service-account.json
-#    volumes:
-#      - ./secrets:/secrets:ro
-#    ports:
-#      - "8080:8080"
+  #  orchestrator:
+  #    image: orchestrator:latest # local
+  #    container_name: orchestrator-app
+  #    restart: unless-stopped
+  #    depends_on:
+  #      - kafka
+  #    environment:
+  #      SPRING_PROFILES_ACTIVE: internal,external,admin,dev
+  #      DB_URL: jdbc:postgresql://postgres:5432/orchestrator
+  #      REDIS_URL: redis://redis:6379
+  #      MODEL_API_BASE_URL: http://model-api:8000
+  #      JWT_PRIVATE_KEY_LOCATION: file:/secrets/privKey.pem
+  #      JWT_PUBLIC_KEY_LOCATION: file:/secrets/pubKey.pem
+  #      FIREBASE_CREDENTIALS_LOCATION: file:/secrets/service-account.json
+  #    volumes:
+  #      - ./secrets:/secrets:ro
+  #    ports:
+  #      - "8080:8080"
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui

@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.api.interceptors.external;
+package knemognition.heartauth.orchestrator.api.interceptors.mobile;
 
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import org.springframework.context.annotation.Bean;
@@ -14,10 +14,10 @@ import org.springframework.security.oauth2.server.resource.web.access.BearerToke
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-class ExternalConfig {
+class MobileConfig {
 
     @Bean
-    @Profile(SpringProfiles.EXTERNAL)
+    @Profile(SpringProfiles.MOBILE)
     SecurityFilterChain pairing(HttpSecurity http, JwtDecoder decoder) throws Exception {
         return http.securityMatcher("/external/v1/pairing/**")
                 .cors(Customizer.withDefaults())

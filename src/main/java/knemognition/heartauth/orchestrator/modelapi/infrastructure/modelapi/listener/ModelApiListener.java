@@ -20,7 +20,7 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Profile(SpringProfiles.INTERNAL)
+@Profile(SpringProfiles.TENANT)
 public class ModelApiListener {
 
     private final ModelApiKafkaMapper dtoMapper;
@@ -32,15 +32,15 @@ public class ModelApiListener {
             @Header(HeaderNames.HEADER_MODEL_API_UNIQUE_ID) String uniqueModelId,
             @Header(name = KafkaHeaders.KEY, required = false) String correlationId
     ) {
-        log.info("[MODELAPI] Received model API prediction response | key={}", correlationId);
+        log.info("[MODELAPI] Received model API prediction response");
         var cmd = dtoMapper.toCmd(payload, UUID.fromString(uniqueModelId));
         modelApiCallbackApi.handle(cmd);
     }
 
     @KafkaListener(topics = "${model.api.topics.combined}", groupId = "admin-orchestrator-group")
-    public void onPredictResponse(@Payload CombinedModelActionDto payload,
-                                  @Header(HeaderNames.HEADER_CORRELATION_ID) String correlationId,
-                                  @Header(name = KafkaHeaders.KEY, required = false) String key) {
+    public void onCombined(@Payload CombinedModelActionDto payload,
+                           @Header(HeaderNames.HEADER_CORRELATION_ID) String correlationId,
+                           @Header(name = KafkaHeaders.KEY, required = false) String key) {
         log.info("[MODELAPI] Received Combined Predict");
     }
 }

@@ -28,8 +28,8 @@ import static knemognition.heartauth.orchestrator.shared.constants.HeaderNames.A
 @RequiredArgsConstructor
 @RestController
 @PreAuthorize("hasAuthority(T(knemognition.heartauth.orchestrator.shared.constants.Authorities).TENANT)")
-@Profile(SpringProfiles.INTERNAL)
-public class InternalController implements PairingApi, ChallengeApi {
+@Profile(SpringProfiles.TENANT)
+public class TenantController implements PairingApi, ChallengeApi {
 
     private final HttpServletRequest httpServletRequest;
     private final DtoMapper dtoMapper;
@@ -38,7 +38,7 @@ public class InternalController implements PairingApi, ChallengeApi {
 
     @Override
     public ResponseEntity<CreateChallengeResponseDto> createChallenge(CreateChallengeRequestDto request) {
-        log.info("[INTERNAL-CONTROLLER] Received challenge create request for user {}", request.getUserId());
+        log.info("[TENANT-CONTROLLER] Received challenge create request for user {}", request.getUserId());
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
         var cmd = dtoMapper.toCmd(request, tenantId);
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -48,7 +48,7 @@ public class InternalController implements PairingApi, ChallengeApi {
 
     @Override
     public ResponseEntity<StatusResponseDto> getChallengeStatus(UUID id) {
-        log.info("[INTERNAL-CONTROLLER] Received status request for id {}", id);
+        log.info("[TENANT-CONTROLLER] Received status request for id {}", id);
         UUID tenantId = (UUID) httpServletRequest.getAttribute(ATTR_TENANT_ID);
         var cmd = GetChallengeStatusCmd.builder()
                 .challengeId(id)
@@ -60,7 +60,7 @@ public class InternalController implements PairingApi, ChallengeApi {
 
     @Override
     public ResponseEntity<StatusResponseDto> getPairingStatus(UUID jti) {
-        log.info("[INTERNAL-CONTROLLER] Received status request for jti: {}", jti);
+        log.info("[TENANT-CONTROLLER] Received status request for jti: {}", jti);
         UUID tenantId = (UUID) httpServletRequest.getAttribute(HeaderNames.ATTR_TENANT_ID);
         var cmd = GetPairingStatusCmd.builder()
                 .challengeId(jti)
@@ -72,7 +72,7 @@ public class InternalController implements PairingApi, ChallengeApi {
 
     @Override
     public ResponseEntity<CreatePairingResponseDto> createPairing(CreatePairingRequestDto req) {
-        log.info("[INTERNAL-CONTROLLER] Received status request for token issue for user {}", req.getUserId());
+        log.info("[TENANT-CONTROLLER] Received status request for token issue for user {}", req.getUserId());
         UUID tenantId = (UUID) httpServletRequest.getAttribute(HeaderNames.ATTR_TENANT_ID);
         var cmd = dtoMapper.toCmd(req, tenantId);
         return ResponseEntity.status(HttpStatus.CREATED)
