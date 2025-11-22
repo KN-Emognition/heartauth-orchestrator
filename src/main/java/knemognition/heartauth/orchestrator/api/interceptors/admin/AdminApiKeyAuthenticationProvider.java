@@ -24,7 +24,7 @@ public class AdminApiKeyAuthenticationProvider implements AuthenticationProvider
         if (provided == null || provided.isBlank()) {
             throw new BadCredentialsException("invalid_api_key");
         }
-        if (!provided.equals(adminProperties.getApiKey())) {
+        if (!provided.equals(adminProperties.getKey())) {
             throw new BadCredentialsException("invalid_api_key");
         }
 
