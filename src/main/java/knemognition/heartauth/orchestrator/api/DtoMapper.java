@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.api;
 
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.CreateTenantResponseDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.RefEcgOverwriteRequestDto;
 import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.CompleteChallengeRequestDto;
 import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.CompletePairingRequestDto;
 import knemognition.heartauth.orchestrator.api.rest.v1.mobile.model.InitPairingRequestDto;
@@ -10,8 +11,10 @@ import knemognition.heartauth.orchestrator.challenges.api.ChallengeStatusRead;
 import knemognition.heartauth.orchestrator.challenges.api.CompleteChallengeWithPredictionPayloadCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreatedChallengeRead;
+import knemognition.heartauth.orchestrator.ecg.api.SaveReferenceDataCmd;
 import knemognition.heartauth.orchestrator.pairings.api.*;
 import knemognition.heartauth.orchestrator.tenants.api.CreatedTenant;
+import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -42,4 +45,9 @@ public interface DtoMapper {
     InitPairingResponseDto toDto(InitPairingRead src);
 
     CompletePairingCmd toCmd(CompletePairingRequestDto src);
+
+    IdentifiableUserCmd toCmd(RefEcgOverwriteRequestDto src);
+
+    @Mapping(target="userId", source = "userId")
+    SaveReferenceDataCmd toCmd(RefEcgOverwriteRequestDto src, UUID userId);
 }

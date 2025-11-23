@@ -4,9 +4,12 @@ import knemognition.heartauth.orchestrator.api.DtoMapper;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.api.ModelActionApi;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.api.TenantsApi;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.CreateTenantResponseDto;
+import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.RefEcgOverwriteRequestDto;
+import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
 import knemognition.heartauth.orchestrator.modelapi.api.ModelApiModule;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import knemognition.heartauth.orchestrator.tenants.api.TenantsModule;
+import knemognition.heartauth.orchestrator.users.api.UserModule;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -26,6 +29,8 @@ public class AdminController implements TenantsApi, ModelActionApi {
 
     private final TenantsModule tenantsModule;
     private final ModelApiModule modelApiModule;
+    private final UserModule userModule;
+    private final EcgModule ecgModule;
     private final DtoMapper mapper;
 
     @Override
@@ -39,5 +44,17 @@ public class AdminController implements TenantsApi, ModelActionApi {
     public ResponseEntity<Map<String, Object>> getModelAction() {
         log.info("[ADMIN-CONTROLLER] Received request to get combined model API");
         return ResponseEntity.ok(modelApiModule.getCombinedModelApi());
+    }
+
+    @Override
+    public ResponseEntity<Void> overwriteRefData(RefEcgOverwriteRequestDto refEcgOverwriteRequestDto) {
+        log.info("[ADMIN-CONTROLLER] Received request to overwrite reference ECG data");
+        userModule.getUser(mapper.toCmd(refEcgOverwriteRequestDto))
+                .ifPresent(userRead -> {
+                    ecgModule.updateReferenceData(mapper.toCmd(refEcgOverwriteRequestDto, userRead.getId()));
+                    log.info("[ADMIN-CONTROLLER] Successfully overwrote reference ECG data");
+                });
+        return ResponseEntity.noContent()
+                .build();
     }
 }

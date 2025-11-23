@@ -10,4 +10,6 @@ public interface EcgStore {
     Optional<RefEcg> getReferenceEcg(UUID userId);
 
     void saveReferenceEcg(UUID userId, RefEcg refEcg);
+
+    void updateReferenceEcg(UUID userId, RefEcg refEcg);
 }

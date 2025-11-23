@@ -30,4 +30,14 @@ public class EcgStoreImpl implements EcgStore {
         ety.setRefEcg(refEcg.getRefEcg());
         ecgRefDataRepository.save(ety);
     }
+
+    @Override
+    public void updateReferenceEcg(UUID userId, RefEcg refEcg) {
+        ecgRefDataRepository.findByUserId(userId)
+                .ifPresent(ecgRefDataEntity -> {
+                    ecgRefDataEntity.setRefEcg(refEcg.getRefEcg());
+                    ecgRefDataRepository.save(ecgRefDataEntity);
+
+                });
+    }
 }

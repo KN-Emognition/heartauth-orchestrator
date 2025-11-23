@@ -39,6 +39,21 @@ paths:
               schema:
                 type: object
                 additionalProperties: true
+  /admin/v1/ref-data-overwrite:
+    post:
+      tags:
+        - ModelAction
+      operationId: overwriteRefData
+      summary: Overwrite refData (demo purpose)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefEcgOverwriteRequest'
+      responses:
+        '201':
+          description: Command successful
 components:
   schemas:
     CreateTenantResponse:
@@ -53,7 +68,26 @@ components:
         apiKey:
           type: string
           format: uuid
-
+    RefEcgOverwriteRequest:
+      type: object
+      required:
+        - tenantId
+        - userId
+        - refEcg
+      properties:
+        tenantId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        refEcg:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: float
 
 
 
