@@ -4,9 +4,9 @@ import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreatedChallengeRead;
 import knemognition.heartauth.orchestrator.challenges.app.mappers.ChallengesMapper;
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
-import knemognition.heartauth.orchestrator.challenges.app.ports.PushSender;
 import knemognition.heartauth.orchestrator.challenges.config.ChallengeProperties;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseModule;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import knemognition.heartauth.orchestrator.users.api.DeviceRead;
@@ -34,7 +34,7 @@ public class CreateChallengeHandler {
     private final SecurityModule securityModule;
     private final UserModule userModule;
     private final ChallengeProperties challengeProperties;
-    private final PushSender pushSender;
+    private final FirebaseModule pushSender;
     private final Environment env;
     private final ChallengeStore challengeStore;
 
@@ -80,7 +80,7 @@ public class CreateChallengeHandler {
     private void sendToDevices(List<DeviceRead> deviceCredentials, String nonceB64, CreatedChallengeResult result, PublicKey publicKey) {
         var to = mapper.toChallengePushMessage(result, nonceB64, publicKey);
         for (DeviceRead item : deviceCredentials) {
-            pushSender.sendData(item.getFcmToken(), to);
+            pushSender.sendChallengeMessage(item.getFcmToken(), to);
         }
     }
 

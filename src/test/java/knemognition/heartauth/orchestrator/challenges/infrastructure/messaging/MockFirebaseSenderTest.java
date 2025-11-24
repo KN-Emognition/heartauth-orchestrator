@@ -1,6 +1,7 @@
 package knemognition.heartauth.orchestrator.challenges.infrastructure.messaging;
 
-import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.firebase.infrastructure.messaging.sender.MockFirebaseSender;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;
@@ -17,7 +18,7 @@ class MockFirebaseSenderTest {
                 .ttl(10L)
                 .build();
 
-        assertThatCode(() -> sender.sendData("token", message))
+        assertThatCode(() -> sender.sendMessage("token", message))
                 .doesNotThrowAnyException();
     }
 }

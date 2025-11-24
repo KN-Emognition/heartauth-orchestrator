@@ -9,8 +9,7 @@ import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
 import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
-import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
-import knemognition.heartauth.orchestrator.challenges.domain.MessageType;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,7 +17,7 @@ import org.mapstruct.Mapping;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-@Mapper(componentModel = "spring", imports = {KeyLoader.class, MessageType.class})
+@Mapper(componentModel = "spring", imports = {KeyLoader.class})
 public interface ChallengesMapper {
 
     @Mapping(target = "nonce", source = "state.nonceB64")
@@ -38,7 +37,6 @@ public interface ChallengesMapper {
     @Mapping(target = "ephemeralPrivateKey", expression = "java(KeyLoader.toPem(privateKey,\"PRIVATE KEY\"))")
     CreateChallenge toDomain(CreateChallengeCmd cmd, String nonceB64, Integer ttlSeconds, PrivateKey privateKey, String userPublicKey);
 
-    @Mapping(target = "type", expression = "java(MessageType.CHALLENGE)")
     @Mapping(target = "challengeId", source = "res.id")
     @Mapping(target = "ttl", source = "res.ttlSeconds")
     @Mapping(target = "publicKey", expression = "java(KeyLoader.toPem(publicKey,\"PUBLIC KEY\"))")

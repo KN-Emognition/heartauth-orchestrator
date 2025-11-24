@@ -30,8 +30,17 @@ components:
         - nonce
         - ttl
         - exp
+    RefDataCollectPushMessage:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/MessageType'
+      required:
+        - type
+
     MessageType:
       type: string
       enum:
         - CHALLENGE
+        - REF_DATA_COLLECT
       example: CHALLENGE

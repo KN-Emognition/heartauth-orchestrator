@@ -1,10 +1,9 @@
-package knemognition.heartauth.orchestrator.challenges.app.ports;
-
+package knemognition.heartauth.orchestrator.firebase.api;
 
 import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
-import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 
-public interface PushSender {
+public interface FirebaseModule {
+
 
     /**
      * Send a data message to a device.
@@ -14,5 +13,7 @@ public interface PushSender {
      * @throws FirebaseSendException
      *         if validation fails or the push provider reports an error
      */
-    void sendData(String fcmToken, ChallengePushMessage data);
+    void sendChallengeMessage(String fcmToken, ChallengePushMessage data);
+
+    void sendRefDataCollectMessage(String fcmToken, RefDataCollectPushMessage data);
 }

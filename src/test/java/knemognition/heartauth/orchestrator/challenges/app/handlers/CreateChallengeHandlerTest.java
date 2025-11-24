@@ -6,7 +6,7 @@ import knemognition.heartauth.orchestrator.challenges.app.mappers.ChallengesMapp
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
 import knemognition.heartauth.orchestrator.challenges.app.ports.PushSender;
 import knemognition.heartauth.orchestrator.challenges.config.ChallengeProperties;
-import knemognition.heartauth.orchestrator.challenges.domain.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
