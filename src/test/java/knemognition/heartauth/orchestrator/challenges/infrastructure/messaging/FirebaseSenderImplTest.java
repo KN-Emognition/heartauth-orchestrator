@@ -4,7 +4,7 @@
 //import com.google.firebase.messaging.FirebaseMessaging;
 //import com.google.firebase.messaging.FirebaseMessagingException;
 //import com.google.firebase.messaging.Message;
-//import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
+//import knemognition.heartauth.orchestrator.firebase.api.FirebaseSendException;
 //import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 //import knemognition.heartauth.orchestrator.firebase.domain.MessageType;
 //import knemognition.heartauth.orchestrator.firebase.infrastructure.messaging.sender.FirebaseSenderImpl;

@@ -3,7 +3,7 @@ package knemognition.heartauth.orchestrator.firebase.infrastructure.messaging.se
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.*;
-import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseSendException;
 import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.firebase.api.RefDataCollectPushMessage;
 import knemognition.heartauth.orchestrator.firebase.domain.MessageTitleDesc;

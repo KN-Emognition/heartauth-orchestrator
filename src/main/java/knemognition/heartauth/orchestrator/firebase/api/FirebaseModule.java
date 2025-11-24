@@ -1,7 +1,5 @@
 package knemognition.heartauth.orchestrator.firebase.api;
 
-import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
-
 public interface FirebaseModule {
 
 

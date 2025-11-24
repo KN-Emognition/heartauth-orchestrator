@@ -1,7 +1,7 @@
 package knemognition.heartauth.orchestrator.challenges.app.ports;
 
 
-import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseSendException;
 import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 
 public interface PushSender {
