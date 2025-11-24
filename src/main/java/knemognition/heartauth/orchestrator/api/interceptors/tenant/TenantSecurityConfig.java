@@ -60,12 +60,12 @@ class TenantSecurityConfig {
         filter.setFailureHandler(new AuthenticationEntryPointFailureHandler(problemEntryPoint));
 
         return http
-                .securityMatcher("/internal/**")
+                .securityMatcher("/tenants/**")
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(a -> a
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/internal/**")
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/tenants/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated()

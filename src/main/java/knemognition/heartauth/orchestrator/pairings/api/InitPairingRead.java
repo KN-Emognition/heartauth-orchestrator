@@ -7,5 +7,6 @@ import lombok.Value;
 @Builder
 public class InitPairingRead {
     String nonce;
+    String username;
     Long expiresAt;
 }

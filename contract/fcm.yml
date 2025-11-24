@@ -1,0 +1,37 @@
+openapi: 3.0.3
+info:
+  title: Firebase Message
+  version: "1.0.0"
+paths: { }
+components:
+  schemas:
+    ChallengePushMessage:
+      type: object
+      properties:
+        challengeId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/MessageType'
+        publicKey:
+          type: string
+        nonce:
+          type: string
+        ttl:
+          type: integer
+          format: int64
+        exp:
+          type: integer
+          format: int64
+      required:
+        - challengeId
+        - type
+        - publicKey
+        - nonce
+        - ttl
+        - exp
+    MessageType:
+      type: string
+      enum:
+        - CHALLENGE
+      example: CHALLENGE

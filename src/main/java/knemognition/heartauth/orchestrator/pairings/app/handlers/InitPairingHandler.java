@@ -57,6 +57,7 @@ public class InitPairingHandler {
         return InitPairingRead.builder()
                 .nonce(nonceB64)
                 .expiresAt(state.getExp())
+                .username(state.getUsername())
                 .build();
     }
 }

@@ -19,7 +19,7 @@ class MobileConfig {
     @Bean
     @Profile(SpringProfiles.MOBILE)
     SecurityFilterChain pairing(HttpSecurity http, JwtDecoder decoder) throws Exception {
-        return http.securityMatcher("/external/v1/pairing/**")
+        return http.securityMatcher("/mobile/v1/pairing/**")
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

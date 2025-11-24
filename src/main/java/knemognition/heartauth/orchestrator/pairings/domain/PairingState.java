@@ -14,6 +14,7 @@ public class PairingState {
     UUID userId;
     UUID tenantId;
     FlowStatus status;
+    String username;
     String reason;
     String deviceId;
     String displayName;
