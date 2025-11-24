@@ -4,18 +4,14 @@ import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreatedChallengeRead;
 import knemognition.heartauth.orchestrator.challenges.app.mappers.ChallengesMapper;
 import knemognition.heartauth.orchestrator.challenges.app.ports.ChallengeStore;
-import knemognition.heartauth.orchestrator.challenges.app.ports.PushSender;
 import knemognition.heartauth.orchestrator.challenges.config.ChallengeProperties;
-import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
-import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseModule;
 import knemognition.heartauth.orchestrator.security.api.SecurityModule;
-import knemognition.heartauth.orchestrator.users.api.DeviceRead;
-import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
-import knemognition.heartauth.orchestrator.users.api.NoActiveDeviceException;
-import knemognition.heartauth.orchestrator.users.api.Platform;
-import knemognition.heartauth.orchestrator.users.api.UserModule;
+import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
+import knemognition.heartauth.orchestrator.users.api.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,11 +29,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CreateChallengeHandlerTest {
@@ -55,22 +47,27 @@ class CreateChallengeHandlerTest {
     @Mock
     private ChallengeProperties challengeProperties;
     @Mock
-    private PushSender pushSender;
-    @Mock
     private Environment environment;
     @Mock
     private ChallengeStore challengeStore;
+    @Mock
+    private FirebaseModule firebaseModule;
 
     @InjectMocks
     private CreateChallengeHandler handler;
 
     @BeforeEach
     void setUp() {
-        lenient().when(challengeProperties.getMinTtl()).thenReturn(30);
-        lenient().when(challengeProperties.getMaxTtl()).thenReturn(90);
-        lenient().when(challengeProperties.getDefaultTtl()).thenReturn(45);
-        lenient().when(challengeProperties.getNonceLength()).thenReturn(32);
-        lenient().when(environment.getActiveProfiles()).thenReturn(new String[]{"prod"});
+        lenient().when(challengeProperties.getMinTtl())
+                .thenReturn(30);
+        lenient().when(challengeProperties.getMaxTtl())
+                .thenReturn(90);
+        lenient().when(challengeProperties.getDefaultTtl())
+                .thenReturn(45);
+        lenient().when(challengeProperties.getNonceLength())
+                .thenReturn(32);
+        lenient().when(environment.getActiveProfiles())
+                .thenReturn(new String[]{"prod"});
     }
 
     @Test
@@ -115,7 +112,8 @@ class CreateChallengeHandlerTest {
         when(userModule.getUserDevices(identifiableUser)).thenReturn(List.of(firstDevice, secondDevice));
         when(securityModule.createNonce(32)).thenReturn("nonce-from-handler");
         when(securityModule.createEphemeralKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
-        when(mapper.toDomain(eq(cmd), eq("nonce-from-handler"), eq(30), eq(privateKey), eq(firstDevice.getPublicKey()))).thenReturn(createChallenge);
+        when(mapper.toDomain(eq(cmd), eq("nonce-from-handler"), eq(30), eq(privateKey),
+                eq(firstDevice.getPublicKey()))).thenReturn(createChallenge);
         when(challengeStore.createChallenge(createChallenge)).thenReturn(createdResult);
         when(mapper.toChallengePushMessage(createdResult, "nonce-from-handler", publicKey)).thenReturn(pushMessage);
         when(mapper.toRead(createdResult)).thenReturn(read);
@@ -123,8 +121,8 @@ class CreateChallengeHandlerTest {
         var result = handler.handle(cmd);
 
         assertThat(result).isEqualTo(read);
-        verify(pushSender).sendData(firstDevice.getFcmToken(), pushMessage);
-        verify(pushSender).sendData(secondDevice.getFcmToken(), pushMessage);
+        verify(firebaseModule).sendChallengeMessage(firstDevice.getFcmToken(), pushMessage);
+        verify(firebaseModule).sendChallengeMessage(secondDevice.getFcmToken(), pushMessage);
         verify(challengeStore).createChallenge(createChallenge);
     }
 
@@ -161,14 +159,16 @@ class CreateChallengeHandlerTest {
         when(userModule.getUserDevices(identifiableUser)).thenReturn(List.of(device));
         when(securityModule.createNonce(32)).thenReturn("random-nonce");
         when(securityModule.createEphemeralKeyPair()).thenReturn(new KeyPair(publicKey, privateKey));
-        when(mapper.toDomain(eq(cmd), eq(USER_ID.toString()), eq(50), eq(privateKey), eq(device.getPublicKey()))).thenReturn(createChallenge);
+        when(mapper.toDomain(eq(cmd), eq(USER_ID.toString()), eq(50), eq(privateKey),
+                eq(device.getPublicKey()))).thenReturn(createChallenge);
         when(challengeStore.createChallenge(createChallenge)).thenReturn(createdResult);
-        when(mapper.toChallengePushMessage(createdResult, USER_ID.toString(), publicKey)).thenReturn(ChallengePushMessage.builder()
-                .challengeId(CHALLENGE_ID)
-                .nonce(USER_ID.toString())
-                .publicKey("public-pem")
-                .ttl(50L)
-                .build());
+        when(mapper.toChallengePushMessage(createdResult, USER_ID.toString(), publicKey)).thenReturn(
+                ChallengePushMessage.builder()
+                        .challengeId(CHALLENGE_ID)
+                        .nonce(USER_ID.toString())
+                        .publicKey("public-pem")
+                        .ttl(50L)
+                        .build());
         when(mapper.toRead(createdResult)).thenReturn(CreatedChallengeRead.builder()
                 .challengeId(CHALLENGE_ID)
                 .build());
@@ -197,7 +197,8 @@ class CreateChallengeHandlerTest {
 
         assertThatThrownBy(() -> handler.handle(cmd))
                 .isInstanceOf(NoActiveDeviceException.class);
-        verify(pushSender, never()).sendData(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any());
+        verify(firebaseModule, never()).sendChallengeMessage(org.mockito.ArgumentMatchers.anyString(),
+                org.mockito.ArgumentMatchers.any());
     }
 
     @Test

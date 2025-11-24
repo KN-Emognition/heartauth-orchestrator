@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.pairings.app.handlers;
 
 import knemognition.heartauth.orchestrator.pairings.api.CreatePairingCmd;
 import knemognition.heartauth.orchestrator.pairings.api.CreatedPairingRead;
+import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;
 import knemognition.heartauth.orchestrator.pairings.app.mappers.PairingsMapper;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
 import knemognition.heartauth.orchestrator.pairings.config.PairingProperties;
@@ -109,6 +110,6 @@ class CreatePairingHandlerTest {
         when(userModule.checkIfUserExists(mapper.toCmd(cmd))).thenReturn(true);
 
         assertThatThrownBy(() -> handler.createPairing(cmd))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(NoPairingException.class);
     }
 }

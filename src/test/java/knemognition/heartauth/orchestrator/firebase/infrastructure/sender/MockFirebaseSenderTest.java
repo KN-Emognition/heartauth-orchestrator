@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.challenges.infrastructure.messaging;
+package knemognition.heartauth.orchestrator.firebase.infrastructure.sender;
 
 import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.firebase.infrastructure.messaging.sender.MockFirebaseSender;

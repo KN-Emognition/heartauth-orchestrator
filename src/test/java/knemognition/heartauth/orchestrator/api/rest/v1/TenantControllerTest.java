@@ -7,6 +7,7 @@ import knemognition.heartauth.orchestrator.challenges.api.ChallengeStatusRead;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengesModule;
 import knemognition.heartauth.orchestrator.challenges.api.CreateChallengeCmd;
 import knemognition.heartauth.orchestrator.challenges.api.CreatedChallengeRead;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseModule;
 import knemognition.heartauth.orchestrator.pairings.api.CreatePairingCmd;
 import knemognition.heartauth.orchestrator.pairings.api.CreatedPairingRead;
 import knemognition.heartauth.orchestrator.pairings.api.PairingStatusRead;
@@ -45,6 +46,8 @@ class TenantControllerTest {
     @MockitoBean
     private PairingsModule pairingsModule;
     @MockitoBean
+    private FirebaseModule firebaseModule;
+    @MockitoBean
     private ChallengesModule challengesModule;
 
     @Test
@@ -65,7 +68,7 @@ class TenantControllerTest {
         when(challengesModule.create(cmd)).thenReturn(created);
         when(dtoMapper.toDto(created)).thenReturn(response);
 
-        mockMvc.perform(post("/internal/v1/challenge").requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId)
+        mockMvc.perform(post("/tenants/v1/challenge").requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -85,7 +88,7 @@ class TenantControllerTest {
         when(challengesModule.getStatus(any())).thenReturn(status);
         when(dtoMapper.toDto(status)).thenReturn(dto);
 
-        mockMvc.perform(get("/internal/v1/challenge/status/{id}", challengeId).requestAttr(HeaderNames.ATTR_TENANT_ID,
+        mockMvc.perform(get("/tenants/v1/challenge/status/{id}", challengeId).requestAttr(HeaderNames.ATTR_TENANT_ID,
                         tenantId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("APPROVED"));
@@ -94,10 +97,13 @@ class TenantControllerTest {
     @Test
     void shouldCreatePairing() throws Exception {
         UUID tenantId = UUID.randomUUID();
-        var request = new CreatePairingRequestDto().userId(UUID.randomUUID());
+        var request = new CreatePairingRequestDto().userId(UUID.randomUUID())
+                .username(UUID.randomUUID()
+                        .toString());
         var cmd = CreatePairingCmd.builder()
                 .tenantId(tenantId)
                 .userId(request.getUserId())
+                .username(request.getUsername())
                 .build();
         var created = CreatedPairingRead.builder()
                 .jti(UUID.randomUUID())
@@ -109,7 +115,7 @@ class TenantControllerTest {
         when(pairingsModule.create(cmd)).thenReturn(created);
         when(dtoMapper.toDto(created)).thenReturn(dto);
 
-        mockMvc.perform(post("/internal/v1/pairing").requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId)
+        mockMvc.perform(post("/tenants/v1/pairing").requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId)
                         .contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -128,7 +134,7 @@ class TenantControllerTest {
         when(pairingsModule.getStatus(any())).thenReturn(status);
         when(dtoMapper.toDto(status)).thenReturn(dto);
 
-        mockMvc.perform(get("/internal/v1/pairing/status/{jti}", jti).requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId))
+        mockMvc.perform(get("/tenants/v1/pairing/status/{jti}", jti).requestAttr(HeaderNames.ATTR_TENANT_ID, tenantId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status").value("PENDING"));
     }
