@@ -36,7 +36,7 @@ paths:
       responses:
         '200':
           description: Application is healthy
-  /external/v1/pairing/init:
+  /mobile/v1/pairing/init:
     post:
       operationId: initPairing
       tags:
@@ -58,7 +58,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/InitPairingResponse'
-  /external/v1/pairing/complete:
+  /mobile/v1/pairing/complete:
     post:
       operationId: completePairing
       tags:
@@ -74,10 +74,13 @@ paths:
             schema:
               $ref: '#/components/schemas/CompletePairingRequest'
       responses:
-        '204':
-          description: Pairing outcome recorded.
-
-  /external/v1/challenge/{id}/complete:
+        '200':
+          description: Complete pairing response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompletePairingResponse'
+  /mobile/v1/challenge/{id}/complete:
     post:
       operationId: completeChallenge
       tags:
@@ -171,12 +174,15 @@ components:
       required:
         - expiresAt
         - nonce
+        - username
       properties:
         nonce:
           type: string
         expiresAt:
           type: integer
           format: int64
+        username:
+          type: string
     CompletePairingRequest:
       type: object
       required:
@@ -187,6 +193,17 @@ components:
           type: string
           description: |
             JWT encrypted with ecgData
+        signature:
+          type: string
+    CompletePairingResponse:
+      type: object
+      required:
+        - refDataCollectId
+      properties:
+        refDataCollectId:
+          type: string
+          description: |
+            Id of refDataCollection process
         signature:
           type: string
     CompleteChallengeRequest:
@@ -227,3 +244,25 @@ components:
       type: string
       enum:
         - ES256
+    EcgRefDataCollectInitResponse:
+      type: object
+      properties:
+        flowId:
+          type: string
+          format: uuid
+        publicKey:
+          type: string
+        nonce:
+          type: string
+        ttl:
+          type: integer
+          format: int64
+        exp:
+          type: integer
+          format: int64
+      required:
+        - flowId
+        - publicKey
+        - nonce
+        - ttl
+        - exp

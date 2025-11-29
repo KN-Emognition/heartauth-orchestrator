@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.pairings.app.handlers;
 
 import knemognition.heartauth.orchestrator.pairings.api.CreatePairingCmd;
 import knemognition.heartauth.orchestrator.pairings.api.CreatedPairingRead;
+import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;
 import knemognition.heartauth.orchestrator.pairings.app.mappers.PairingsMapper;
 import knemognition.heartauth.orchestrator.pairings.app.ports.PairingStore;
 import knemognition.heartauth.orchestrator.pairings.config.PairingProperties;
@@ -33,7 +34,7 @@ public class CreatePairingHandler {
     public CreatedPairingRead createPairing(CreatePairingCmd cmd) {
         boolean exists = userModule.checkIfUserExists(mapper.toCmd(cmd));
         if (exists) {
-            throw new IllegalStateException("User with ID " + cmd.getUserId() + " already has benn paired.");
+            throw new NoPairingException("User with ID " + cmd.getUserId() + " already has benn paired.");
         }
         log.info("[PAIRING] User with given ID doesnt exit {}", cmd.getUserId());
         var effectiveTtl = clampOrDefault(cmd.getTtlSeconds(), properties.getMinTtl(), properties.getMaxTtl(),

@@ -31,6 +31,7 @@ public class PairingStateRedis implements Serializable {
     private FlowStatus status;
     private String reason;
 
+    private String username;
     private String deviceId;
     private String displayName;
     private String publicKey;

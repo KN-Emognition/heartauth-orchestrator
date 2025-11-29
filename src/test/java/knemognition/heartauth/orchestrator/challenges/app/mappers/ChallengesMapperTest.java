@@ -2,6 +2,7 @@ package knemognition.heartauth.orchestrator.challenges.app.mappers;
 
 import knemognition.heartauth.orchestrator.challenges.api.*;
 import knemognition.heartauth.orchestrator.challenges.domain.*;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
 import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
@@ -134,7 +135,6 @@ class ChallengesMapperTest {
         assertThat(message.getNonce()).isEqualTo("nonce-abc");
         assertThat(message.getTtl()).isEqualTo(75L);
         assertThat(message.getPublicKey()).isEqualTo(KeyLoader.toPem(publicKey, "PUBLIC KEY"));
-        assertThat(message.getType()).isEqualTo(MessageType.CHALLENGE);
     }
 
     private KeyPair createKeyPair() throws Exception {

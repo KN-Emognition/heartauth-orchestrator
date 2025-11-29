@@ -14,6 +14,7 @@ import java.util.UUID;
 public class CreatePairing {
     UUID tenantId;
     UUID userId;
+    String username;
     UUID jti;
     Long ttlSeconds;
 }

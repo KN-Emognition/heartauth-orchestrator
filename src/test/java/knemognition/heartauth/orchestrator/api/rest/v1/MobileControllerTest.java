@@ -83,7 +83,7 @@ class MobileControllerTest {
         when(dtoMapper.toCmd(dto, challengeId)).thenReturn(cmd);
         when(challengesModule.complete(cmd)).thenReturn(true);
 
-        mockMvc.perform(post("/external/v1/challenge/{id}/complete", challengeId).contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/mobile/v1/challenge/{id}/complete", challengeId).contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNoContent());
     }
@@ -100,7 +100,7 @@ class MobileControllerTest {
         when(dtoMapper.toCmd(dto, challengeId)).thenReturn(cmd);
         when(challengesModule.complete(cmd)).thenReturn(false);
 
-        mockMvc.perform(post("/external/v1/challenge/{id}/complete", challengeId).contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/mobile/v1/challenge/{id}/complete", challengeId).contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isBadRequest());
     }
@@ -114,7 +114,7 @@ class MobileControllerTest {
                 .build();
         when(dtoMapper.toCmd(dto)).thenReturn(cmd);
 
-        mockMvc.perform(post("/external/v1/pairing/complete").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/mobile/v1/pairing/complete").contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNoContent());
 
@@ -142,7 +142,7 @@ class MobileControllerTest {
         when(dtoMapper.toDto(ArgumentMatchers.any(
                 knemognition.heartauth.orchestrator.pairings.api.InitPairingRead.class))).thenReturn(response);
 
-        mockMvc.perform(post("/external/v1/pairing/init").contentType(APPLICATION_JSON)
+        mockMvc.perform(post("/mobile/v1/pairing/init").contentType(APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.nonce").value("nonce"));
