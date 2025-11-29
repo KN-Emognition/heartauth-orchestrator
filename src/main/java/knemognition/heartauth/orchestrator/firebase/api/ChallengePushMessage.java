@@ -1,5 +1,4 @@
-package knemognition.heartauth.orchestrator.challenges.domain;
-
+package knemognition.heartauth.orchestrator.firebase.api;
 
 import lombok.Builder;
 import lombok.Value;
@@ -11,7 +10,6 @@ import java.util.UUID;
 @Builder
 public class ChallengePushMessage {
     UUID challengeId;
-    MessageType type;
     String publicKey;
     String nonce;
     Long ttl;

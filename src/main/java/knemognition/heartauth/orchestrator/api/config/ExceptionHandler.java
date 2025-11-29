@@ -2,7 +2,7 @@ package knemognition.heartauth.orchestrator.api.config;
 
 import jakarta.servlet.http.HttpServletRequest;
 import knemognition.heartauth.orchestrator.challenges.api.ChallengeFailedException;
-import knemognition.heartauth.orchestrator.challenges.api.FirebaseSendException;
+import knemognition.heartauth.orchestrator.firebase.api.FirebaseSendException;
 import knemognition.heartauth.orchestrator.challenges.api.NoChallengeException;
 import knemognition.heartauth.orchestrator.pairings.api.DeviceEnrichException;
 import knemognition.heartauth.orchestrator.pairings.api.NoPairingException;

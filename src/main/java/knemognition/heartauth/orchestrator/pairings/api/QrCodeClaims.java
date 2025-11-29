@@ -9,6 +9,7 @@ import java.util.UUID;
 @Builder
 public class QrCodeClaims {
     UUID userId;
+    String username;
     UUID tenantId;
     Long exp;
     UUID jti;

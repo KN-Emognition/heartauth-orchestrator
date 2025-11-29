@@ -1,4 +1,4 @@
-package knemognition.heartauth.orchestrator.challenges.api;
+package knemognition.heartauth.orchestrator.firebase.api;
 
 public class FirebaseSendException extends RuntimeException {
     public FirebaseSendException(String message) {

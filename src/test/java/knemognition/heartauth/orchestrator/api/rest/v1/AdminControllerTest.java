@@ -2,17 +2,19 @@ package knemognition.heartauth.orchestrator.api.rest.v1;
 
 import knemognition.heartauth.orchestrator.api.DtoMapper;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.CreateTenantResponseDto;
+import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
 import knemognition.heartauth.orchestrator.modelapi.api.ModelApiModule;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import knemognition.heartauth.orchestrator.tenants.api.CreatedTenant;
 import knemognition.heartauth.orchestrator.tenants.api.TenantsModule;
+import knemognition.heartauth.orchestrator.users.api.UserModule;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
@@ -37,6 +39,10 @@ class AdminControllerTest {
     @MockitoBean
     private ModelApiModule modelApiModule;
     @MockitoBean
+    private UserModule userModule;
+    @MockitoBean
+    private EcgModule ecgModule;
+    @MockitoBean
     private DtoMapper dtoMapper;
 
     @Test
@@ -53,8 +59,10 @@ class AdminControllerTest {
 
         mockMvc.perform(post("/admin/v1/tenants"))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(created.getTenantId().toString()))
-                .andExpect(jsonPath("$.apiKey").value(created.getApiKey().toString()));
+                .andExpect(jsonPath("$.id").value(created.getTenantId()
+                        .toString()))
+                .andExpect(jsonPath("$.apiKey").value(created.getApiKey()
+                        .toString()));
     }
 
     @Test
