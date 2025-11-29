@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +18,7 @@ public class UserApiImpl implements UserModule {
 
     private final CheckIfUserExistsHandler checkIfUserExistsHandler;
     private final GetUserDeviceHandler getUserDeviceHandler;
-    private final GetUserHandler getUserIdHandler;
+    private final GetUserHandler getUserHandler;
     private final SaveUserDeviceHandler saveUserDeviceHandler;
 
     @Override
@@ -27,7 +28,12 @@ public class UserApiImpl implements UserModule {
 
     @Override
     public Optional<UserRead> getUser(IdentifiableUserCmd user) {
-        return getUserIdHandler.handle(user);
+        return getUserHandler.handle(user);
+    }
+
+    @Override
+    public Optional<UserRead> getUser(UUID id) {
+        return getUserHandler.handle(id);
     }
 
     @Override

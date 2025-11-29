@@ -33,10 +33,28 @@ components:
     RefDataCollectPushMessage:
       type: object
       properties:
+        notificationId:
+          type: string
+          format: uuid
         type:
           $ref: '#/components/schemas/MessageType'
+        publicKey:
+          type: string
+        nonce:
+          type: string
+        ttl:
+          type: integer
+          format: int64
+        exp:
+          type: integer
+          format: int64
       required:
+        - notificationId
         - type
+        - publicKey
+        - nonce
+        - ttl
+        - exp
 
     MessageType:
       type: string

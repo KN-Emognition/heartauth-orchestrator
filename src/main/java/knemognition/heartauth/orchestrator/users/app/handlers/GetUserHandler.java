@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,12 @@ public class GetUserHandler {
         var tenant = tenantApi.get(user.getTenantId())
                 .orElseThrow();
         return userRepository.findByUserIdAndTenantId(user.getUserId(), tenant.getId())
+                .map(userMapper::toReadModel);
+    }
+
+    public Optional<UserRead> handle(UUID id) {
+        log.info("[USERS] Get user  handler called");
+        return userRepository.findById(id)
                 .map(userMapper::toReadModel);
     }
 }
