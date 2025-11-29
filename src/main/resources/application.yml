@@ -22,6 +22,10 @@ spring:
           PredictRequestDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictRequestDto,
           PredictResponseDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto,
           CombinedModelActionDto:knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.CombinedModelActionDto
+    streams:
+      application-id: heartauth-orchestrator
+      properties:
+        max.request.size: 5000000
   jackson:
     default-property-inclusion: non_null
   data:

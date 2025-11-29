@@ -14,6 +14,6 @@ public class MockFirebaseSender implements FirebaseSender {
 
     @Override
     public <T> void sendMessage(String token, T message) {
-        log.warn("[CHALLENGE] Mock sendData called with token");
+        log.warn("[FIREBASE] Mock sendData called with token {} and message {}", token, message);
     }
 }
