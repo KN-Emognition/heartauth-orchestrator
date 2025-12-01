@@ -10,6 +10,7 @@ import java.util.UUID;
 @Builder
 public class EcgSendPredictCmd {
     UUID correlationId;
+    String userCompoundId;
     List<Float> testEcg;
     List<List<Float>> refEcg;
 }

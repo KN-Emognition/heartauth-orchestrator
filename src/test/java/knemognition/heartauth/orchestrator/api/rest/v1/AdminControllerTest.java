@@ -64,13 +64,4 @@ class AdminControllerTest {
                 .andExpect(jsonPath("$.apiKey").value(created.getApiKey()
                         .toString()));
     }
-
-    @Test
-    void shouldReturnModelActions() throws Exception {
-        when(modelApiModule.getCombinedModelApi()).thenReturn(Map.of("entries", 2));
-
-        mockMvc.perform(get("/admin/v1/model-action"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.entries").value(2));
-    }
 }

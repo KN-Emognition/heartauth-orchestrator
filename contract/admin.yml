@@ -5,6 +5,7 @@ info:
 tags:
   - name: Tenants
     description: Tenant lifecycle operations
+servers: []
 paths:
   /admin/v1/tenants:
     post:
@@ -25,20 +26,6 @@ paths:
                   value:
                     id: "a9b2f1a6-2a36-4f1f-bc3b-9d63f5a8f5a2"
                     apiKey: "a9b2f1a6-2a36-4f1f-bc3b-9d63f5a8f5a2"
-  /admin/v1/model-action:
-    get:
-      tags:
-        - ModelAction
-      operationId: getModelAction
-      summary: Retrieve Model API action summary
-      responses:
-        '200':
-          description: Generic result map
-          content:
-            application/json:
-              schema:
-                type: object
-                additionalProperties: true
   /admin/v1/ref-data-overwrite:
     post:
       tags:

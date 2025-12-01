@@ -97,6 +97,9 @@ public class CompleteChallengeHandler {
                 .correlationId(state.getModelApiTryId())
                 .testEcg(ecgTestTokenClaims.getTestEcg())
                 .refEcg(refData.getRefEcg())
+                .userCompoundId(state.getTenantId()
+                        .toString() + state.getUserId()
+                        .toString())
                 .build());
         log.info("[CHALLENGE] Posted Kafka message for ECG prediction for challengeId {}", cmd.getChallengeId());
         internalChallengeStore.setStatus(statusChangeBuilder.status(FlowStatus.PENDING)

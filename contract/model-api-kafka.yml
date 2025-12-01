@@ -2,6 +2,7 @@ openapi: 3.0.3
 info:
   title: Model API
   version: 1.0.0
+servers: []
 paths:
   /model-api:
     post:
@@ -18,6 +19,8 @@ components:
       required:
         - refEcg
         - testEcg
+        - userId
+        - tenantId
       properties:
         refEcg:
           type: array
@@ -31,6 +34,8 @@ components:
           items:
             type: number
             format: float
+        userCompoundId:
+          type: string
     PredictResponse:
       type: object
       required:

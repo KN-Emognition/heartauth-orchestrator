@@ -8,7 +8,7 @@ info:
     - All timestamps are UTC unless stated otherwise.
     - Ids are UUID v4 strings.
     - Short-lived resources (pairings/challenges) may expire; polling endpoints indicate current status.
-
+servers: []
 tags:
   - name: Pairing
     description: Create and poll device pairing flows (connect userId with theirs device).

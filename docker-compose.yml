@@ -73,24 +73,21 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-  #  orchestrator:
-  #    image: orchestrator:latest # local
-  #    container_name: orchestrator-app
-  #    restart: unless-stopped
-  #    depends_on:
-  #      - kafka
-  #    environment:
-  #      SPRING_PROFILES_ACTIVE: internal,external,admin,dev
-  #      DB_URL: jdbc:postgresql://postgres:5432/orchestrator
-  #      REDIS_URL: redis://redis:6379
-  #      MODEL_API_BASE_URL: http://model-api:8000
-  #      JWT_PRIVATE_KEY_LOCATION: file:/secrets/privKey.pem
-  #      JWT_PUBLIC_KEY_LOCATION: file:/secrets/pubKey.pem
-  #      FIREBASE_CREDENTIALS_LOCATION: file:/secrets/service-account.json
-  #    volumes:
-  #      - ./secrets:/secrets:ro
-  #    ports:
-  #      - "8080:8080"
+  orchestrator:
+      image: orchestrator:latest # local
+      container_name: orchestrator-app
+      restart: unless-stopped
+      depends_on:
+        - kafka
+      environment:
+        SPRING_PROFILES_ACTIVE: tenant,mobile,admin
+        DB_URL: jdbc:postgresql://postgres:5432/orchestrator
+        REDIS_URL: redis://redis:6379
+        SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      volumes:
+        - ./secrets:/secrets:ro
+      ports:
+        - "8080:8080"
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
@@ -104,7 +101,6 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
       # Zookeeper not needed for UI; it can read everything from brokers
       # KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
-
 volumes:
   pgdata:
   redis-data:

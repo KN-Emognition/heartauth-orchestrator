@@ -36,6 +36,10 @@ public abstract class PairingsMapper {
 
     public abstract QrCodeClaims toClaims(CreatePairingCmd src, UUID jti, Long exp);
 
+    @Mapping(target = "subject", ignore = true)
+    @Mapping(target = "expiresAt", ignore = true)
+    @Mapping(target = "notBefore", ignore = true)
+    @Mapping(target = "id", ignore = true)
     public abstract JwtClaimsSet toClaimsSet(PairingProperties src, Instant issuedAt, QrCodeClaims claims);
 
     public abstract CreatePairing toDomain(QrCodeClaims src, Long ttlSeconds);

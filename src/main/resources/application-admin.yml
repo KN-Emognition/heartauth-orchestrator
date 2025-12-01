@@ -1,5 +1,18 @@
 spring:
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: modelapi-proxy
+              uri: ${MODELAPI_URL:http://${MODELAPI_HOST:localhost}:${MODELAPI_PORT:8000}}
+              predicates:
+                - Path=/admin/proxy/modelapi/**
+              filters:
+                - StripPrefix=3
   application:
     name: admin-orchestrator
+
+
 admin:
   api.key: "your_admin_api_key_here"

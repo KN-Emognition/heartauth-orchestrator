@@ -6,7 +6,6 @@ import knemognition.heartauth.orchestrator.api.rest.v1.admin.api.TenantsApi;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.CreateTenantResponseDto;
 import knemognition.heartauth.orchestrator.api.rest.v1.admin.model.RefEcgOverwriteRequestDto;
 import knemognition.heartauth.orchestrator.ecg.api.EcgModule;
-import knemognition.heartauth.orchestrator.modelapi.api.ModelApiModule;
 import knemognition.heartauth.orchestrator.shared.constants.SpringProfiles;
 import knemognition.heartauth.orchestrator.tenants.api.TenantsModule;
 import knemognition.heartauth.orchestrator.users.api.UserModule;
@@ -18,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -28,7 +25,6 @@ import java.util.Map;
 public class AdminController implements TenantsApi, ModelActionApi {
 
     private final TenantsModule tenantsModule;
-    private final ModelApiModule modelApiModule;
     private final UserModule userModule;
     private final EcgModule ecgModule;
     private final DtoMapper mapper;
@@ -40,11 +36,6 @@ public class AdminController implements TenantsApi, ModelActionApi {
                 .body(mapper.toDto(tenantsModule.create()));
     }
 
-    @Override
-    public ResponseEntity<Map<String, Object>> getModelAction() {
-        log.info("[ADMIN-CONTROLLER] Received request to get combined model API");
-        return ResponseEntity.ok(modelApiModule.getCombinedModelApi());
-    }
 
     @Override
     public ResponseEntity<Void> overwriteRefData(RefEcgOverwriteRequestDto refEcgOverwriteRequestDto) {
