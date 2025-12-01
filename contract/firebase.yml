@@ -3,6 +3,7 @@ info:
   title: Firebase Message
   version: "1.0.0"
 paths: { }
+servers: []
 components:
   schemas:
     ChallengePushMessage:

@@ -1,7 +1,6 @@
 package knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.listener;
 
 import knemognition.heartauth.orchestrator.modelapi.api.ModelApiCallbackApi;
-import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.CombinedModelActionDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.kafka.model.PredictResponseDto;
 import knemognition.heartauth.orchestrator.modelapi.infrastructure.modelapi.mapper.ModelApiKafkaMapper;
 import knemognition.heartauth.orchestrator.shared.constants.HeaderNames;
@@ -35,12 +34,5 @@ public class ModelApiListener {
         log.info("[MODELAPI] Received model API prediction response");
         var cmd = dtoMapper.toCmd(payload, UUID.fromString(uniqueModelId));
         modelApiCallbackApi.handle(cmd);
-    }
-
-    @KafkaListener(topics = "${model.api.topics.combined}", groupId = "admin-orchestrator-group")
-    public void onCombined(@Payload CombinedModelActionDto payload,
-                           @Header(HeaderNames.HEADER_CORRELATION_ID) String correlationId,
-                           @Header(name = KafkaHeaders.KEY, required = false) String key) {
-        log.info("[MODELAPI] Received Combined Predict");
     }
 }

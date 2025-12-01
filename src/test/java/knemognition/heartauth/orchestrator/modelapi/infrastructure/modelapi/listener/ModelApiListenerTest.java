@@ -42,11 +42,4 @@ class ModelApiListenerTest {
 
         verify(callbackApi).handle(cmd);
     }
-
-    @Test
-    void shouldAcceptCombinedEventsWithoutErrors() {
-        CombinedModelActionDto payload = mock(CombinedModelActionDto.class);
-        listener.onCombined(payload, "corr-id", "key");
-        // method only logs, so reaching this point without exception is sufficient
-    }
 }

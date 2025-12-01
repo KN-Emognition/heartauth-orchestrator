@@ -4,15 +4,14 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.6</version>
+        <version>3.5.7</version>
         <relativePath/>
     </parent>
     <groupId>knemognition.heartauth</groupId>
     <artifactId>orchestrator</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>orchestrator</name>
-    <description>HeartAuth Orchestrator</description>
-
+    <description>Heartauth Orchestrator</description>
     <properties>
         <java.version>21</java.version>
         <openapi.generator.version>7.15.0</openapi.generator.version>
@@ -21,10 +20,12 @@
         <google-auth-library-oauth2-http.version>1.27.0</google-auth-library-oauth2-http.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <lombok-mapstruct-binding.version>0.2.0</lombok-mapstruct-binding.version>
-        <firebase-admin.version>9.5.0</firebase-admin.version>
+        <firebase-admin.version>9.7.0</firebase-admin.version>
         <bouncycastle.version>1.82</bouncycastle.version>
         <spring-modulith-bom.version>1.2.2</spring-modulith-bom.version>
         <mockito.version>5.17.0</mockito.version>
+        <spring-cloud-starter-gateway-server-webmvc.version>4.3.0</spring-cloud-starter-gateway-server-webmvc.version>
+        <jackson-databind.version>2.20.0</jackson-databind.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -50,8 +51,12 @@
         <dependency>
             <groupId>org.springframework.modulith</groupId>
             <artifactId>spring-modulith-docs</artifactId>
-            <version>1.2.3</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-gateway-server-webmvc</artifactId>
+            <version>${spring-cloud-starter-gateway-server-webmvc.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -92,6 +97,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+            <version>${jackson-databind.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -139,7 +145,6 @@
             <artifactId>bcpkix-jdk18on</artifactId>
             <version>${bouncycastle.version}</version>
         </dependency>
-        <!--testing-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -179,7 +184,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>${groupId}.${artifactId}.OrchestratorApplication</mainClass>
+                    <mainClass>${project.groupId}.${project.artifactId}.OrchestratorApplication</mainClass>
                     <layout>JAR</layout>
                 </configuration>
             </plugin>

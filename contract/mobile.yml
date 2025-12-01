@@ -3,6 +3,7 @@ info:
   title: ECG Orchestrator API — External
   version: 1.0.0
   description: Endpoints called by the mobile app.
+servers: []
 tags:
   - name: Pairing
     description: Device enrollment from the mobile app.
