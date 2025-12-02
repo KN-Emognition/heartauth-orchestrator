@@ -1,7 +1,6 @@
 # docker build -t orchestrator  .
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /app
-
 COPY pom.xml .
 RUN mvn dependency:go-offline
 COPY src ./src
@@ -12,7 +11,7 @@ RUN mvn clean package -DskipTests
 FROM eclipse-temurin:21-jdk-alpine AS jlink
 RUN $JAVA_HOME/bin/jlink \
     --module-path $JAVA_HOME/jmods \
-    --add-modules java.base,java.logging,java.xml,java.naming,java.sql,java.management,java.instrument,jdk.unsupported,java.desktop,java.security.jgss \
+    --add-modules java.base,java.logging,java.xml,java.naming,java.sql,java.management,java.instrument,jdk.unsupported,java.desktop,java.security.jgss,jdk.crypto.ec \
     --output /javaruntime \
     --compress=2 --no-header-files --no-man-pages
 
