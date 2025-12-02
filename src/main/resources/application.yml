@@ -6,7 +6,7 @@ spring:
       properties:
         max.request.size: 5000000
         compression.type: gzip
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:${KAFKA_HOST:localhost}:${KAFKA_PORT:9092}}
     admin:
       fail-fast: true
     consumer:
