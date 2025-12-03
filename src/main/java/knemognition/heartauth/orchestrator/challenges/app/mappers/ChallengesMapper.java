@@ -7,9 +7,9 @@ import knemognition.heartauth.orchestrator.challenges.api.CreatedChallengeRead;
 import knemognition.heartauth.orchestrator.challenges.domain.ChallengeState;
 import knemognition.heartauth.orchestrator.challenges.domain.CreateChallenge;
 import knemognition.heartauth.orchestrator.challenges.domain.CreatedChallengeResult;
+import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.security.api.ValidateNonceCmd;
 import knemognition.heartauth.orchestrator.security.app.utils.KeyLoader;
-import knemognition.heartauth.orchestrator.firebase.api.ChallengePushMessage;
 import knemognition.heartauth.orchestrator.users.api.IdentifiableUserCmd;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -28,6 +28,7 @@ public interface ChallengesMapper {
     ChallengeStatusRead toRead(ChallengeState state);
 
     @Mapping(target = "challengeId", source = "id")
+    @Mapping(target = "ttl", source = "ttlSeconds")
     CreatedChallengeRead toRead(CreatedChallengeResult src);
 
     IdentifiableUserCmd toCmd(CreateChallengeCmd src);

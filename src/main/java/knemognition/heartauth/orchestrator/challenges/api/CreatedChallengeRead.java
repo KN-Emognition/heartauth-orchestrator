@@ -9,4 +9,8 @@ import java.util.UUID;
 @Value
 public class CreatedChallengeRead {
     UUID challengeId;
+    Long ttl;
+    Long exp;
+
+
 }

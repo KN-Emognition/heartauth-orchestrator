@@ -48,6 +48,6 @@ public class CreatePairingHandler {
         log.info("[PAIRING] Encoded JWT for user {}", cmd.getUserId());
         store.createPairing(mapper.toDomain(qrCodeClaims, effectiveTtl.longValue()));
         log.info("[PAIRING] Created pairing for user {}", cmd.getUserId());
-        return mapper.toRead(qrCodeClaims, jwt);
+        return mapper.toRead(qrCodeClaims, jwt, effectiveTtl.longValue());
     }
 }

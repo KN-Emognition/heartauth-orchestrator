@@ -93,7 +93,7 @@ class CreatePairingHandlerTest {
         when(jwtEncoder.encode(any(JwtEncoderParameters.class))).thenReturn(jwt);
         when(mapper.toDomain(claims, 60L)).thenReturn(create);
         when(pairingStore.createPairing(create)).thenReturn(createdResult);
-        when(mapper.toRead(claims, "jwt-token")).thenReturn(read);
+        when(mapper.toRead(claims, "jwt-token",60L)).thenReturn(read);
 
         CreatedPairingRead result = handler.createPairing(cmd);
 

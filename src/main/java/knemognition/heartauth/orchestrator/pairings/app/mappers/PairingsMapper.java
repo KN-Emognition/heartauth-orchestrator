@@ -44,8 +44,7 @@ public abstract class PairingsMapper {
 
     public abstract CreatePairing toDomain(QrCodeClaims src, Long ttlSeconds);
 
-    @Mapping(target = "jti", source = "qrCode.jti")
-    public abstract CreatedPairingRead toRead(QrCodeClaims qrCode, String jwt);
+    public abstract CreatedPairingRead toRead(QrCodeClaims qrCode, String jwt, Long ttl);
 
     Consumer<Map<String, Object>> map(QrCodeClaims claims) {
         return map -> map.putAll(objectMapper.convertValue(claims, new TypeReference<Map<String, String>>() {
