@@ -18,6 +18,11 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.intercept.AuthorizationFilter;
 import org.springframework.security.web.authentication.AuthenticationEntryPointFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 import static knemognition.heartauth.orchestrator.shared.utils.ExceptionHandlingUtils.problem;
 
@@ -31,6 +36,20 @@ class AdminSecurityConfig {
         res.setStatus(status.value());
         res.setContentType("application/problem+json");
         om.writeValue(res.getOutputStream(), pd);
+    }
+
+    @Bean
+    @Profile(SpringProfiles.ADMIN)
+    CorsConfigurationSource adminCorsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("*"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("*"));
+        config.setAllowCredentials(false);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/admin/**", config);
+        return source;
     }
 
     @Bean
